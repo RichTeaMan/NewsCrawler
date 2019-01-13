@@ -9,4 +9,4 @@ ADD https://github.com/RichTeaMan/NewsCrawler/archive/$branch.tar.gz newsCrawler
 RUN tar -xzf newsCrawler.tar.gz --strip-components=1 -C NewsCrawler
 WORKDIR /NewsCrawler
 RUN ./cake.sh -target=build
-ENTRYPOINT ./cake.sh -target=Run
+ENTRYPOINT ./cake.sh -target=ProdRun
