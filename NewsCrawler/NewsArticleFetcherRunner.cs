@@ -51,7 +51,7 @@ namespace NewsCrawler
                     Console.WriteLine($"An error occurred: {ex.Message}");
                 }
             }
-            Console.WriteLine("Articles loaded.");
+            Console.WriteLine($"Complete: {articles.Count()} articles loaded.");
 
             Console.WriteLine("Saving articles...");
 
@@ -59,7 +59,7 @@ namespace NewsCrawler
 
             await newsArticleContext.SaveChangesAsync();
 
-            Console.WriteLine("Complete!");
+            Console.WriteLine("Crawling complete!");
         }
     }
 }
