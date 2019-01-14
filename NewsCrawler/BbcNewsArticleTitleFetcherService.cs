@@ -16,7 +16,7 @@ namespace NewsCrawler
 
         private bool HasTitleAttribute(HtmlNode htmlNode)
         {
-            return htmlNode.Attributes.Any(attr => attr.Name == "class" && attr.Value == "story-body__h1");
+            return htmlNode.Attributes.Any(attr => attr.Name == "class" && (attr.Value == "story-body__h1" || attr.Value == "vxp-media__headline"));
         }
     }
 }

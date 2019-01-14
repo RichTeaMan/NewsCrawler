@@ -35,5 +35,27 @@ namespace NewsCrawler.Tests
 
             Assert.AreEqual(expectedTitle, actualTitle);
         }
+
+        [TestMethod]
+        public void TitleTest3()
+        {
+            var html = File.ReadAllText("HtmlPages/TestHtml3.html");
+            string expectedTitle = "'Adventurous' Hatfield gran, 99, tackles climbing wall";
+
+            var actualTitle = bbcNewsArticleTitleFetcherService.FetchTitle(html);
+
+            Assert.AreEqual(expectedTitle, actualTitle);
+        }
+
+        [TestMethod]
+        public void TitleTest4()
+        {
+            var html = File.ReadAllText("HtmlPages/TestHtml4.html");
+            string expectedTitle = "'They're playing God with people's lives'";
+
+            var actualTitle = bbcNewsArticleTitleFetcherService.FetchTitle(html);
+
+            Assert.AreEqual(expectedTitle, actualTitle);
+        }
     }
 }
