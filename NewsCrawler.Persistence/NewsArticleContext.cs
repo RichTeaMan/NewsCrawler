@@ -7,6 +7,12 @@ namespace NewsCrawler.Persistence
     {
         public DbSet<Article> Articles { get; set; }
 
+        public NewsArticleContext(DbContextOptions<NewsArticleContext> options)
+            :base(options)
+        {
+
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
@@ -16,7 +22,7 @@ namespace NewsCrawler.Persistence
 
 
             var connectionString = config.GetConnectionString("NewsArticleDatabase");
-            optionsBuilder.UseSqlServer(connectionString);
+            //optionsBuilder.UseSqlServer(connectionString);
         }
     }
 }

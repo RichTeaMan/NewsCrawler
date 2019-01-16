@@ -1,0 +1,27 @@
+﻿@model NewsCrawler.WebUI.Models.ArticleResult
+
+<div class="row">
+    <div class="col-md">
+        <h2>Archived Articles</h2>
+        
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Date Recorded</th>
+                    <th scope="col">Link</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var article in Model.ArticleList)
+                {
+                    <tr>
+                        <td>@article.Title</td>
+                        <td>@article.RecordedDate.ToString("dd/MM/yyyy")</td>
+                        <td><a href="@article.Link">@article.Link</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

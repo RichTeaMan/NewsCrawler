@@ -15,4 +15,10 @@
     <ProjectReference Include="..\NewsCrawler.Persistence\NewsCrawler.Persistence.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
