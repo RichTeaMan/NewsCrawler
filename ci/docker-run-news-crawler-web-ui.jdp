@@ -11,9 +11,9 @@ pipeline {
     stages {
         stage('Build image') { 
             steps {
-				dir("Docker/WebUI") {
-					sh "sudo docker build -t ${params.imageName}:${params.imageVersion} --build-arg branch=${params.branch} ."
-				}
+                dir("Docker/WebUI") {
+                    sh "sudo docker build -t ${params.imageName}:${params.imageVersion} --build-arg branch=${params.branch} ."
+                }
             }
         }
         stage('Remove old container') { 
