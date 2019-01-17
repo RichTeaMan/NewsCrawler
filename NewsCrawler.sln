@@ -33,6 +33,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebUI", "WebUI", "{2CDD9CC6
 		Docker\WebUI\dockerfile = Docker\WebUI\dockerfile
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ci", "ci", "{68BE8E99-DEF2-49CB-8535-752BDE215947}"
+	ProjectSection(SolutionItems) = preProject
+		ci\docker-run-news-crawler-web-ui.jdp = ci\docker-run-news-crawler-web-ui.jdp
+		ci\docker-run-news-crawler.jdp = ci\docker-run-news-crawler.jdp
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

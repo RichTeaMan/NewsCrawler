@@ -1,0 +1,30 @@
+pipeline {
+    agent { label "linux" }
+    
+    parameters {
+        string(name: 'branch', description: 'Name of the branch to build.', defaultValue: 'master')
+        string(name: 'imageName', description: 'Name of the Docker image once it is built.', defaultValue: 'news-crawler-web-ui')
+        string(name: 'imageVersion', description: 'Version of the Docker image once it is built.', defaultValue: 'latest')
+        string(name: 'containerName', description: 'Name of the Docker container to deploy and run.', defaultValue: 'news-crawler-web-ui')
+    }
+    
+    stages {
+        stage('Build image') { 
+            steps {
+				dir("Docker/WebUI") {
+					sh "sudo docker build -t ${params.imageName}:${params.imageVersion} --build-arg branch=${params.branch} ."
+				}
+            }
+        }
+        stage('Remove old container') { 
+            steps {
+                sh (script: "sudo docker rm --force ${params.containerName}", returnStatus: true)
+            }
+        }
+        stage('Run container') { 
+            steps {
+                sh "sudo docker run -d -p 8083:80 --name ${params.containerName} ${params.imageName}:${params.imageVersion}"
+            }
+        }
+    }
+}
