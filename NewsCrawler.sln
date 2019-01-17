@@ -9,17 +9,29 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsCrawler.Persistence", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D6A35BF2-B950-4783-AA9B-5F585C62B33C}"
 	ProjectSection(SolutionItems) = preProject
-		appsettings.json = appsettings.json
 		build.cake = build.cake
 		cake.sh = cake.sh
-		dockerfile = dockerfile
 		dotnet-install.sh = dotnet-install.sh
 		readme.md = readme.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsCrawler.Tests", "NewsCrawler.Tests\NewsCrawler.Tests.csproj", "{16A79867-3BEE-4321-BAD0-895184B495AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewsCrawler.WebUI", "NewsCrawler.WebUI\NewsCrawler.WebUI.csproj", "{3B2D834B-DF3B-4A46-8A43-62FD88284722}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsCrawler.WebUI", "NewsCrawler.WebUI\NewsCrawler.WebUI.csproj", "{3B2D834B-DF3B-4A46-8A43-62FD88284722}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{C68B15A7-4DE4-4FEC-8BA0-D37B646A2DF3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Crawler", "Crawler", "{6EEA079F-2F36-4A2D-B778-CF1B309B3B72}"
+	ProjectSection(SolutionItems) = preProject
+		Docker\Crawler\appsettings.json = Docker\Crawler\appsettings.json
+		Docker\Crawler\dockerfile = Docker\Crawler\dockerfile
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebUI", "WebUI", "{2CDD9CC6-B8FB-4AF6-9041-63AD416D9878}"
+	ProjectSection(SolutionItems) = preProject
+		Docker\WebUI\appsettings.json = Docker\WebUI\appsettings.json
+		Docker\WebUI\dockerfile = Docker\WebUI\dockerfile
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,6 +58,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6EEA079F-2F36-4A2D-B778-CF1B309B3B72} = {C68B15A7-4DE4-4FEC-8BA0-D37B646A2DF3}
+		{2CDD9CC6-B8FB-4AF6-9041-63AD416D9878} = {C68B15A7-4DE4-4FEC-8BA0-D37B646A2DF3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD02A4B5-3B4C-479D-9136-5E55E7E54913}
