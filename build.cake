@@ -63,15 +63,15 @@ Task("Run")
     .IsDependentOn("Build")
     .Does(() =>
 {
-    DotNetCoreExecute($"./NewsCrawler/bin/{buildDir}/netcoreapp2.1/NewsCrawler.dll");
+    DotNetCoreExecute($"./NewsCrawler/bin/{buildDir}/netcoreapp2.2/NewsCrawler.dll");
 });
 
 Task("ProdRun")
     .IsDependentOn("Build")
     .Does(() =>
 {
-    CopyFile("Docker/Crawler/appsettings.json", $"./NewsCrawler/bin/{buildDir}/netcoreapp2.1/appsettings.json");
-    DotNetCoreExecute($"./NewsCrawler/bin/{buildDir}/netcoreapp2.1/NewsCrawler.dll");
+    CopyFile("Docker/Crawler/appsettings.json", $"./NewsCrawler/bin/{buildDir}/netcoreapp2.2/appsettings.json");
+    DotNetCoreExecute($"./NewsCrawler/bin/{buildDir}/netcoreapp2.2/NewsCrawler.dll");
 });
 
 Task("WebUI")
