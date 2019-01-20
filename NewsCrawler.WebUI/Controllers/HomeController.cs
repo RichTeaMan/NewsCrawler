@@ -53,5 +53,21 @@ namespace NewsCrawler.WebUI.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        public IActionResult Search(string term)
+        {
+            var articles = newsArticleContext.Articles
+                .Where(a => a.Title.Contains(term))
+                .Select(a => new Models.Article { Title = a.Title, Link = a.Url, RecordedDate = a.RecordedDate })
+                .ToArray();
+
+            var articleResult = new ArticleResult
+            {
+                ArticleList = articles,
+                SearchTerm = term
+            };
+
+            return View("Index", articleResult);
+        }
     }
 }

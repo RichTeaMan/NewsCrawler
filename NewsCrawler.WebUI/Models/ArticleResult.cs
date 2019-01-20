@@ -8,5 +8,7 @@ namespace NewsCrawler.WebUI.Models
     public class ArticleResult
     {
         public IEnumerable<Article> ArticleList { get; set; }
+
+        public string SearchTerm { get; set; } = string.Empty;
     }
 }

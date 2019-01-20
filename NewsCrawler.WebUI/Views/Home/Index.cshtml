@@ -3,6 +3,14 @@
 <div class="row">
     <div class="col-md">
         <h2>Archived Articles</h2>
+
+        <div>
+            <h3>Search</h3>
+            <form method="get" asp-controller="Home" asp-action="Search">
+                <!-- Input and Submit elements -->
+                <input name="term" type="text" value="@Model.SearchTerm" />
+            </form>
+        </div>
         
         <table class="table">
             <thead>
