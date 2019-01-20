@@ -59,6 +59,21 @@ Task("Test")
     DotNetCoreTest("NewsCrawler.sln");
 });
 
+Task("TitleUpdate")
+    .IsDependentOn("Build")
+    .Does(() =>
+{
+    DotNetCoreExecute($"./NewsCrawler/bin/{buildDir}/netcoreapp2.2/NewsCrawler.dll", "Title-Update");
+});
+
+Task("ProdTitleUpdate")
+    .IsDependentOn("Build")
+    .Does(() =>
+{
+    CopyFile("Docker/Crawler/appsettings.json", $"./NewsCrawler/bin/{buildDir}/netcoreapp2.2/appsettings.json");
+    DotNetCoreExecute($"./NewsCrawler/bin/{buildDir}/netcoreapp2.2/NewsCrawler.dll", "Title-Update");
+});
+
 Task("Run")
     .IsDependentOn("Build")
     .Does(() =>

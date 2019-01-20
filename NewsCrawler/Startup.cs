@@ -23,6 +23,7 @@ namespace NewsCrawler
             services.AddSingleton<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
             services.AddSingleton<INewsArticleFetchService, NewsArticleFetchService>();
             services.AddSingleton<INewsArticleTitleFetcherService, BbcNewsArticleTitleFetcherService>();
+            services.AddSingleton<ITitleUpdaterRunner, TitleUpdaterRunner>();
             services.AddSingleton<NewsArticleContext>();
         }
     }
