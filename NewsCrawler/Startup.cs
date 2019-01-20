@@ -24,7 +24,7 @@ namespace NewsCrawler
             services.AddSingleton<INewsArticleFetchService, NewsArticleFetchService>();
             services.AddSingleton<INewsArticleTitleFetcherService, BbcNewsArticleTitleFetcherService>();
             services.AddSingleton<ITitleUpdaterRunner, TitleUpdaterRunner>();
-            services.AddSingleton<NewsArticleContext>();
+            services.AddSingleton<IIndexPageDeterminationService, BbcIndexPageDeterminationService>();
         }
     }
 }

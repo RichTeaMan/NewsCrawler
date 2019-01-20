@@ -15,7 +15,7 @@ This project uses SQL Server. You can use set this up locally or use a Docker co
 
 The following command will deploy the database to localhost:
 ```
-dotnet ef database update --project NewsCrawler.Persistence
+dotnet ef database update --project NewsCrawler.Persistence --startup-project NewsCrawler.WebUI
 ```
 The connection string can be changed in NewsCrawler.Persistence/appsettings.json.
 
@@ -23,5 +23,5 @@ The connection string can be changed in NewsCrawler.Persistence/appsettings.json
 
 After making changes run the following to create a migration. Run the update command to apply changes.
 ```
-dotnet ef migrations add < migration of migration > --project NewsCrawler.Persistence
+dotnet ef migrations add < migration of migration > --project NewsCrawler.Persistence --startup-project NewsCrawler.WebUI
 ```

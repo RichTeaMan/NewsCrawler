@@ -10,13 +10,16 @@ namespace NewsCrawler
     {
         private readonly INewsArticleTitleFetcherService newsArticleTitleFetcherService;
 
+        private readonly IIndexPageDeterminationService indexPageDeterminationService;
+
         private readonly NewsArticleContext newsArticleContext;
 
 
 
-        public TitleUpdaterRunner(INewsArticleTitleFetcherService newsArticleTitleFetcherService, NewsArticleContext newsArticleContext)
+        public TitleUpdaterRunner(INewsArticleTitleFetcherService newsArticleTitleFetcherService, IIndexPageDeterminationService indexPageDeterminationService, NewsArticleContext newsArticleContext)
         {
             this.newsArticleTitleFetcherService = newsArticleTitleFetcherService;
+            this.indexPageDeterminationService = indexPageDeterminationService;
             this.newsArticleContext = newsArticleContext;
         }
 
@@ -32,12 +35,26 @@ namespace NewsCrawler
             int articlesChecked = 0;
             foreach(var article in newsArticleContext.Articles)
             {
+                bool hasUpdates = false;
                 string title = newsArticleTitleFetcherService.FetchTitle(article.Content);
                 if (article.Title != title)
                 {
                     article.Title = title;
+                    hasUpdates = true;
+                }
+
+                bool isIndexPage = indexPageDeterminationService.IsIndexPage(article);
+                if (isIndexPage != article.IsIndexPage)
+                {
+                    article.IsIndexPage = isIndexPage;
+                    hasUpdates = true;
+                }
+
+                if (hasUpdates)
+                {
                     updates++;
                 }
+
                 articlesChecked++;
                 if (articlesChecked % 20 == 0)
                 {

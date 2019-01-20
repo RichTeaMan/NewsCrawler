@@ -22,7 +22,7 @@ namespace NewsCrawler.Persistence
 
 
             var connectionString = config.GetConnectionString("NewsArticleDatabase");
-            //optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseSqlServer(connectionString);
         }
     }
 }

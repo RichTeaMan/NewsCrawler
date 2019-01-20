@@ -24,5 +24,8 @@ namespace NewsCrawler.Persistence
 
         [Required]
         public DateTimeOffset RecordedDate { get; set; }
+
+        [Required]
+        public bool IsIndexPage { get; set; }
     }
 }
