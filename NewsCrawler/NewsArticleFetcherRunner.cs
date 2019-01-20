@@ -43,7 +43,7 @@ namespace NewsCrawler
                     articles.Add(article);
                     if (articles.Count() % 10 == 0)
                     {
-                        Console.WriteLine($"{articles.Count()} articles loaded.");
+                        Console.WriteLine($"{articles.Count()} of {articleLinks.Count()} articles loaded.");
                     }
                 }
                 catch (Exception ex)
