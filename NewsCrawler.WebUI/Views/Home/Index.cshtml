@@ -17,16 +17,14 @@
                 <tr>
                     <th scope="col">Title</th>
                     <th scope="col">Date Recorded</th>
-                    <th scope="col">Link</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var article in Model.ArticleList)
                 {
                     <tr>
-                        <td>@article.Title</td>
-                        <td>@article.RecordedDate.ToString("dd/MM/yyyy")</td>
-                        <td><a href="@article.Link">Link</a></td>
+                        <td><a href="@article.Link" target="_blank">@article.Title</a></td>
+                        <td>@article.RecordedDate.ToString("g")</td>
                     </tr>
                 }
             </tbody>
