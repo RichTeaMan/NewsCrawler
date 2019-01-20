@@ -7,11 +7,17 @@ namespace NewsCrawler
     {
         public string FetchTitle(string articleContent)
         {
+            string title = null;
             var doc = new HtmlDocument();
             doc.LoadHtml(articleContent);
 
             var titleNode = doc.DocumentNode.Descendants().FirstOrDefault(n => HasTitleAttribute(n));
-            return titleNode?.InnerText?.Trim();
+            title = titleNode?.InnerText?.Trim();
+            if (title == null)
+            {
+                title = doc.DocumentNode.Descendants().FirstOrDefault(n => n.Name == "title")?.InnerText?.Trim()?.Replace(" - BBC News", string.Empty);
+            }
+            return title;
         }
 
         private bool HasTitleAttribute(HtmlNode htmlNode)
