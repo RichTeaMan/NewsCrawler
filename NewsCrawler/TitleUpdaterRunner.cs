@@ -12,14 +12,20 @@ namespace NewsCrawler
 
         private readonly IIndexPageDeterminationService indexPageDeterminationService;
 
+        private readonly IArticlePublishedDateFetcherService articlePublishedDateFetcherService;
+
         private readonly NewsArticleContext newsArticleContext;
 
 
 
-        public TitleUpdaterRunner(INewsArticleTitleFetcherService newsArticleTitleFetcherService, IIndexPageDeterminationService indexPageDeterminationService, NewsArticleContext newsArticleContext)
+        public TitleUpdaterRunner(INewsArticleTitleFetcherService newsArticleTitleFetcherService,
+            IIndexPageDeterminationService indexPageDeterminationService,
+            IArticlePublishedDateFetcherService articlePublishedDateFetcherService,
+            NewsArticleContext newsArticleContext)
         {
             this.newsArticleTitleFetcherService = newsArticleTitleFetcherService;
             this.indexPageDeterminationService = indexPageDeterminationService;
+            this.articlePublishedDateFetcherService = articlePublishedDateFetcherService;
             this.newsArticleContext = newsArticleContext;
         }
 
@@ -49,6 +55,13 @@ namespace NewsCrawler
                     article.IsIndexPage = isIndexPage;
                     hasUpdates = true;
                 }
+                var publishedDate = articlePublishedDateFetcherService.FetchDate(article.Content);
+                if (publishedDate != article.PublishedDate)
+                {
+                    article.PublishedDate = publishedDate;
+                    hasUpdates = true;
+                }
+
 
                 if (hasUpdates)
                 {

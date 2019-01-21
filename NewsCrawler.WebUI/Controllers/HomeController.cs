@@ -25,7 +25,7 @@ namespace NewsCrawler.WebUI.Controllers
             var articles = newsArticleContext.Articles
                 .Where(a => string.IsNullOrEmpty(searchTerm) || a.Title.Contains(searchTerm))
                 .OrderByDescending(a => a.RecordedDate)
-                .Select(a => new Models.Article { Title = a.Title, Link = a.Url, RecordedDate = a.RecordedDate });
+                .Select(a => new Models.Article { Title = a.Title, Link = a.Url, RecordedDate = a.RecordedDate, PublishedDate = a.PublishedDate });
 
             var pagedArticles = articles
                 .Skip((page - 1) * ArticlesPerPage)

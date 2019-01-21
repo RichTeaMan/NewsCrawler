@@ -10,6 +10,8 @@ namespace NewsCrawler.WebUI.Models
         [DisplayFormat(DataFormatString = "{dd/MM/yyyy}")]
         public DateTimeOffset RecordedDate { get; set; }
 
+        public DateTimeOffset? PublishedDate { get; set; }
+
         public string Link { get; set; }
     }
 }

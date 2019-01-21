@@ -20,6 +20,7 @@
             <thead>
                 <tr>
                     <th scope="col">Title</th>
+                    <th scope="col">Date Published</th>
                     <th scope="col">Date Recorded</th>
                 </tr>
             </thead>
@@ -28,6 +29,7 @@
                 {
                     <tr>
                         <td><a href="@article.Link" target="_blank">@article.Title</a></td>
+                        <td>@article.PublishedDate?.ToString("g")</td>
                         <td>@article.RecordedDate.ToString("g")</td>
                     </tr>
                 }
