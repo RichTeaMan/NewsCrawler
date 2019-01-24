@@ -26,7 +26,7 @@ namespace NewsCrawler
 
         private bool HasDateAttribute(HtmlNode htmlNode)
         {
-            return htmlNode.Attributes.Any(attr => attr.Name == "class" && attr.Value == "date date--v2");
+            return htmlNode.Attributes.Any(attr => attr.Name == "class" && (attr.Value == "date date--v2" || attr.Value?.Contains("vxp-date") == true));
         }
     }
 }
