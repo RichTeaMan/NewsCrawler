@@ -29,8 +29,8 @@
                 {
                     <tr>
                         <td><a href="@article.Link" target="_blank">@article.Title</a></td>
-                        <td>@article.PublishedDate?.ToString("g")</td>
-                        <td>@article.RecordedDate.ToString("g")</td>
+                        <td>@Html.DisplayFor(m => article.PublishedDate)</td>
+                        <td>@Html.DisplayFor(m => article.RecordedDate)</td>
                     </tr>
                 }
             </tbody>

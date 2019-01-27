@@ -50,22 +50,6 @@ namespace NewsCrawler.WebUI
                 app.UseHsts();
             }
 
-            var ci = new CultureInfo("en-GB");
-
-            // Configure the Localization middleware
-            app.UseRequestLocalization(new RequestLocalizationOptions
-            {
-                DefaultRequestCulture = new RequestCulture(ci),
-                SupportedCultures = new List<CultureInfo>
-                {
-                    ci,
-                },
-                SupportedUICultures = new List<CultureInfo>
-                {
-                    ci,
-                }
-            });
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
