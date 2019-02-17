@@ -87,29 +87,38 @@ namespace NewsCrawler
         {
             try
             {
+                int splitArticleCount = 200;
                 var context = serviceProvider.GetRequiredService<NewsArticleContext>();
-                var articles = context.Articles.Where(a => !a.IsIndexPage && a.PublishedDate != null);
-                var articleCleaner = serviceProvider.GetRequiredService<IArticleCleaner>();
+                var articlesCount = context.Articles.Count(a => !a.IsIndexPage && a.PublishedDate != null);
                 Directory.CreateDirectory("cleanedArticles");
-                int articleCount = articles.Count();
-                Console.WriteLine($"Cleaning {articleCount} articles.");
+                Console.WriteLine($"Cleaning {articlesCount} articles.");
                 int articlesCleaned = 0;
-                foreach (var article in articles)
+
+                int scopeCount = (articlesCount / splitArticleCount) + 1;
+                foreach (var scopes in Enumerable.Range(0, scopeCount))
                 {
-                    string fileName = article.Title;
-                    foreach(var invalidFilenameChar in Path.GetInvalidFileNameChars())
+                    using (var scope = serviceProvider.CreateScope())
                     {
-                        fileName = fileName.Replace(invalidFilenameChar.ToString(), string.Empty);
-                    }
-                    var clean = articleCleaner.CleanArticle(article);
-                    await File.WriteAllTextAsync($"cleanedArticles/{fileName}.txt", clean);
+                        var splitContext = scope.ServiceProvider.GetRequiredService<NewsArticleContext>();
+                        var articleCleaner = scope.ServiceProvider.GetRequiredService<IArticleCleaner>();
+                        var articles = splitContext.Articles.Skip(articlesCleaned).Take(splitArticleCount);
 
-                    article.Content = string.Empty;
+                        foreach (var article in articles)
+                        {
+                            string fileName = article.Title;
+                            foreach (var invalidFilenameChar in Path.GetInvalidFileNameChars())
+                            {
+                                fileName = fileName.Replace(invalidFilenameChar.ToString(), string.Empty);
+                            }
+                            var clean = articleCleaner.CleanArticle(article);
+                            await File.WriteAllTextAsync($"cleanedArticles/{fileName}.txt", clean);
 
-                    articlesCleaned++;
-                    if (articlesCleaned % (articleCount / 100) == 0)
-                    {
-                        Console.WriteLine($"{articlesCleaned} articles cleaned.");
+                            articlesCleaned++;
+                            if (articlesCleaned % (articlesCount / 100) == 0)
+                            {
+                                Console.WriteLine($"{articlesCleaned} articles cleaned.");
+                            }
+                        }
                     }
                 }
                 Console.WriteLine($"{articlesCleaned} articles cleaned.");
