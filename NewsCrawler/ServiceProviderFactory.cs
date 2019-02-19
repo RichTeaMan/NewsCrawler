@@ -26,7 +26,6 @@ namespace NewsCrawler
             serviceCollection.AddSingleton<INewsArticleFetchService, NewsArticleFetchService>();
             serviceCollection.AddSingleton<INewsArticleTitleFetcherService, BbcNewsArticleTitleFetcherService>();
             serviceCollection.AddSingleton<IArticleUpdaterRunner, ArticleUpdaterRunner>();
-            serviceCollection.AddSingleton<IIndexPageDeterminationService, BbcIndexPageDeterminationService>();
             serviceCollection.AddSingleton<IArticlePublishedDateFetcherService, BbcNewsArticlePublishedDateFetcherService>();
             serviceCollection.AddSingleton<IArticleCleaner, ArticleCleaner>();
 
@@ -49,7 +48,6 @@ namespace NewsCrawler
             serviceCollection.AddSingleton<INewsArticleFetchService, NewsArticleFetchService>();
             serviceCollection.AddSingleton<INewsArticleTitleFetcherService, DailyMailNewsArticleTitleFetcherService>();
             serviceCollection.AddSingleton<IArticleUpdaterRunner, ArticleUpdaterRunner>();
-            serviceCollection.AddSingleton<IIndexPageDeterminationService, DailyMailIndexPageDeterminationService>();
             serviceCollection.AddSingleton<IArticlePublishedDateFetcherService, DailyMailNewsArticlePublishedDateFetcherService>();
             serviceCollection.AddSingleton<IArticleCleaner, ArticleCleaner>();
 

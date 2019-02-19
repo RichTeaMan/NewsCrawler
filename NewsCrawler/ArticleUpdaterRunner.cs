@@ -11,21 +11,19 @@ namespace NewsCrawler
     {
         private readonly INewsArticleTitleFetcherService newsArticleTitleFetcherService;
 
-        private readonly IIndexPageDeterminationService indexPageDeterminationService;
-
         private readonly IArticlePublishedDateFetcherService articlePublishedDateFetcherService;
 
         private readonly NewsArticleContext newsArticleContext;
 
-
+        private readonly INewsArticleDeterminationService newsArticleDeterminationService;
 
         public ArticleUpdaterRunner(INewsArticleTitleFetcherService newsArticleTitleFetcherService,
-            IIndexPageDeterminationService indexPageDeterminationService,
+            INewsArticleDeterminationService newsArticleDeterminationService,
             IArticlePublishedDateFetcherService articlePublishedDateFetcherService,
             NewsArticleContext newsArticleContext)
         {
             this.newsArticleTitleFetcherService = newsArticleTitleFetcherService;
-            this.indexPageDeterminationService = indexPageDeterminationService;
+            this.newsArticleDeterminationService = newsArticleDeterminationService;
             this.articlePublishedDateFetcherService = articlePublishedDateFetcherService;
             this.newsArticleContext = newsArticleContext;
         }
@@ -50,7 +48,7 @@ namespace NewsCrawler
                     hasUpdates = true;
                 }
 
-                bool isIndexPage = indexPageDeterminationService.IsIndexPage(article);
+                bool isIndexPage = newsArticleDeterminationService.IsIndexPage(article.Url);
                 if (isIndexPage != article.IsIndexPage)
                 {
                     article.IsIndexPage = isIndexPage;

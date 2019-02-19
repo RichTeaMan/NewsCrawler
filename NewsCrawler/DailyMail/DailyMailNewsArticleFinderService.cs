@@ -26,18 +26,18 @@ namespace NewsCrawler.DailyMail
 
         public IEnumerable<string> FindNewsArticles()
         {
-            var docuemntNodes = new List<HtmlNode>();
+            var documentNodes = new List<HtmlNode>();
             foreach (var indexUrl in indexUrls)
             {
                 var web = new HtmlWeb();
                 var doc = web.Load(indexUrl);
-                docuemntNodes.Add(doc.DocumentNode);
+                documentNodes.Add(doc.DocumentNode);
             }
 
-            var links = docuemntNodes.SelectMany(n => n.Descendants())
+            var links = documentNodes.SelectMany(n => n.Descendants())
                 .Where(n => n.Name == "a")
                 .Select(n => FindHref(n))
-                .Where(v => newsArticleDeterminationService.IsNewsArticle(v))
+                .Where(v => newsArticleDeterminationService.IsNewsArticle(v) || newsArticleDeterminationService.IsIndexPage(v) )
                 .Select(v => $"{baseUrl}{v}")
                 .Distinct()
                 .ToArray();

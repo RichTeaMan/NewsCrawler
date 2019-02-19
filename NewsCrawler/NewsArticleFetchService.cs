@@ -13,16 +13,16 @@ namespace NewsCrawler
         private readonly INewsArticleTitleFetcherService newsArticleTitleFetcherService;
 
         private readonly IArticlePublishedDateFetcherService articlePublishedDateFetcherService;
-        private readonly IIndexPageDeterminationService indexPageDeterminationService;
+        private readonly INewsArticleDeterminationService newsArticleDeterminationService;
 
         public NewsArticleFetchService(
             INewsArticleTitleFetcherService newsArticleTitleFetcherService,
             IArticlePublishedDateFetcherService articlePublishedDateFetcherService,
-            IIndexPageDeterminationService indexPageDeterminationService)
+            INewsArticleDeterminationService newsArticleDeterminationService)
         {
             this.newsArticleTitleFetcherService = newsArticleTitleFetcherService ?? throw new ArgumentNullException(nameof(newsArticleTitleFetcherService));
             this.articlePublishedDateFetcherService = articlePublishedDateFetcherService ?? throw new ArgumentNullException(nameof(articlePublishedDateFetcherService));
-            this.indexPageDeterminationService = indexPageDeterminationService ?? throw new ArgumentNullException(nameof(indexPageDeterminationService));
+            this.newsArticleDeterminationService = newsArticleDeterminationService ?? throw new ArgumentNullException(nameof(newsArticleDeterminationService));
         }
 
         public async Task<Article> FetchArticleAsync(string url)
@@ -41,7 +41,7 @@ namespace NewsCrawler
                     RecordedDate = DateTimeOffset.Now,
                     PublishedDate = publishedDate
                 };
-                article.IsIndexPage = indexPageDeterminationService.IsIndexPage(article);
+                article.IsIndexPage = newsArticleDeterminationService.IsIndexPage(article.Url);
 
                 return article;
             }
