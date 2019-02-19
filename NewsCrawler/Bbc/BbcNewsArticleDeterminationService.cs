@@ -1,6 +1,6 @@
 ﻿using NewsCrawler.Interfaces;
 
-namespace NewsCrawler
+namespace NewsCrawler.Bbc
 {
     public class BbcNewsArticleDeterminationService : INewsArticleDeterminationService
     {

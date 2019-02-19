@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NewsCrawler.Bbc;
+using NewsCrawler.DailyMail;
 using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence;
 using System;
@@ -27,6 +28,29 @@ namespace NewsCrawler
             serviceCollection.AddSingleton<IArticleUpdaterRunner, ArticleUpdaterRunner>();
             serviceCollection.AddSingleton<IIndexPageDeterminationService, BbcIndexPageDeterminationService>();
             serviceCollection.AddSingleton<IArticlePublishedDateFetcherService, BbcNewsArticlePublishedDateFetcherService>();
+            serviceCollection.AddSingleton<IArticleCleaner, ArticleCleaner>();
+
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            return serviceProvider;
+        }
+
+        public static IServiceProvider CreateDailyMailServiceProvider()
+        {
+            var builder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            var config = builder.Build();
+            var connectionString = config.GetConnectionString("NewsArticleDatabase");
+
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString));
+            serviceCollection.AddSingleton<INewsArticleDeterminationService, DailyMailNewsArticleDeterminationService>();
+            serviceCollection.AddSingleton<INewsArticleFinderService, DailyMailNewsArticleFinderService>();
+            serviceCollection.AddSingleton<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
+            serviceCollection.AddSingleton<INewsArticleFetchService, NewsArticleFetchService>();
+            serviceCollection.AddSingleton<INewsArticleTitleFetcherService, DailyMailNewsArticleTitleFetcherService>();
+            serviceCollection.AddSingleton<IArticleUpdaterRunner, ArticleUpdaterRunner>();
+            serviceCollection.AddSingleton<IIndexPageDeterminationService, DailyMailIndexPageDeterminationService>();
+            serviceCollection.AddSingleton<IArticlePublishedDateFetcherService, DailyMailNewsArticlePublishedDateFetcherService>();
             serviceCollection.AddSingleton<IArticleCleaner, ArticleCleaner>();
 
             var serviceProvider = serviceCollection.BuildServiceProvider();

@@ -56,9 +56,17 @@ namespace NewsCrawler
         [DefaultClCommand]
         public static async Task RunCrawler()
         {
-            var serviceProvider = ServiceProviderFactory.CreateBbcServiceProvider();
-            var newsArticleFetcherRunner = serviceProvider.GetRequiredService<INewsArticleFetcherRunner>();
-            await newsArticleFetcherRunner.RunFetcher();
+            using (var scope = ServiceProviderFactory.CreateBbcServiceProvider().CreateScope())
+            {
+                var newsArticleFetcherRunner = scope.ServiceProvider.GetRequiredService<INewsArticleFetcherRunner>();
+                await newsArticleFetcherRunner.RunFetcher();
+            }
+
+            using (var scope = ServiceProviderFactory.CreateDailyMailServiceProvider().CreateScope())
+            {
+                var newsArticleFetcherRunner = scope.ServiceProvider.GetRequiredService<INewsArticleFetcherRunner>();
+                await newsArticleFetcherRunner.RunFetcher();
+            }
         }
 
         [ClCommand("Title-Update")]
