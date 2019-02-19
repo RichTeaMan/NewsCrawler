@@ -37,7 +37,8 @@ namespace NewsCrawler.DailyMail
             var links = documentNodes.SelectMany(n => n.Descendants())
                 .Where(n => n.Name == "a")
                 .Select(n => FindHref(n))
-                .Where(v => newsArticleDeterminationService.IsNewsArticle(v) || newsArticleDeterminationService.IsIndexPage(v) )
+                .Where(v => !string.IsNullOrWhiteSpace(v))
+                .Where(v => v.StartsWith("/") && (newsArticleDeterminationService.IsNewsArticle(v) || newsArticleDeterminationService.IsIndexPage(v)))
                 .Select(v => $"{baseUrl}{v}")
                 .Distinct()
                 .ToArray();

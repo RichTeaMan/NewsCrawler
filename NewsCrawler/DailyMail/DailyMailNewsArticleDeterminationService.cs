@@ -13,6 +13,10 @@ namespace NewsCrawler.DailyMail
 
         public bool IsIndexPage(string articleLink)
         {
+            if (string.IsNullOrWhiteSpace(articleLink))
+            {
+                return false;
+            }
             return !Regex.IsMatch(articleLink, @"\d") && !articleLink.Contains("news/article-");
         }
     }

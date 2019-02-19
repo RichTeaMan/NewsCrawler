@@ -24,43 +24,52 @@ namespace NewsCrawler
 
         public async Task RunFetcher()
         {
-            List<Article> articles = new List<Article>();
-
-            Console.WriteLine("Loading existing articles.");
-            var existingArticles = new HashSet<string>(newsArticleContext.Articles.Select(a => a.Url));
-            Console.WriteLine($"{existingArticles.Count} existing articles loaded.");
-
-            Console.WriteLine($"Getting articles from news source: '{newsArticleFinderService.SourceName}'");
-
-            var articleLinks = newsArticleFinderService.FindNewsArticles().Distinct().Where(a => !existingArticles.Contains(a)).ToList();
-
-            Console.WriteLine($"Found {articleLinks.Count()} articles.");
-
-            foreach (var articleLink in articleLinks)
+            try
             {
-                try
+                List<Article> articles = new List<Article>();
+
+                Console.WriteLine("Loading existing articles.");
+                var existingArticles = new HashSet<string>(newsArticleContext.Articles.Select(a => a.Url));
+                Console.WriteLine($"{existingArticles.Count} existing articles loaded.");
+
+                Console.WriteLine($"Getting articles from news source: '{newsArticleFinderService.SourceName}'");
+
+                var articleLinks = newsArticleFinderService.FindNewsArticles().Distinct().Where(a => !existingArticles.Contains(a)).ToList();
+
+                Console.WriteLine($"Found {articleLinks.Count()} articles.");
+
+                foreach (var articleLink in articleLinks)
                 {
-                    var article = await newsArticleFetchService.FetchArticleAsync(articleLink);
-                    articles.Add(article);
-                    if (articles.Count() % 10 == 0)
+                    try
                     {
-                        Console.WriteLine($"{articles.Count()} of {articleLinks.Count()} articles loaded.");
+                        var article = await newsArticleFetchService.FetchArticleAsync(articleLink);
+                        articles.Add(article);
+                        if (articles.Count() % 10 == 0)
+                        {
+                            Console.WriteLine($"{articles.Count()} of {articleLinks.Count()} articles loaded.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"An error occurred retrieving '{articleLink}': {ex.Message}");
+                        Console.WriteLine(ex.StackTrace);
                     }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"An error occurred: {ex.Message}");
-                }
+                Console.WriteLine($"Complete: {articles.Count()} articles loaded.");
+
+                Console.WriteLine("Saving articles...");
+
+                await newsArticleContext.Articles.AddRangeAsync(articles);
+
+                await newsArticleContext.SaveChangesAsync();
+
+                Console.WriteLine("Crawling complete!");
             }
-            Console.WriteLine($"Complete: {articles.Count()} articles loaded.");
-
-            Console.WriteLine("Saving articles...");
-
-            await newsArticleContext.Articles.AddRangeAsync(articles);
-
-            await newsArticleContext.SaveChangesAsync();
-
-            Console.WriteLine("Crawling complete!");
+            catch(Exception ex)
+            {
+                Console.WriteLine($"An error occurred fetching: {ex.Message}");
+                Console.WriteLine(ex.StackTrace);
+            }
         }
     }
 }
