@@ -13,13 +13,19 @@ namespace NewsCrawler.Persistence
 
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Article>()
+                .Property(a => a.NewsSource)
+                .HasDefaultValue("Unspecified");
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
             var config = builder.Build();
-
 
             var connectionString = config.GetConnectionString("NewsArticleDatabase");
             optionsBuilder.UseSqlServer(connectionString);

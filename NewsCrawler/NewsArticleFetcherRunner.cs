@@ -43,6 +43,7 @@ namespace NewsCrawler
                     try
                     {
                         var article = await newsArticleFetchService.FetchArticleAsync(articleLink);
+                        article.NewsSource = newsArticleFinderService.SourceName;
                         articles.Add(article);
                         if (articles.Count() % 10 == 0)
                         {

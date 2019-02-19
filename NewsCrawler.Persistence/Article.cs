@@ -29,5 +29,9 @@ namespace NewsCrawler.Persistence
 
         [Required]
         public bool IsIndexPage { get; set; }
+
+        [Required]
+        [MaxLength(Constants.MAX_NEWS_SOURCE_LENGTH)]
+        public string NewsSource { get; set; }
     }
 }
