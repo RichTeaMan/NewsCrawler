@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using NewsCrawler.Interfaces;
 using System.Linq;
+using System.Web;
 
 namespace NewsCrawler.DailyMail
 {
@@ -14,6 +15,12 @@ namespace NewsCrawler.DailyMail
 
             var titleNode = doc.DocumentNode.Descendants().FirstOrDefault(n => n.Name == "h2");
             title = titleNode?.InnerText?.Trim();
+
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                title = HttpUtility.HtmlDecode(title)?.Trim();
+            }
+
             return title;
         }
     }
