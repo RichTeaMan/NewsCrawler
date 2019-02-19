@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using NewsCrawler.Interfaces;
 
 namespace NewsCrawler
 {
-    public class NewsArticleDeterminationService : INewsArticleDeterminationService
+    public class BbcNewsArticleDeterminationService : INewsArticleDeterminationService
     {
         public bool IsNewsArticle(string articleLink)
         {

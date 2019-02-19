@@ -1,9 +1,10 @@
 ﻿using HtmlAgilityPack;
+using NewsCrawler.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NewsCrawler
+namespace NewsCrawler.Bbc
 {
     public class BbcNewsArticleFinderService : INewsArticleFinderService
     {

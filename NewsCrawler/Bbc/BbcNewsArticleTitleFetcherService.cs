@@ -1,7 +1,8 @@
 ﻿using HtmlAgilityPack;
+using NewsCrawler.Interfaces;
 using System.Linq;
 
-namespace NewsCrawler
+namespace NewsCrawler.Bbc
 {
     public class BbcNewsArticleTitleFetcherService : INewsArticleTitleFetcherService
     {

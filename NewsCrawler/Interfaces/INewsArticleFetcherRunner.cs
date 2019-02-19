@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace NewsCrawler
+namespace NewsCrawler.Interfaces
 {
     public interface INewsArticleFetcherRunner
     {

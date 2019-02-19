@@ -1,4 +1,5 @@
-﻿using NewsCrawler.Persistence;
+﻿using NewsCrawler.Interfaces;
+using NewsCrawler.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,4 +1,5 @@
-﻿using NewsCrawler.Persistence;
+﻿using NewsCrawler.Interfaces;
+using NewsCrawler.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NewsCrawler
 {
-    public class TitleUpdaterRunner : ITitleUpdaterRunner
+    public class ArticleUpdaterRunner : IArticleUpdaterRunner
     {
         private readonly INewsArticleTitleFetcherService newsArticleTitleFetcherService;
 
@@ -18,7 +19,7 @@ namespace NewsCrawler
 
 
 
-        public TitleUpdaterRunner(INewsArticleTitleFetcherService newsArticleTitleFetcherService,
+        public ArticleUpdaterRunner(INewsArticleTitleFetcherService newsArticleTitleFetcherService,
             IIndexPageDeterminationService indexPageDeterminationService,
             IArticlePublishedDateFetcherService articlePublishedDateFetcherService,
             NewsArticleContext newsArticleContext)

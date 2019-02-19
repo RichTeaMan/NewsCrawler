@@ -1,10 +1,8 @@
-﻿using NewsCrawler.Persistence;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using NewsCrawler.Interfaces;
+using NewsCrawler.Persistence;
 using System.Text.RegularExpressions;
 
-namespace NewsCrawler
+namespace NewsCrawler.Bbc
 {
     public class BbcIndexPageDeterminationService : IIndexPageDeterminationService
     {

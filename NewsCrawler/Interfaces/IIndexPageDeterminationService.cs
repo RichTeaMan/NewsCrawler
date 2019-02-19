@@ -1,6 +1,6 @@
 ﻿using NewsCrawler.Persistence;
 
-namespace NewsCrawler
+namespace NewsCrawler.Interfaces
 {
     public interface IIndexPageDeterminationService
     {

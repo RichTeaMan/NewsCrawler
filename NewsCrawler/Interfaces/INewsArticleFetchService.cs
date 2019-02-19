@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using NewsCrawler.Persistence;
 
-namespace NewsCrawler
+namespace NewsCrawler.Interfaces
 {
     public interface INewsArticleFetchService
     {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence;
 using RichTea.CommandLineParser;
 using System;
@@ -78,7 +79,7 @@ namespace NewsCrawler
         [ClCommand("Title-Update")]
         public static async Task RunTitleUpdate()
         {
-            var titleUpdater = serviceProvider.GetRequiredService<ITitleUpdaterRunner>();
+            var titleUpdater = serviceProvider.GetRequiredService<IArticleUpdaterRunner>();
             await titleUpdater.RunTitleUpdater();
         }
 

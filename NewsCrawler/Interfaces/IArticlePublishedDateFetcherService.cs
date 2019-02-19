@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NewsCrawler
+namespace NewsCrawler.Interfaces
 {
     public interface IArticlePublishedDateFetcherService
     {

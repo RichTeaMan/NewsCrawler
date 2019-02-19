@@ -1,4 +1,4 @@
-﻿namespace NewsCrawler
+﻿namespace NewsCrawler.Interfaces
 {
     public interface INewsArticleDeterminationService
     {

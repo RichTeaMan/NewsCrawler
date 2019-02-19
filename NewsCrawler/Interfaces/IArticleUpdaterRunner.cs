@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace NewsCrawler
+namespace NewsCrawler.Interfaces
 {
-    public interface ITitleUpdaterRunner
+    public interface IArticleUpdaterRunner
     {
         Task RunTitleUpdater();
     }

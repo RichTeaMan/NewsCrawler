@@ -1,8 +1,9 @@
 ﻿using HtmlAgilityPack;
+using NewsCrawler.Interfaces;
 using System;
 using System.Linq;
 
-namespace NewsCrawler
+namespace NewsCrawler.Bbc
 {
     public class BbcNewsArticlePublishedDateFetcherService : IArticlePublishedDateFetcherService
     {
