@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence;
 using RichTea.CommandLineParser;
@@ -12,24 +11,9 @@ namespace NewsCrawler
 {
     class Program
     {
-        static ServiceProvider serviceProvider;
-
         static void Main(string[] args)
         {
-            Console.WriteLine("Starting BBC news crawler.");
-
-            var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-            var config = builder.Build();
-
-            var connectionString = config.GetConnectionString("NewsArticleDatabase");
-
-            var serviceCollection = new ServiceCollection();
-
-            var startup = new Startup(config);
-            startup.ConfigureServices(serviceCollection);
-            serviceProvider = serviceCollection.BuildServiceProvider();
-
+            Console.WriteLine("Starting News Crawler.");
             ParseCommand(args);
         }
 
@@ -72,6 +56,7 @@ namespace NewsCrawler
         [DefaultClCommand]
         public static async Task RunCrawler()
         {
+            var serviceProvider = ServiceProviderFactory.CreateBbcServiceProvider();
             var newsArticleFetcherRunner = serviceProvider.GetRequiredService<INewsArticleFetcherRunner>();
             await newsArticleFetcherRunner.RunFetcher();
         }
@@ -79,6 +64,7 @@ namespace NewsCrawler
         [ClCommand("Title-Update")]
         public static async Task RunTitleUpdate()
         {
+            var serviceProvider = ServiceProviderFactory.CreateBbcServiceProvider();
             var titleUpdater = serviceProvider.GetRequiredService<IArticleUpdaterRunner>();
             await titleUpdater.RunTitleUpdater();
         }
@@ -86,6 +72,7 @@ namespace NewsCrawler
         [ClCommand("Clean-Article")]
         public static async Task RunCleanArticle()
         {
+            var serviceProvider = ServiceProviderFactory.CreateBbcServiceProvider();
             try
             {
                 int splitArticleCount = 200;
