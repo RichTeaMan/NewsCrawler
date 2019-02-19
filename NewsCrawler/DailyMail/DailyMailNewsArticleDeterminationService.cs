@@ -17,7 +17,7 @@ namespace NewsCrawler.DailyMail
             {
                 return false;
             }
-            return !Regex.IsMatch(articleLink, @"\d") && !articleLink.Contains("news/article-");
+            return !Regex.IsMatch(articleLink, @"\d") && !articleLink.Contains("news/article-") && !articleLink.EndsWith(".uk") && !articleLink.EndsWith(".com");
         }
     }
 }
