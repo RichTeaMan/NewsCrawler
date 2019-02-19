@@ -122,6 +122,8 @@ namespace NewsCrawler.Bbc
             this.newsArticleDeterminationService = newsArticleDeterminationService ?? throw new ArgumentNullException(nameof(newsArticleDeterminationService));
         }
 
+        public string SourceName => "BBC News";
+
         public IEnumerable<string> FindNewsArticles()
         {
             var docuemntNodes = new List<HtmlNode>();

@@ -30,7 +30,7 @@ namespace NewsCrawler
             var existingArticles = new HashSet<string>(newsArticleContext.Articles.Select(a => a.Url));
             Console.WriteLine($"{existingArticles.Count} existing articles loaded.");
 
-            Console.WriteLine("Getting articles.");
+            Console.WriteLine($"Getting articles from news source: '{newsArticleFinderService.SourceName}'");
 
             var articleLinks = newsArticleFinderService.FindNewsArticles().Distinct().Where(a => !existingArticles.Contains(a)).ToList();
 

@@ -22,6 +22,8 @@ namespace NewsCrawler.DailyMail
             this.newsArticleDeterminationService = newsArticleDeterminationService ?? throw new ArgumentNullException(nameof(newsArticleDeterminationService));
         }
 
+        public string SourceName => "Daily Mail";
+
         public IEnumerable<string> FindNewsArticles()
         {
             var docuemntNodes = new List<HtmlNode>();
