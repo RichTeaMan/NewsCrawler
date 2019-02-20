@@ -136,10 +136,7 @@ namespace NewsCrawler
                 Directory.CreateDirectory("cleanedArticles");
 
                 await articleBatcher.RunCleanArticle(
-                articles =>
-                {
-                    return articles.Where(a => a.Url.Contains("bbc.co.uk"));
-                },
+                article => article.Url.Contains("bbc.co.uk"),
                 async article =>
                 {
                     string fileName = article.Title;

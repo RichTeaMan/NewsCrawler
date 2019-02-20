@@ -2,8 +2,8 @@
 using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence;
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace NewsCrawler
@@ -19,7 +19,7 @@ namespace NewsCrawler
             this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
-        public async Task RunCleanArticle(Func<IEnumerable<Article>, IEnumerable<Article>> articleFactory, Func<Article, Task> articleFunction)
+        public async Task RunCleanArticle(Expression<Func<Article, bool>> articlePredicate, Func<Article, Task> articleFunction)
         {
             try
             {
@@ -27,8 +27,7 @@ namespace NewsCrawler
                 using (var scope = serviceProvider.CreateScope())
                 {
                     var context = scope.ServiceProvider.GetRequiredService<NewsArticleContext>();
-                    var allArticles = articleFactory(context.Articles);
-                    articlesCount = allArticles.Count();
+                    articlesCount = context.Articles.Count(articlePredicate);
                 }
 
                 Console.WriteLine($"Processing {articlesCount} articles.");
@@ -41,7 +40,7 @@ namespace NewsCrawler
                     {
                         var splitContext = scope.ServiceProvider.GetRequiredService<NewsArticleContext>();
                         var articleCleaner = scope.ServiceProvider.GetRequiredService<IArticleCleaner>();
-                        var articles = articleFactory(splitContext.Articles).Skip(articlesCleaned).Take(SplitArticleCount);
+                        var articles = splitContext.Articles.Where(articlePredicate).Skip(articlesCleaned).Take(SplitArticleCount);
 
                         foreach (var article in articles)
                         {
