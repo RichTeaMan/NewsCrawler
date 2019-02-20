@@ -2,6 +2,7 @@
 using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace NewsCrawler
         /// <param name="articlePredicate">Articles to operate on.</param>
         /// <param name="articleFunction">Function to run on individual articles.</param>
         /// <returns></returns>
-        public async Task RunArticleBatch(Expression<Func<Article, bool>> articlePredicate, Func<Article, Task> articleFunction)
+        public async Task RunArticleBatch(Expression<Func<Article, bool>> articlePredicate, Func<Article, Task<bool>> articleFunction)
         {
             try
             {
@@ -40,7 +41,7 @@ namespace NewsCrawler
                 }
 
                 Console.WriteLine($"Processing {articlesCount} articles.");
-                int articlesCleaned = 0;
+                int articlesProcessed = 0;
 
                 int scopeCount = (articlesCount / SplitArticleCount) + 1;
                 foreach (var scopes in Enumerable.Range(0, scopeCount))
@@ -49,23 +50,31 @@ namespace NewsCrawler
                     {
                         var splitContext = scope.ServiceProvider.GetRequiredService<NewsArticleContext>();
                         var articleCleaner = scope.ServiceProvider.GetRequiredService<IArticleCleaner>();
-                        var articles = splitContext.Articles.Where(articlePredicate).Skip(articlesCleaned).Take(SplitArticleCount);
+                        var articles = splitContext.Articles.Where(articlePredicate).Skip(articlesProcessed).Take(SplitArticleCount);
+                        var articlesUpdateList = new List<Article>();
 
                         foreach (var article in articles)
                         {
-                            await articleFunction(article);
-
-                            articlesCleaned++;
-                            if (articlesCleaned % (articlesCount / 100) == 0)
+                            var toUpdate = await articleFunction(article);
+                            if (toUpdate)
                             {
-                                Console.WriteLine($"{articlesCleaned} articles processed.");
+                                articlesUpdateList.Add(article);
+                            }
+
+                            articlesProcessed++;
+                            if (articlesProcessed % (articlesCount / 100) == 0)
+                            {
+                                Console.WriteLine($"{articlesProcessed} articles processed.");
                             }
                         }
 
-                        await splitContext.SaveChangesAsync();
+                        if (articlesUpdateList.Any())
+                        {
+                            await splitContext.SaveChangesAsync();
+                        }
                     }
                 }
-                Console.WriteLine($"{articlesCleaned} articles processed.");
+                Console.WriteLine($"{articlesProcessed} articles processed.");
                 Console.WriteLine("Bulkk processing complete.");
             }
             catch (Exception ex)

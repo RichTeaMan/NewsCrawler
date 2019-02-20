@@ -4,6 +4,6 @@ namespace NewsCrawler.Interfaces
 {
     public interface IArticleUpdaterRunner
     {
-        Task RunTitleUpdater();
+        Task RunTitleUpdater(string urlContains);
     }
 }

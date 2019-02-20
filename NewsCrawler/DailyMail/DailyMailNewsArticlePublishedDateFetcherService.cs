@@ -15,19 +15,22 @@ namespace NewsCrawler.DailyMail
             doc.LoadHtml(articleContent);
 
             var dateNode = doc.DocumentNode.Descendants().FirstOrDefault(n => HasDateAttribute(n));
-            string dateStrSeconds = dateNode?.GetAttributeValue("data-seconds", null);
+            string dateStr = dateNode?.GetAttributeValue("content", null);
 
-            long seconds;
-            if (!string.IsNullOrEmpty(dateStrSeconds) && long.TryParse(dateStrSeconds, out seconds))
+            if (!string.IsNullOrEmpty(dateStr))
             {
-                dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(seconds);
+                DateTimeOffset parsedDate;
+                if (DateTimeOffset.TryParse(dateStr, out parsedDate))
+                {
+                    dateTimeOffset = parsedDate;
+                }
             }
             return dateTimeOffset;
         }
 
         private bool HasDateAttribute(HtmlNode htmlNode)
         {
-            return htmlNode.Attributes.Any(attr => attr.Name == "class" && (attr.Value == "date date--v2" || attr.Value?.Contains("vxp-date") == true));
+            return htmlNode.Attributes.Any(attr => attr.Name == "property" && attr.Value == "article:published_time");
         }
     }
 }

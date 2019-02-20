@@ -28,7 +28,7 @@ namespace NewsCrawler
             this.serviceProvider = serviceProvider;
         }
 
-        public async Task RunTitleUpdater()
+        public async Task RunTitleUpdater(string urlContains)
         {
             List<Article> articles = new List<Article>();
 
@@ -37,8 +37,8 @@ namespace NewsCrawler
             var articleBatcher = new ArticleBatcher(serviceProvider);
             int updates = 0;
             await articleBatcher.RunArticleBatch(
-            a => a.Url.Contains("bbc.co.uk"),
-            async article =>
+            a => a.Url.Contains(urlContains),
+            article =>
             {
                 bool hasUpdates = false;
                 string title = newsArticleTitleFetcherService.FetchTitle(article.Content);
@@ -66,9 +66,10 @@ namespace NewsCrawler
                     updates++;
                 }
 
-                await Task.CompletedTask;
+                return Task.FromResult(hasUpdates);
             });
 
+            Console.WriteLine($"{updates} articles updated.");
             Console.WriteLine("Title update complete!");
         }
     }

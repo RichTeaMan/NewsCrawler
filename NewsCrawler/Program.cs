@@ -72,9 +72,17 @@ namespace NewsCrawler
         [ClCommand("Title-Update")]
         public static async Task RunTitleUpdate()
         {
-            var serviceProvider = ServiceProviderFactory.CreateBbcServiceProvider();
-            var titleUpdater = serviceProvider.GetRequiredService<IArticleUpdaterRunner>();
-            await titleUpdater.RunTitleUpdater();
+            using (var scope = ServiceProviderFactory.CreateBbcServiceProvider().CreateScope())
+            {
+                var titleUpdater = scope.ServiceProvider.GetRequiredService<IArticleUpdaterRunner>();
+                await titleUpdater.RunTitleUpdater("bbc.co.uk");
+            }
+
+            using (var scope = ServiceProviderFactory.CreateDailyMailServiceProvider().CreateScope())
+            {
+                var titleUpdater = scope.ServiceProvider.GetRequiredService<IArticleUpdaterRunner>();
+                await titleUpdater.RunTitleUpdater("dailymail.co.uk");
+            }
         }
 
         [ClCommand("Clean-Article")]
@@ -98,6 +106,7 @@ namespace NewsCrawler
                     }
                     var clean = articleCleaner.CleanArticle(article);
                     await File.WriteAllTextAsync($"cleanedArticles/{fileName}.txt", clean);
+                    return false;
                 });
             }
         }
