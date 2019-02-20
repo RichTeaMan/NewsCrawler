@@ -13,19 +13,19 @@ namespace NewsCrawler
 
         private readonly IArticlePublishedDateFetcherService articlePublishedDateFetcherService;
 
-        private readonly NewsArticleContext newsArticleContext;
-
         private readonly INewsArticleDeterminationService newsArticleDeterminationService;
+
+        private readonly IServiceProvider serviceProvider;
 
         public ArticleUpdaterRunner(INewsArticleTitleFetcherService newsArticleTitleFetcherService,
             INewsArticleDeterminationService newsArticleDeterminationService,
             IArticlePublishedDateFetcherService articlePublishedDateFetcherService,
-            NewsArticleContext newsArticleContext)
+            IServiceProvider serviceProvider)
         {
             this.newsArticleTitleFetcherService = newsArticleTitleFetcherService;
             this.newsArticleDeterminationService = newsArticleDeterminationService;
             this.articlePublishedDateFetcherService = articlePublishedDateFetcherService;
-            this.newsArticleContext = newsArticleContext;
+            this.serviceProvider = serviceProvider;
         }
 
         public async Task RunTitleUpdater()
@@ -33,12 +33,12 @@ namespace NewsCrawler
             List<Article> articles = new List<Article>();
 
             Console.WriteLine("Updating titles of existing articles.");
-            int articleCount = newsArticleContext.Articles.Count();
-            Console.WriteLine($"{articleCount} articles to update.");
 
+            var articleBatcher = new ArticleBatcher(serviceProvider);
             int updates = 0;
-            int articlesChecked = 0;
-            foreach(var article in newsArticleContext.Articles)
+            await articleBatcher.RunArticleBatch(
+            a => a.Url.Contains("bbc.co.uk"),
+            async article =>
             {
                 bool hasUpdates = false;
                 string title = newsArticleTitleFetcherService.FetchTitle(article.Content);
@@ -61,23 +61,13 @@ namespace NewsCrawler
                     hasUpdates = true;
                 }
 
-
                 if (hasUpdates)
                 {
                     updates++;
                 }
 
-                articlesChecked++;
-                if (articlesChecked % 20 == 0)
-                {
-                    Console.WriteLine($"{articlesChecked} of {articleCount} articles checked. {updates} updates pending.");
-                }
-            }
-            Console.WriteLine($"{articlesChecked} of {articleCount} articles checked. {updates} updates pending.");
-
-            Console.WriteLine("Saving articles...");
-
-            await newsArticleContext.SaveChangesAsync();
+                await Task.CompletedTask;
+            });
 
             Console.WriteLine("Title update complete!");
         }

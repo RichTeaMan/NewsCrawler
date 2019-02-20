@@ -77,56 +77,8 @@ namespace NewsCrawler
             await titleUpdater.RunTitleUpdater();
         }
 
-        public static async Task RunCleanArticle()
-        {
-            var serviceProvider = ServiceProviderFactory.CreateBbcServiceProvider();
-            try
-            {
-                int splitArticleCount = 200;
-                var context = serviceProvider.GetRequiredService<NewsArticleContext>();
-                var articlesCount = context.Articles.Count(a => !a.IsIndexPage && a.PublishedDate != null);
-                Directory.CreateDirectory("cleanedArticles");
-                Console.WriteLine($"Cleaning {articlesCount} articles.");
-                int articlesCleaned = 0;
-
-                int scopeCount = (articlesCount / splitArticleCount) + 1;
-                foreach (var scopes in Enumerable.Range(0, scopeCount))
-                {
-                    using (var scope = serviceProvider.CreateScope())
-                    {
-                        var splitContext = scope.ServiceProvider.GetRequiredService<NewsArticleContext>();
-                        var articleCleaner = scope.ServiceProvider.GetRequiredService<IArticleCleaner>();
-                        var articles = splitContext.Articles.Skip(articlesCleaned).Take(splitArticleCount);
-
-                        foreach (var article in articles)
-                        {
-                            string fileName = article.Title;
-                            foreach (var invalidFilenameChar in Path.GetInvalidFileNameChars())
-                            {
-                                fileName = fileName.Replace(invalidFilenameChar.ToString(), string.Empty);
-                            }
-                            var clean = articleCleaner.CleanArticle(article);
-                            await File.WriteAllTextAsync($"cleanedArticles/{fileName}.txt", clean);
-
-                            articlesCleaned++;
-                            if (articlesCleaned % (articlesCount / 100) == 0)
-                            {
-                                Console.WriteLine($"{articlesCleaned} articles cleaned.");
-                            }
-                        }
-                    }
-                }
-                Console.WriteLine($"{articlesCleaned} articles cleaned.");
-                Console.WriteLine("Cleaing complete.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
-        }
-
         [ClCommand("Clean-Article")]
-        public static async Task RunCleanArticle2()
+        public static async Task RunCleanArticle()
         {
             var serviceProvider = ServiceProviderFactory.CreateBbcServiceProvider();
             using (var scope = serviceProvider.CreateScope())
@@ -135,7 +87,7 @@ namespace NewsCrawler
                 var articleBatcher = new ArticleBatcher(serviceProvider);
                 Directory.CreateDirectory("cleanedArticles");
 
-                await articleBatcher.RunCleanArticle(
+                await articleBatcher.RunArticleBatch(
                 article => article.Url.Contains("bbc.co.uk"),
                 async article =>
                 {

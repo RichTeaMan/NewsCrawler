@@ -19,7 +19,16 @@ namespace NewsCrawler
             this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
-        public async Task RunCleanArticle(Expression<Func<Article, bool>> articlePredicate, Func<Article, Task> articleFunction)
+        /// <summary>
+        /// Run a given delegate on articles matching the article predicate.
+        /// </summary>
+        /// <remarks>
+        /// This will create and dispose contexts regularly, resulting in less memory usage.
+        /// </remarks>
+        /// <param name="articlePredicate">Articles to operate on.</param>
+        /// <param name="articleFunction">Function to run on individual articles.</param>
+        /// <returns></returns>
+        public async Task RunArticleBatch(Expression<Func<Article, bool>> articlePredicate, Func<Article, Task> articleFunction)
         {
             try
             {
@@ -52,6 +61,8 @@ namespace NewsCrawler
                                 Console.WriteLine($"{articlesCleaned} articles processed.");
                             }
                         }
+
+                        await splitContext.SaveChangesAsync();
                     }
                 }
                 Console.WriteLine($"{articlesCleaned} articles processed.");
