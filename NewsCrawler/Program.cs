@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 
 namespace NewsCrawler
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Console.WriteLine("Starting News Crawler.");
             ParseCommand(args);
         }
 
-        static void ParseCommand(string[] args)
+        private static void ParseCommand(string[] args)
         {
             MethodInvoker command = null;
             try
@@ -77,7 +77,6 @@ namespace NewsCrawler
             await titleUpdater.RunTitleUpdater();
         }
 
-        [ClCommand("Clean-Article")]
         public static async Task RunCleanArticle()
         {
             var serviceProvider = ServiceProviderFactory.CreateBbcServiceProvider();
@@ -123,6 +122,34 @@ namespace NewsCrawler
             catch (Exception ex)
             {
                 Console.WriteLine(ex);
+            }
+        }
+
+        [ClCommand("Clean-Article")]
+        public static async Task RunCleanArticle2()
+        {
+            var serviceProvider = ServiceProviderFactory.CreateBbcServiceProvider();
+            using (var scope = serviceProvider.CreateScope())
+            {
+                var articleCleaner = scope.ServiceProvider.GetRequiredService<IArticleCleaner>();
+                var articleBatcher = new ArticleBatcher(serviceProvider);
+                Directory.CreateDirectory("cleanedArticles");
+
+                await articleBatcher.RunCleanArticle(
+                articles =>
+                {
+                    return articles.Where(a => a.Url.Contains("bbc.co.uk"));
+                },
+                async article =>
+                {
+                    string fileName = article.Title;
+                    foreach (var invalidFilenameChar in Path.GetInvalidFileNameChars())
+                    {
+                        fileName = fileName.Replace(invalidFilenameChar.ToString(), string.Empty);
+                    }
+                    var clean = articleCleaner.CleanArticle(article);
+                    await File.WriteAllTextAsync($"cleanedArticles/{fileName}.txt", clean);
+                });
             }
         }
     }

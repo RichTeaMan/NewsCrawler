@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "NewsCrawler": {
+      "commandName": "Project",
+      "commandLineArgs": "Clean-Article"
+    }
+  }
+}
