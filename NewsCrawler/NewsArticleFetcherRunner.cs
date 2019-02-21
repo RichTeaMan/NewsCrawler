@@ -69,6 +69,12 @@ namespace NewsCrawler
             catch(Exception ex)
             {
                 Console.WriteLine($"An error occurred fetching: {ex.Message}");
+                Exception inner = ex.InnerException;
+                while(inner != null)
+                {
+                    Console.WriteLine($"Inner exception: {inner.Message}");
+                    inner = inner.InnerException;
+                }
                 Console.WriteLine(ex.StackTrace);
             }
         }
