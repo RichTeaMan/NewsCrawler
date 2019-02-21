@@ -50,6 +50,7 @@ namespace NewsCrawler
                 Console.WriteLine($"Found {articleLinks.Count()} articles.");
 
                 List<Article> articles = new List<Article>();
+                int totalArticles = 0;
                 foreach (var articleLink in articleLinks)
                 {
                     try
@@ -57,7 +58,8 @@ namespace NewsCrawler
                         var article = await newsArticleFetchService.FetchArticleAsync(articleLink);
                         article.NewsSource = sourceName;
                         articles.Add(article);
-                        if (articles.Count() % 10 == 0)
+                        totalArticles++;
+                        if (totalArticles % 10 == 0)
                         {
                             Console.WriteLine($"{articles.Count()} of {articleLinks.Count()} articles loaded.");
                         }
@@ -80,7 +82,7 @@ namespace NewsCrawler
                         Console.WriteLine(ex.StackTrace);
                     }
                 }
-                Console.WriteLine($"Complete: {articles.Count()} articles loaded.");
+                Console.WriteLine($"Complete: {totalArticles} articles loaded.");
 
                 Console.WriteLine("Saving articles...");
 
@@ -90,7 +92,6 @@ namespace NewsCrawler
                     var scopedNewsArticleContext = scope.ServiceProvider.GetRequiredService<NewsArticleContext>();
                     await scopedNewsArticleContext.Articles.AddRangeAsync(articles);
                     await scopedNewsArticleContext.SaveChangesAsync();
-                    articles = new List<Article>();
                 }
 
                 Console.WriteLine("Crawling complete!");
