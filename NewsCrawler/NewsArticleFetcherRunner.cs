@@ -1,4 +1,5 @@
-﻿using NewsCrawler.Interfaces;
+﻿using Microsoft.Extensions.DependencyInjection;
+using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence;
 using System;
 using System.Collections.Generic;
@@ -9,45 +10,68 @@ namespace NewsCrawler
 {
     public class NewsArticleFetcherRunner : INewsArticleFetcherRunner
     {
-        private readonly INewsArticleFinderService newsArticleFinderService;
 
         private readonly INewsArticleFetchService newsArticleFetchService;
 
-        private readonly NewsArticleContext newsArticleContext;
+        private readonly IServiceProvider serviceProvider;
 
-        public NewsArticleFetcherRunner(INewsArticleFinderService newsArticleFinderService, INewsArticleFetchService newsArticleFetchService, NewsArticleContext newsArticleContext)
+        private readonly int batchSize = 200;
+
+        public NewsArticleFetcherRunner(INewsArticleFetchService newsArticleFetchService, IServiceProvider serviceProvider)
         {
-            this.newsArticleFinderService = newsArticleFinderService ?? throw new ArgumentNullException(nameof(newsArticleFinderService));
             this.newsArticleFetchService = newsArticleFetchService ?? throw new ArgumentNullException(nameof(newsArticleFetchService));
-            this.newsArticleContext = newsArticleContext ?? throw new ArgumentNullException(nameof(newsArticleContext));
+            this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
         public async Task RunFetcher()
         {
             try
             {
-                List<Article> articles = new List<Article>();
 
                 Console.WriteLine("Loading existing articles.");
-                var existingArticles = new HashSet<string>(newsArticleContext.Articles.Select(a => a.Url));
+                HashSet<string> existingArticles;
+                using (var scope = serviceProvider.CreateScope())
+                {
+                    var scopedNewsArticleContext = scope.ServiceProvider.GetRequiredService<NewsArticleContext>();
+                    existingArticles = new HashSet<string>(scopedNewsArticleContext.Articles.Select(a => a.Url));
+                }
                 Console.WriteLine($"{existingArticles.Count} existing articles loaded.");
 
-                Console.WriteLine($"Getting articles from news source: '{newsArticleFinderService.SourceName}'");
-
-                var articleLinks = newsArticleFinderService.FindNewsArticles().Distinct().Where(a => !existingArticles.Contains(a)).ToList();
+                List<string> articleLinks;
+                string sourceName;
+                using (var scope = serviceProvider.CreateScope())
+                {
+                    var newsArticleFinderService = scope.ServiceProvider.GetRequiredService<INewsArticleFinderService>();
+                    articleLinks = newsArticleFinderService.FindNewsArticles().Distinct().Where(a => !existingArticles.Contains(a)).ToList();
+                    sourceName = newsArticleFinderService.SourceName;
+                }
+                Console.WriteLine($"Getting articles from news source: '{sourceName}'");
 
                 Console.WriteLine($"Found {articleLinks.Count()} articles.");
 
+                List<Article> articles = new List<Article>();
                 foreach (var articleLink in articleLinks)
                 {
                     try
                     {
                         var article = await newsArticleFetchService.FetchArticleAsync(articleLink);
-                        article.NewsSource = newsArticleFinderService.SourceName;
+                        article.NewsSource = sourceName;
                         articles.Add(article);
                         if (articles.Count() % 10 == 0)
                         {
                             Console.WriteLine($"{articles.Count()} of {articleLinks.Count()} articles loaded.");
+                        }
+
+                        if (articles.Count >= batchSize)
+                        {
+                            using (var scope = serviceProvider.CreateScope())
+                            {
+                                Console.WriteLine("Saving articles...");
+                                var scopedNewsArticleContext = scope.ServiceProvider.GetRequiredService<NewsArticleContext>();
+                                await scopedNewsArticleContext.Articles.AddRangeAsync(articles);
+                                await scopedNewsArticleContext.SaveChangesAsync();
+                                articles = new List<Article>();
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -60,17 +84,22 @@ namespace NewsCrawler
 
                 Console.WriteLine("Saving articles...");
 
-                await newsArticleContext.Articles.AddRangeAsync(articles);
-
-                await newsArticleContext.SaveChangesAsync();
+                using (var scope = serviceProvider.CreateScope())
+                {
+                    Console.WriteLine("Saving articles...");
+                    var scopedNewsArticleContext = scope.ServiceProvider.GetRequiredService<NewsArticleContext>();
+                    await scopedNewsArticleContext.Articles.AddRangeAsync(articles);
+                    await scopedNewsArticleContext.SaveChangesAsync();
+                    articles = new List<Article>();
+                }
 
                 Console.WriteLine("Crawling complete!");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"An error occurred fetching: {ex.Message}");
                 Exception inner = ex.InnerException;
-                while(inner != null)
+                while (inner != null)
                 {
                     Console.WriteLine($"Inner exception: {inner.Message}");
                     inner = inner.InnerException;
