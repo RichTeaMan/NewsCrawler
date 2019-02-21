@@ -67,6 +67,12 @@ namespace NewsCrawler
                 var newsArticleFetcherRunner = scope.ServiceProvider.GetRequiredService<INewsArticleFetcherRunner>();
                 await newsArticleFetcherRunner.RunFetcher();
             }
+
+            using (var scope = ServiceProviderFactory.CreateGuardianServiceProvider().CreateScope())
+            {
+                var newsArticleFetcherRunner = scope.ServiceProvider.GetRequiredService<INewsArticleFetcherRunner>();
+                await newsArticleFetcherRunner.RunFetcher();
+            }
         }
 
         [ClCommand("Title-Update")]
@@ -82,6 +88,12 @@ namespace NewsCrawler
             {
                 var titleUpdater = scope.ServiceProvider.GetRequiredService<IArticleUpdaterRunner>();
                 await titleUpdater.RunTitleUpdater("dailymail.co.uk");
+            }
+
+            using (var scope = ServiceProviderFactory.CreateDailyMailServiceProvider().CreateScope())
+            {
+                var titleUpdater = scope.ServiceProvider.GetRequiredService<IArticleUpdaterRunner>();
+                await titleUpdater.RunTitleUpdater("www.theguardian.com");
             }
         }
 
