@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence;
 using System;
@@ -15,7 +16,7 @@ namespace NewsCrawler
 
         private readonly IServiceProvider serviceProvider;
 
-        private readonly int batchSize = 200;
+        private readonly int batchSize = 100;
 
         public NewsArticleFetcherRunner(INewsArticleFetchService newsArticleFetchService, IServiceProvider serviceProvider)
         {
@@ -76,23 +77,30 @@ namespace NewsCrawler
                             }
                         }
                     }
+                    catch (DbUpdateException)
+                    {
+                        throw;
+                    }
                     catch (Exception ex)
                     {
                         Console.WriteLine($"An error occurred retrieving '{articleLink}': {ex.Message}");
                         Console.WriteLine(ex.StackTrace);
                     }
                 }
-                Console.WriteLine($"Complete: {totalArticles} articles loaded.");
 
-                Console.WriteLine("Saving articles...");
-
-                using (var scope = serviceProvider.CreateScope())
+                if (articles.Any())
                 {
                     Console.WriteLine("Saving articles...");
-                    var scopedNewsArticleContext = scope.ServiceProvider.GetRequiredService<NewsArticleContext>();
-                    await scopedNewsArticleContext.Articles.AddRangeAsync(articles);
-                    await scopedNewsArticleContext.SaveChangesAsync();
+                    using (var scope = serviceProvider.CreateScope())
+                    {
+                        Console.WriteLine("Saving articles...");
+                        var scopedNewsArticleContext = scope.ServiceProvider.GetRequiredService<NewsArticleContext>();
+                        await scopedNewsArticleContext.Articles.AddRangeAsync(articles);
+                        await scopedNewsArticleContext.SaveChangesAsync();
+                    }
                 }
+
+                Console.WriteLine($"Complete: {totalArticles} articles loaded.");
 
                 Console.WriteLine("Crawling complete!");
             }
