@@ -51,7 +51,7 @@ namespace NewsCrawler
                 Console.WriteLine($"Found {articleLinks.Count()} articles.");
 
                 List<Article> articles = new List<Article>();
-                int totalArticles = 0;
+                int fetchedArticles = 0;
                 foreach (var articleLink in articleLinks)
                 {
                     try
@@ -59,10 +59,10 @@ namespace NewsCrawler
                         var article = await newsArticleFetchService.FetchArticleAsync(articleLink);
                         article.NewsSource = sourceName;
                         articles.Add(article);
-                        totalArticles++;
-                        if (totalArticles % 10 == 0)
+                        fetchedArticles++;
+                        if (fetchedArticles % 10 == 0)
                         {
-                            Console.WriteLine($"{articles.Count()} of {articleLinks.Count()} articles loaded.");
+                            Console.WriteLine($"{fetchedArticles} of {articleLinks.Count()} articles loaded.");
                         }
 
                         if (articles.Count >= batchSize)
@@ -100,7 +100,7 @@ namespace NewsCrawler
                     }
                 }
 
-                Console.WriteLine($"Complete: {totalArticles} articles loaded.");
+                Console.WriteLine($"Complete: {fetchedArticles} articles loaded.");
 
                 Console.WriteLine("Crawling complete!");
             }
