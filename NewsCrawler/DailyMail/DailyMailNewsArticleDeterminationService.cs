@@ -10,7 +10,7 @@ namespace NewsCrawler.DailyMail
         {
             bool isNews = false;
             if (!string.IsNullOrEmpty(articleLink)) {
-                isNews = articleLink.StartsWith("/news/article-") && !articleLink.Contains("/index.rss");
+                isNews = articleLink.StartsWith("/news/article-") && !articleLink.EndsWith(".rss");
             }
             return isNews;
         }
@@ -21,7 +21,7 @@ namespace NewsCrawler.DailyMail
             {
                 return false;
             }
-            return !Regex.IsMatch(articleLink, @"\d") && !articleLink.Contains("news/article-") && !articleLink.Contains("/index.rss") && !articleLink.EndsWith(".uk") && !articleLink.EndsWith(".com");
+            return !Regex.IsMatch(articleLink, @"\d") && !articleLink.Contains("news/article-") && !articleLink.EndsWith(".rss") && !articleLink.EndsWith(".uk") && !articleLink.EndsWith(".com");
         }
     }
 }
