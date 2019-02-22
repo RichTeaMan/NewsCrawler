@@ -19,7 +19,6 @@ namespace NewsCrawler.Bbc
             if (title == null)
             {
                 title = doc.DocumentNode.Descendants().FirstOrDefault(n => n.Name == "title")?.InnerText?.Trim()?.Replace(" - BBC News", string.Empty);
-                title = title.Substring(0, Math.Min(title.Length, Constants.MAX_TITLE_LENGTH));
             }
             return title;
         }

@@ -41,7 +41,7 @@ namespace NewsCrawler
             article =>
             {
                 bool hasUpdates = false;
-                string title = newsArticleTitleFetcherService.FetchTitle(article.Content);
+                string title = Truncate(newsArticleTitleFetcherService.FetchTitle(article.Content), Constants.MAX_TITLE_LENGTH);
                 if (article.Title != title)
                 {
                     article.Title = title;
@@ -71,6 +71,15 @@ namespace NewsCrawler
 
             Console.WriteLine($"{updates} articles updated.");
             Console.WriteLine("Title update complete!");
+        }
+
+        private string Truncate(string value, int maxLength)
+        {
+            if (value == null)
+            {
+                return null;
+            }
+            return value.Substring(0, Math.Min(value.Length, maxLength));
         }
     }
 }

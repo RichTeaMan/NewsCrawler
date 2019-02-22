@@ -28,7 +28,7 @@ namespace NewsCrawler.Guardian
                     title = match.Value.Trim();
                 }
             }
-            return title?.Substring(0, Math.Min(title.Length, Constants.MAX_TITLE_LENGTH));
+            return title;
         }
 
         private bool HasTitleAttribute(HtmlNode htmlNode)

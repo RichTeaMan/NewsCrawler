@@ -21,7 +21,6 @@ namespace NewsCrawler.DailyMail
             if (!string.IsNullOrWhiteSpace(title))
             {
                 title = HttpUtility.HtmlDecode(title)?.Trim();
-                title = title.Substring(0, Math.Min(title.Length, Constants.MAX_TITLE_LENGTH));
             }
 
             return title;
