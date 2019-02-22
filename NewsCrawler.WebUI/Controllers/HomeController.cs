@@ -23,6 +23,7 @@ namespace NewsCrawler.WebUI.Controllers
         public IActionResult Index(int page = 1, string searchTerm = null)
         {
             var articles = newsArticleContext.Articles
+                .Where(a => !a.IsIndexPage)
                 .Where(a => string.IsNullOrEmpty(searchTerm) || a.Title.Contains(searchTerm))
                 .OrderByDescending(a => a.RecordedDate)
                 .Select(a => new Models.Article { Title = a.Title, Link = a.Url, RecordedDate = a.RecordedDate, PublishedDate = a.PublishedDate });
