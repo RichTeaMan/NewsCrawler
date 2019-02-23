@@ -56,22 +56,13 @@ namespace NewsCrawler
         [DefaultClCommand]
         public static async Task RunCrawler()
         {
-            using (var scope = ServiceProviderFactory.CreateBbcServiceProvider().CreateScope())
+            foreach (var serviceProvider in ServiceProviderFactory.CreateServiceProviders())
             {
-                var newsArticleFetcherRunner = scope.ServiceProvider.GetRequiredService<INewsArticleFetcherRunner>();
-                await newsArticleFetcherRunner.RunFetcher();
-            }
-
-            using (var scope = ServiceProviderFactory.CreateDailyMailServiceProvider().CreateScope())
-            {
-                var newsArticleFetcherRunner = scope.ServiceProvider.GetRequiredService<INewsArticleFetcherRunner>();
-                await newsArticleFetcherRunner.RunFetcher();
-            }
-
-            using (var scope = ServiceProviderFactory.CreateGuardianServiceProvider().CreateScope())
-            {
-                var newsArticleFetcherRunner = scope.ServiceProvider.GetRequiredService<INewsArticleFetcherRunner>();
-                await newsArticleFetcherRunner.RunFetcher();
+                using (var scope = serviceProvider.CreateScope())
+                {
+                    var newsArticleFetcherRunner = scope.ServiceProvider.GetRequiredService<INewsArticleFetcherRunner>();
+                    await newsArticleFetcherRunner.RunFetcher();
+                }
             }
         }
 
@@ -90,10 +81,16 @@ namespace NewsCrawler
                 await titleUpdater.RunTitleUpdater("dailymail.co.uk");
             }
 
-            using (var scope = ServiceProviderFactory.CreateDailyMailServiceProvider().CreateScope())
+            using (var scope = ServiceProviderFactory.CreateGuardianServiceProvider().CreateScope())
             {
                 var titleUpdater = scope.ServiceProvider.GetRequiredService<IArticleUpdaterRunner>();
                 await titleUpdater.RunTitleUpdater("www.theguardian.com");
+            }
+
+            using (var scope = ServiceProviderFactory.CreateCnnServiceProvider().CreateScope())
+            {
+                var titleUpdater = scope.ServiceProvider.GetRequiredService<IArticleUpdaterRunner>();
+                await titleUpdater.RunTitleUpdater("edition.cnn.com");
             }
         }
 
