@@ -12,7 +12,7 @@ namespace NewsCrawler.Guardian
             bool isNewsArticle = false;
             if (!string.IsNullOrEmpty(articleLink))
             {
-                isNewsArticle = !articleLink.Contains("support.theguardian") && newsRegex.IsMatch(articleLink);
+                isNewsArticle = !articleLink.Contains("support.theguardian") && !articleLink.EndsWith("/all") && newsRegex.IsMatch(articleLink);
             }
             return isNewsArticle;
         }
