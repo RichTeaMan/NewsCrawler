@@ -16,7 +16,7 @@ namespace NewsCrawler
 
         private readonly IServiceProvider serviceProvider;
 
-        private readonly int batchSize = 100;
+        private readonly int batchSize = 50;
 
         public NewsArticleFetcherRunner(INewsArticleFetchService newsArticleFetchService, IServiceProvider serviceProvider)
         {
