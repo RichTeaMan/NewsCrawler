@@ -1,4 +1,5 @@
 ﻿using NewsCrawler.Interfaces;
+using System;
 using System.Text.RegularExpressions;
 
 namespace NewsCrawler.Cnn
@@ -21,7 +22,7 @@ namespace NewsCrawler.Cnn
         {
             if (!string.IsNullOrEmpty(articleLink))
             {
-                return articleLink.Contains("https://edition.cnn.com/") && !IsNewsArticle(articleLink);
+                return !IsNewsArticle(articleLink);
             }
             return false;
         }
