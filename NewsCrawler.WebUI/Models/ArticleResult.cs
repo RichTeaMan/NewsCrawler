@@ -9,6 +9,10 @@ namespace NewsCrawler.WebUI.Models
     {
         public IEnumerable<Article> ArticleList { get; set; }
 
+        public IEnumerable<string> NewsSources { get; set; }
+
+        public IEnumerable<string> SelectedNewsSources { get; set; }
+
         public int ArticleCount { get; set; }
 
         public string SearchTerm { get; set; } = string.Empty;
