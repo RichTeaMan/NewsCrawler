@@ -128,16 +128,22 @@ namespace NewsCrawler.Cnn
             var links = documentNodes.SelectMany(n => n.Descendants())
                 .Where(n => n.Name == "a")
                 .Select(n => FindHref(n))
+                .Where(v => !string.IsNullOrWhiteSpace(v))
                 .Where(v => newsArticleDeterminationService.IsNewsArticle(v) || newsArticleDeterminationService.IsIndexPage(v))
                 .Select(v => MakeAbsolute(v))
                 .Distinct()
+                .Where(v => v.Contains(baseUrl))
                 .ToArray();
             return links;
         }
 
         private string MakeAbsolute(string path)
         {
-            if (path.StartsWith("/"))
+            if (path.StartsWith("//"))
+            {
+                path = path.Remove(0, 2);
+            }
+            else if (path.StartsWith("/"))
             {
                 path = $"{baseUrl}{path}";
             }
