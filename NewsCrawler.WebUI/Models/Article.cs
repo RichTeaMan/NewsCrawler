@@ -7,6 +7,8 @@ namespace NewsCrawler.WebUI.Models
     {
         public string Title { get; set; }
 
+        public string NewsSource { get; set; }
+
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy h:mm tt}")]
         public DateTimeOffset RecordedDate { get; set; }
 

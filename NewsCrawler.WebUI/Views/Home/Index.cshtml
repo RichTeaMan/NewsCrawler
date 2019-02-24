@@ -19,6 +19,7 @@
         <table class="table">
             <thead>
                 <tr>
+                    <th scope="col">Source</th>
                     <th scope="col">Title</th>
                     <th scope="col">Date Published</th>
                     <th scope="col">Date Recorded</th>
@@ -28,6 +29,7 @@
                 @foreach (var article in Model.ArticleList)
                 {
                     <tr>
+                        <td>@article.NewsSource</td>
                         <td><a href="@article.Link" target="_blank">@article.Title</a></td>
                         <td>@Html.DisplayFor(m => article.PublishedDate)</td>
                         <td>@Html.DisplayFor(m => article.RecordedDate)</td>

@@ -26,7 +26,13 @@ namespace NewsCrawler.WebUI.Controllers
                 .Where(a => !a.IsIndexPage)
                 .Where(a => string.IsNullOrEmpty(searchTerm) || a.Title.Contains(searchTerm))
                 .OrderByDescending(a => a.RecordedDate)
-                .Select(a => new Models.Article { Title = a.Title, Link = a.Url, RecordedDate = a.RecordedDate, PublishedDate = a.PublishedDate });
+                .Select(a => new Models.Article {
+                    Title = a.Title,
+                    Link = a.Url,
+                    RecordedDate = a.RecordedDate,
+                    PublishedDate = a.PublishedDate,
+                    NewsSource = a.NewsSource
+                });
 
             var pagedArticles = articles
                 .Skip((page - 1) * ArticlesPerPage)
