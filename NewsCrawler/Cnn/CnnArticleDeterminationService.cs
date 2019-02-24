@@ -6,7 +6,7 @@ namespace NewsCrawler.Cnn
 {
     public class CnnArticleDeterminationService : INewsArticleDeterminationService
     {
-        private readonly Regex newsRegex = new Regex(@"/\d{4}/\d{2}\d{2}/");
+        private readonly Regex newsRegex = new Regex(@"/\d{4}/\d{2}/\d{2}/");
 
         public bool IsNewsArticle(string articleLink)
         {
