@@ -18,14 +18,14 @@ namespace NewsCrawler.DailyMail
             {
                 node.Remove();
             }
-            var contentNode = doc.DocumentNode.Descendants().FirstOrDefault(n => n.Attributes.Any(attr => attr.Name == "id" && attr.Value == "js-article-text"));
+            var contentNode = doc.DocumentNode.Descendants().FirstOrDefault(n => n.Attributes.Any(attr => attr.Name == "itemprop" && attr.Value == "articleBody"));
             if (contentNode?.InnerText == null)
             {
                 return string.Empty;
             }
             else
             {
-                return string.Join(" ", contentNode.InnerText.Replace("\n", string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries));
+                return string.Join(" ", contentNode.InnerText.Replace("\r", string.Empty).Replace("\n", string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries));
             }
         }
     }
