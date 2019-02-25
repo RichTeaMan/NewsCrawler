@@ -4,6 +4,6 @@ namespace NewsCrawler.Interfaces
 {
     public interface IArticleCleaner
     {
-        string CleanArticle(Article article);
+        string CleanArticle(string articleContent);
     }
 }

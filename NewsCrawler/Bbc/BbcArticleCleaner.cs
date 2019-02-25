@@ -9,10 +9,10 @@ namespace NewsCrawler.Bbc
 {
     public class BbcArticleCleaner : IArticleCleaner
     {
-        public string CleanArticle(Article article)
+        public string CleanArticle(string articleContent)
         {
             var doc = new HtmlDocument();
-            doc.LoadHtml(article.Content);
+            doc.LoadHtml(articleContent);
 
             var nodesToRemove = doc.DocumentNode.Descendants().Where(n => n.Name == "script" || n.Attributes.Any(attr => attr.Name == "class" && attr.Value == "off-screen")).ToArray();
             foreach(var node in nodesToRemove)

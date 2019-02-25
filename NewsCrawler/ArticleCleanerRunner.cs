@@ -41,7 +41,7 @@ namespace NewsCrawler
                 {
                     fileName = fileName.Replace(invalidFilenameChar.ToString(), string.Empty);
                 }
-                var clean = articleCleaner.CleanArticle(article);
+                var clean = articleCleaner.CleanArticle(article.Content);
                 await File.WriteAllTextAsync(Path.Combine(CleanedArticleDirectory, $"{fileName}.txt"), clean);
                 return false;
             });

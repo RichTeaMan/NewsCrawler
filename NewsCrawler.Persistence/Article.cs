@@ -22,6 +22,13 @@ namespace NewsCrawler.Persistence
         [Column(TypeName = "ntext")]
         public string Content { get; set; }
 
+        public int ContentLength { get; set; }
+
+        [Column(TypeName = "ntext")]
+        public string CleanedContent { get; set; }
+
+        public int CleanedContentLength { get; set; }
+
         [Required]
         public DateTimeOffset RecordedDate { get; set; }
         
