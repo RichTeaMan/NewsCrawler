@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Web;
 using HtmlAgilityPack;
 using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence;
@@ -25,7 +26,8 @@ namespace NewsCrawler.Bbc
             }
             else
             {
-                return string.Join(" ", contentNode.InnerText.Replace("\n", string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries));
+                var cleanedArticle = string.Join(" ", contentNode.InnerText.Replace("\r", string.Empty).Replace("\n", string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries));
+                return HttpUtility.HtmlDecode(cleanedArticle);
             }
         }
     }

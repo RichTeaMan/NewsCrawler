@@ -37,7 +37,7 @@ namespace NewsCrawler.Cnn
                     // Paragraphs don't always end with a space so the space trimming doesn't work well. This hacks a space in.
                     paragraph.InnerHtml = paragraph.InnerHtml + " ";
                 }
-                var cleanedArticle = string.Join(" ", contentNode.InnerText.Replace("\n", string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries));
+                var cleanedArticle = string.Join(" ", contentNode.InnerText.Replace("\r", string.Empty).Replace("\n", string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries));
                 return HttpUtility.HtmlDecode(cleanedArticle);
             }
         }
