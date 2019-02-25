@@ -4,9 +4,9 @@ using HtmlAgilityPack;
 using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence;
 
-namespace NewsCrawler
+namespace NewsCrawler.Cnn
 {
-    public class ArticleCleaner : IArticleCleaner
+    public class CnnArticleCleaner : IArticleCleaner
     {
         public string CleanArticle(Article article)
         {
@@ -18,7 +18,7 @@ namespace NewsCrawler
             {
                 node.Remove();
             }
-            var contentNode = doc.DocumentNode.Descendants().FirstOrDefault(n => n.Attributes.Any(attr => attr.Name == "class" && attr.Value == "story-body__inner"));
+            var contentNode = doc.DocumentNode.Descendants().FirstOrDefault(n => n.Attributes.Any(attr => attr.Name == "class" && attr.Value == "l-container"));
             if (contentNode?.InnerText == null)
             {
                 return string.Empty;

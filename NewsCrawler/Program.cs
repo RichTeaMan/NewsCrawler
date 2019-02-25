@@ -97,26 +97,13 @@ namespace NewsCrawler
         [ClCommand("Clean-Article")]
         public static async Task RunCleanArticle()
         {
-            var serviceProvider = ServiceProviderFactory.CreateBbcServiceProvider();
-            using (var scope = serviceProvider.CreateScope())
+            foreach (var serviceProvider in ServiceProviderFactory.CreateServiceProviders())
             {
-                var articleCleaner = scope.ServiceProvider.GetRequiredService<IArticleCleaner>();
-                var articleBatcher = new ArticleBatcher(serviceProvider);
-                Directory.CreateDirectory("cleanedArticles");
-
-                await articleBatcher.RunArticleBatch(
-                article => article.Url.Contains("bbc.co.uk"),
-                async article =>
+                using (var scope = serviceProvider.CreateScope())
                 {
-                    string fileName = article.Title;
-                    foreach (var invalidFilenameChar in Path.GetInvalidFileNameChars())
-                    {
-                        fileName = fileName.Replace(invalidFilenameChar.ToString(), string.Empty);
-                    }
-                    var clean = articleCleaner.CleanArticle(article);
-                    await File.WriteAllTextAsync($"cleanedArticles/{fileName}.txt", clean);
-                    return false;
-                });
+                    var newsArticleCleanerRunner = scope.ServiceProvider.GetRequiredService<IArticleCleanerRunner>();
+                    await newsArticleCleanerRunner.CleanArticles();
+                }
             }
         }
     }

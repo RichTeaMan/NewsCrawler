@@ -38,7 +38,8 @@ namespace NewsCrawler
             serviceCollection.AddSingleton<INewsArticleTitleFetcherService, BbcNewsArticleTitleFetcherService>();
             serviceCollection.AddSingleton<IArticleUpdaterRunner, ArticleUpdaterRunner>();
             serviceCollection.AddSingleton<IArticlePublishedDateFetcherService, BbcNewsArticlePublishedDateFetcherService>();
-            serviceCollection.AddSingleton<IArticleCleaner, ArticleCleaner>();
+            serviceCollection.AddSingleton<IArticleCleaner, BbcArticleCleaner>();
+            serviceCollection.AddSingleton<IArticleCleanerRunner, BbcArticleCleanerRunner>();
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
             return serviceProvider;
@@ -60,7 +61,8 @@ namespace NewsCrawler
             serviceCollection.AddSingleton<INewsArticleTitleFetcherService, DailyMailNewsArticleTitleFetcherService>();
             serviceCollection.AddSingleton<IArticleUpdaterRunner, ArticleUpdaterRunner>();
             serviceCollection.AddSingleton<IArticlePublishedDateFetcherService, DailyMailNewsArticlePublishedDateFetcherService>();
-            serviceCollection.AddSingleton<IArticleCleaner, ArticleCleaner>();
+            serviceCollection.AddSingleton<IArticleCleaner, DailyMailArticleCleaner>();
+            serviceCollection.AddSingleton<IArticleCleanerRunner, DailyMailArticleCleanerRunner>();
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
             return serviceProvider;
@@ -82,7 +84,8 @@ namespace NewsCrawler
             serviceCollection.AddSingleton<INewsArticleTitleFetcherService, GuardianArticleTitleFetcherService>();
             serviceCollection.AddSingleton<IArticleUpdaterRunner, ArticleUpdaterRunner>();
             serviceCollection.AddSingleton<IArticlePublishedDateFetcherService, GuardianArticlePublishedDateFetcherService>();
-            serviceCollection.AddSingleton<IArticleCleaner, ArticleCleaner>();
+            serviceCollection.AddSingleton<IArticleCleaner, GuardianArticleCleaner>();
+            serviceCollection.AddSingleton<IArticleCleanerRunner, GuardianArticleCleanerRunner>();
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
             return serviceProvider;
@@ -104,7 +107,8 @@ namespace NewsCrawler
             serviceCollection.AddSingleton<INewsArticleTitleFetcherService, CnnArticleTitleFetcherService>();
             serviceCollection.AddSingleton<IArticleUpdaterRunner, ArticleUpdaterRunner>();
             serviceCollection.AddSingleton<IArticlePublishedDateFetcherService, CnnArticlePublishedDateFetcherService>();
-            serviceCollection.AddSingleton<IArticleCleaner, ArticleCleaner>();
+            serviceCollection.AddSingleton<IArticleCleaner, CnnArticleCleaner>();
+            serviceCollection.AddSingleton<IArticleCleanerRunner, CnnArticleCleanerRunner>();
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
             return serviceProvider;
