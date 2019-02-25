@@ -31,19 +31,22 @@ namespace NewsCrawler
             article => article.Url.Contains(ArticleUrlContains),
             async article =>
             {
-                string fileName = article?.Title;
-                if (string.IsNullOrWhiteSpace(fileName))
-                {
-                    Console.WriteLine($"Article with ID {article.Id} does not have a title.");
-                    fileName = article.Id.ToString();
-                }
-                foreach (var invalidFilenameChar in Path.GetInvalidFileNameChars())
-                {
-                    fileName = fileName.Replace(invalidFilenameChar.ToString(), string.Empty);
-                }
                 var clean = articleCleaner.CleanArticle(article.Content);
-                await File.WriteAllTextAsync(Path.Combine(CleanedArticleDirectory, $"{fileName}.txt"), clean);
-                return false;
+                if (clean != article.CleanedContent)
+                {
+                    article.CleanedContent = clean;
+                    int cleanLength = 0;
+                    if (!string.IsNullOrEmpty(clean))
+                    {
+                        cleanLength = clean.Length;
+                    }
+                    article.CleanedContentLength = cleanLength;
+                    return await Task.FromResult(true);
+                }
+                else
+                {
+                    return await Task.FromResult(false);
+                }
             });
 
             Console.WriteLine($"Completed cleaning articles containing '{ArticleUrlContains}'.");
