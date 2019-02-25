@@ -13,6 +13,7 @@
             <div class="form-group">
                 <input name="searchTerm" class="form-control" type="text" value="@Model.SearchTerm" />
 
+                <label for="newSources">News Source: </label>
                 <select class="form-control" size="@Model.NewsSources.Count()" name="newsSources" multiple="multiple" id="lstNewsSourcesCount">
                     @foreach (var newsSource in Model.NewsSources)
                     {
@@ -48,7 +49,7 @@
                     <th scope="col">Source</th>
                     <th scope="col">Title</th>
                     <th scope="col">Date Published</th>
-                    <th scope="col">Date Recorded</th>
+                    <th scope="col">Detail</th>
                 </tr>
             </thead>
             <tbody>
@@ -58,7 +59,7 @@
                         <td>@article.NewsSource</td>
                         <td><a href="@article.Link" target="_blank">@article.Title</a></td>
                         <td>@Html.DisplayFor(m => article.PublishedDate)</td>
-                        <td>@Html.DisplayFor(m => article.RecordedDate)</td>
+                        <td><a href="/Detail/@article.Id">Detail</a></td>
                     </tr>
                 }
             </tbody>

@@ -1,14 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NewsCrawler.Persistence;
-using System.Collections.Generic;
-using System.Globalization;
 
 namespace NewsCrawler.WebUI
 {
@@ -56,6 +53,13 @@ namespace NewsCrawler.WebUI
 
             app.UseMvc(routes =>
             {
+                routes.MapRoute(
+                    name: "detail",
+                    defaults: new {
+                        controller = "ArticleDetail",
+                        action = "Index" },
+                    template: "Detail/{id}");
+
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");

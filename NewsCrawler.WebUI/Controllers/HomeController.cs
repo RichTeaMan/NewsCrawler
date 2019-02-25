@@ -30,11 +30,15 @@ namespace NewsCrawler.WebUI.Controllers
                 .Where(a => newsSources == null || !newsSources.Any() || newsSources.Contains(a.NewsSource))
                 .OrderByDescending(a => a.RecordedDate)
                 .Select(a => new Models.Article {
+                    Id = a.Id,
                     Title = a.Title,
                     Link = a.Url,
+                    IsIndexPage = a.IsIndexPage,
                     RecordedDate = a.RecordedDate,
                     PublishedDate = a.PublishedDate,
-                    NewsSource = a.NewsSource
+                    NewsSource = a.NewsSource,
+                    ContentLength = a.ContentLength,
+                    CleanedContentLength = a.CleanedContentLength
                 });
 
             var pagedArticles = articles
