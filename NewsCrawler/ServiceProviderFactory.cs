@@ -31,15 +31,15 @@ namespace NewsCrawler
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString));
-            serviceCollection.AddSingleton<INewsArticleDeterminationService, BbcNewsArticleDeterminationService>();
-            serviceCollection.AddSingleton<INewsArticleFinderService, BbcNewsArticleFinderService>();
-            serviceCollection.AddSingleton<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
-            serviceCollection.AddSingleton<INewsArticleFetchService, NewsArticleFetchService>();
-            serviceCollection.AddSingleton<INewsArticleTitleFetcherService, BbcNewsArticleTitleFetcherService>();
-            serviceCollection.AddSingleton<IArticleUpdaterRunner, ArticleUpdaterRunner>();
-            serviceCollection.AddSingleton<IArticlePublishedDateFetcherService, BbcNewsArticlePublishedDateFetcherService>();
-            serviceCollection.AddSingleton<IArticleCleaner, BbcArticleCleaner>();
-            serviceCollection.AddSingleton<IArticleCleanerRunner, BbcArticleCleanerRunner>();
+            serviceCollection.AddScoped<INewsArticleDeterminationService, BbcNewsArticleDeterminationService>();
+            serviceCollection.AddScoped<INewsArticleFinderService, BbcNewsArticleFinderService>();
+            serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
+            serviceCollection.AddScoped<INewsArticleFetchService, NewsArticleFetchService>();
+            serviceCollection.AddScoped<INewsArticleTitleFetcherService, BbcNewsArticleTitleFetcherService>();
+            serviceCollection.AddScoped<IArticleUpdaterRunner, ArticleUpdaterRunner>();
+            serviceCollection.AddScoped<IArticlePublishedDateFetcherService, BbcNewsArticlePublishedDateFetcherService>();
+            serviceCollection.AddScoped<IArticleCleaner, BbcArticleCleaner>();
+            serviceCollection.AddScoped<IArticleCleanerRunner, BbcArticleCleanerRunner>();
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
             return serviceProvider;
@@ -54,15 +54,15 @@ namespace NewsCrawler
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString));
-            serviceCollection.AddSingleton<INewsArticleDeterminationService, DailyMailNewsArticleDeterminationService>();
-            serviceCollection.AddSingleton<INewsArticleFinderService, DailyMailNewsArticleFinderService>();
-            serviceCollection.AddSingleton<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
-            serviceCollection.AddSingleton<INewsArticleFetchService, NewsArticleFetchService>();
-            serviceCollection.AddSingleton<INewsArticleTitleFetcherService, DailyMailNewsArticleTitleFetcherService>();
-            serviceCollection.AddSingleton<IArticleUpdaterRunner, ArticleUpdaterRunner>();
-            serviceCollection.AddSingleton<IArticlePublishedDateFetcherService, DailyMailNewsArticlePublishedDateFetcherService>();
-            serviceCollection.AddSingleton<IArticleCleaner, DailyMailArticleCleaner>();
-            serviceCollection.AddSingleton<IArticleCleanerRunner, DailyMailArticleCleanerRunner>();
+            serviceCollection.AddScoped<INewsArticleDeterminationService, DailyMailNewsArticleDeterminationService>();
+            serviceCollection.AddScoped<INewsArticleFinderService, DailyMailNewsArticleFinderService>();
+            serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
+            serviceCollection.AddScoped<INewsArticleFetchService, NewsArticleFetchService>();
+            serviceCollection.AddScoped<INewsArticleTitleFetcherService, DailyMailNewsArticleTitleFetcherService>();
+            serviceCollection.AddScoped<IArticleUpdaterRunner, ArticleUpdaterRunner>();
+            serviceCollection.AddScoped<IArticlePublishedDateFetcherService, DailyMailNewsArticlePublishedDateFetcherService>();
+            serviceCollection.AddScoped<IArticleCleaner, DailyMailArticleCleaner>();
+            serviceCollection.AddScoped<IArticleCleanerRunner, DailyMailArticleCleanerRunner>();
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
             return serviceProvider;
@@ -77,15 +77,15 @@ namespace NewsCrawler
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString));
-            serviceCollection.AddSingleton<INewsArticleDeterminationService, GuardianArticleDeterminationService>();
-            serviceCollection.AddSingleton<INewsArticleFinderService, GuardianArticleFinderService>();
-            serviceCollection.AddSingleton<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
-            serviceCollection.AddSingleton<INewsArticleFetchService, NewsArticleFetchService>();
-            serviceCollection.AddSingleton<INewsArticleTitleFetcherService, GuardianArticleTitleFetcherService>();
-            serviceCollection.AddSingleton<IArticleUpdaterRunner, ArticleUpdaterRunner>();
-            serviceCollection.AddSingleton<IArticlePublishedDateFetcherService, GuardianArticlePublishedDateFetcherService>();
-            serviceCollection.AddSingleton<IArticleCleaner, GuardianArticleCleaner>();
-            serviceCollection.AddSingleton<IArticleCleanerRunner, GuardianArticleCleanerRunner>();
+            serviceCollection.AddScoped<INewsArticleDeterminationService, GuardianArticleDeterminationService>();
+            serviceCollection.AddScoped<INewsArticleFinderService, GuardianArticleFinderService>();
+            serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
+            serviceCollection.AddScoped<INewsArticleFetchService, NewsArticleFetchService>();
+            serviceCollection.AddScoped<INewsArticleTitleFetcherService, GuardianArticleTitleFetcherService>();
+            serviceCollection.AddScoped<IArticleUpdaterRunner, ArticleUpdaterRunner>();
+            serviceCollection.AddScoped<IArticlePublishedDateFetcherService, GuardianArticlePublishedDateFetcherService>();
+            serviceCollection.AddScoped<IArticleCleaner, GuardianArticleCleaner>();
+            serviceCollection.AddScoped<IArticleCleanerRunner, GuardianArticleCleanerRunner>();
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
             return serviceProvider;
@@ -100,15 +100,15 @@ namespace NewsCrawler
 
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString));
-            serviceCollection.AddSingleton<INewsArticleDeterminationService, CnnArticleDeterminationService>();
-            serviceCollection.AddSingleton<INewsArticleFinderService, CnnArticleFinderService>();
-            serviceCollection.AddSingleton<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
-            serviceCollection.AddSingleton<INewsArticleFetchService, NewsArticleFetchService>();
-            serviceCollection.AddSingleton<INewsArticleTitleFetcherService, CnnArticleTitleFetcherService>();
-            serviceCollection.AddSingleton<IArticleUpdaterRunner, ArticleUpdaterRunner>();
-            serviceCollection.AddSingleton<IArticlePublishedDateFetcherService, CnnArticlePublishedDateFetcherService>();
-            serviceCollection.AddSingleton<IArticleCleaner, CnnArticleCleaner>();
-            serviceCollection.AddSingleton<IArticleCleanerRunner, CnnArticleCleanerRunner>();
+            serviceCollection.AddScoped<INewsArticleDeterminationService, CnnArticleDeterminationService>();
+            serviceCollection.AddScoped<INewsArticleFinderService, CnnArticleFinderService>();
+            serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
+            serviceCollection.AddScoped<INewsArticleFetchService, NewsArticleFetchService>();
+            serviceCollection.AddScoped<INewsArticleTitleFetcherService, CnnArticleTitleFetcherService>();
+            serviceCollection.AddScoped<IArticleUpdaterRunner, ArticleUpdaterRunner>();
+            serviceCollection.AddScoped<IArticlePublishedDateFetcherService, CnnArticlePublishedDateFetcherService>();
+            serviceCollection.AddScoped<IArticleCleaner, CnnArticleCleaner>();
+            serviceCollection.AddScoped<IArticleCleanerRunner, CnnArticleCleanerRunner>();
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
             return serviceProvider;
