@@ -30,7 +30,7 @@ namespace NewsCrawler
             var connectionString = config.GetConnectionString("NewsArticleDatabase");
 
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString));
+            serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
             serviceCollection.AddScoped<INewsArticleDeterminationService, BbcNewsArticleDeterminationService>();
             serviceCollection.AddScoped<INewsArticleFinderService, BbcNewsArticleFinderService>();
             serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
@@ -53,7 +53,7 @@ namespace NewsCrawler
             var connectionString = config.GetConnectionString("NewsArticleDatabase");
 
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString));
+            serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
             serviceCollection.AddScoped<INewsArticleDeterminationService, DailyMailNewsArticleDeterminationService>();
             serviceCollection.AddScoped<INewsArticleFinderService, DailyMailNewsArticleFinderService>();
             serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
@@ -76,7 +76,7 @@ namespace NewsCrawler
             var connectionString = config.GetConnectionString("NewsArticleDatabase");
 
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString));
+            serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
             serviceCollection.AddScoped<INewsArticleDeterminationService, GuardianArticleDeterminationService>();
             serviceCollection.AddScoped<INewsArticleFinderService, GuardianArticleFinderService>();
             serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
@@ -99,7 +99,7 @@ namespace NewsCrawler
             var connectionString = config.GetConnectionString("NewsArticleDatabase");
 
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString));
+            serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
             serviceCollection.AddScoped<INewsArticleDeterminationService, CnnArticleDeterminationService>();
             serviceCollection.AddScoped<INewsArticleFinderService, CnnArticleFinderService>();
             serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
