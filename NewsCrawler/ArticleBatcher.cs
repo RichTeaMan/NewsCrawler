@@ -64,7 +64,7 @@ namespace NewsCrawler
                             articlesProcessed++;
                             if (articlesProcessed % (articlesCount / 100) == 0)
                             {
-                                Console.WriteLine($"{articlesProcessed} articles processed.");
+                                Console.WriteLine($"{articlesProcessed} of {articlesCount} articles processed.");
                             }
                         }
 
@@ -75,7 +75,7 @@ namespace NewsCrawler
                     }
                 }
                 Console.WriteLine($"{articlesProcessed} articles processed.");
-                Console.WriteLine("Bulkk processing complete.");
+                Console.WriteLine("Bulk processing complete.");
             }
             catch (Exception ex)
             {
