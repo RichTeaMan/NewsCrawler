@@ -89,6 +89,21 @@ Task("ProdCleanArticles")
     DotNetCoreExecute($"./NewsCrawler/bin/{buildDir}/netcoreapp2.2/NewsCrawler.dll", "Clean-Article");
 });
 
+Task("UpdateWordCount")
+    .IsDependentOn("Build")
+    .Does(() =>
+{
+    DotNetCoreExecute($"./NewsCrawler/bin/{buildDir}/netcoreapp2.2/NewsCrawler.dll", "Update-Word-Count");
+});
+
+Task("ProdUpdateWordCount")
+    .IsDependentOn("Build")
+    .Does(() =>
+{
+    CopyFile("Docker/Crawler/appsettings.json", $"./NewsCrawler/bin/{buildDir}/netcoreapp2.2/appsettings.json");
+    DotNetCoreExecute($"./NewsCrawler/bin/{buildDir}/netcoreapp2.2/NewsCrawler.dll", "Update-Word-Count");
+});
+
 Task("Run")
     .IsDependentOn("Build")
     .Does(() =>

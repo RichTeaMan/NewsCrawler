@@ -106,5 +106,15 @@ namespace NewsCrawler
                 }
             }
         }
+
+        [ClCommand("Update-Word-Count")]
+        public static async Task RunWordCount()
+        {
+            using (var scope = ServiceProviderFactory.CreateGenericServiceProvider().CreateScope())
+            {
+                var wordCountService = scope.ServiceProvider.GetRequiredService<IWordCountService>();
+                await wordCountService.UpdateWordCount();
+            }
+        }
     }
 }

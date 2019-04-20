@@ -7,5 +7,7 @@
         public const int MAX_URL_LENGTH = 200;
 
         public const int MAX_NEWS_SOURCE_LENGTH = 20;
+
+        public const int MAX_WORD_LENGTH = 30;
     }
 }

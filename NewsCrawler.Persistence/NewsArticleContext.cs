@@ -7,6 +7,8 @@ namespace NewsCrawler.Persistence
     {
         public DbSet<Article> Articles { get; set; }
 
+        public DbSet<WordCount> WordCount { get; set; }
+
         public NewsArticleContext(DbContextOptions<NewsArticleContext> options)
             :base(options)
         {
@@ -18,6 +20,8 @@ namespace NewsCrawler.Persistence
             modelBuilder.Entity<Article>()
                 .Property(a => a.NewsSource)
                 .HasDefaultValue("Unspecified");
+
+            modelBuilder.Entity<WordCount>();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

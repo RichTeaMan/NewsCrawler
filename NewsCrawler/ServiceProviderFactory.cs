@@ -14,6 +14,34 @@ namespace NewsCrawler
 {
     public class ServiceProviderFactory
     {
+        /// <summary>
+        /// Creates generised services for dealing with articles. Some services not do have generic version
+        /// so some service lookup will not be resolved.
+        /// </summary>
+        /// <returns></returns>
+        public static IServiceProvider CreateGenericServiceProvider()
+        {
+            var serviceCollection = new ServiceCollection();
+            AddGenericServicesToCollection(serviceCollection);
+
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            return serviceProvider;
+        }
+
+        private static void AddGenericServicesToCollection(ServiceCollection serviceCollection)
+        {
+            var builder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            var config = builder.Build();
+            var connectionString = config.GetConnectionString("NewsArticleDatabase");
+
+            serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
+            serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
+            serviceCollection.AddScoped<INewsArticleFetchService, NewsArticleFetchService>();
+            serviceCollection.AddScoped<IArticleUpdaterRunner, ArticleUpdaterRunner>();
+            serviceCollection.AddScoped<IWordCountService, WordCountService>();
+        }
+
         public static IEnumerable<IServiceProvider> CreateServiceProviders()
         {
             yield return CreateBbcServiceProvider();
@@ -24,19 +52,12 @@ namespace NewsCrawler
 
         public static IServiceProvider CreateBbcServiceProvider()
         {
-            var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-            var config = builder.Build();
-            var connectionString = config.GetConnectionString("NewsArticleDatabase");
-
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
+            AddGenericServicesToCollection(serviceCollection);
+
             serviceCollection.AddScoped<INewsArticleDeterminationService, BbcNewsArticleDeterminationService>();
             serviceCollection.AddScoped<INewsArticleFinderService, BbcNewsArticleFinderService>();
-            serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
-            serviceCollection.AddScoped<INewsArticleFetchService, NewsArticleFetchService>();
             serviceCollection.AddScoped<INewsArticleTitleFetcherService, BbcNewsArticleTitleFetcherService>();
-            serviceCollection.AddScoped<IArticleUpdaterRunner, ArticleUpdaterRunner>();
             serviceCollection.AddScoped<IArticlePublishedDateFetcherService, BbcNewsArticlePublishedDateFetcherService>();
             serviceCollection.AddScoped<IArticleCleaner, BbcArticleCleaner>();
             serviceCollection.AddScoped<IArticleCleanerRunner, BbcArticleCleanerRunner>();
@@ -47,19 +68,12 @@ namespace NewsCrawler
 
         public static IServiceProvider CreateDailyMailServiceProvider()
         {
-            var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-            var config = builder.Build();
-            var connectionString = config.GetConnectionString("NewsArticleDatabase");
-
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
+            AddGenericServicesToCollection(serviceCollection);
+
             serviceCollection.AddScoped<INewsArticleDeterminationService, DailyMailNewsArticleDeterminationService>();
             serviceCollection.AddScoped<INewsArticleFinderService, DailyMailNewsArticleFinderService>();
-            serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
-            serviceCollection.AddScoped<INewsArticleFetchService, NewsArticleFetchService>();
             serviceCollection.AddScoped<INewsArticleTitleFetcherService, DailyMailNewsArticleTitleFetcherService>();
-            serviceCollection.AddScoped<IArticleUpdaterRunner, ArticleUpdaterRunner>();
             serviceCollection.AddScoped<IArticlePublishedDateFetcherService, DailyMailNewsArticlePublishedDateFetcherService>();
             serviceCollection.AddScoped<IArticleCleaner, DailyMailArticleCleaner>();
             serviceCollection.AddScoped<IArticleCleanerRunner, DailyMailArticleCleanerRunner>();
@@ -70,19 +84,12 @@ namespace NewsCrawler
 
         public static IServiceProvider CreateGuardianServiceProvider()
         {
-            var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-            var config = builder.Build();
-            var connectionString = config.GetConnectionString("NewsArticleDatabase");
-
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
+            AddGenericServicesToCollection(serviceCollection);
+
             serviceCollection.AddScoped<INewsArticleDeterminationService, GuardianArticleDeterminationService>();
             serviceCollection.AddScoped<INewsArticleFinderService, GuardianArticleFinderService>();
-            serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
-            serviceCollection.AddScoped<INewsArticleFetchService, NewsArticleFetchService>();
             serviceCollection.AddScoped<INewsArticleTitleFetcherService, GuardianArticleTitleFetcherService>();
-            serviceCollection.AddScoped<IArticleUpdaterRunner, ArticleUpdaterRunner>();
             serviceCollection.AddScoped<IArticlePublishedDateFetcherService, GuardianArticlePublishedDateFetcherService>();
             serviceCollection.AddScoped<IArticleCleaner, GuardianArticleCleaner>();
             serviceCollection.AddScoped<IArticleCleanerRunner, GuardianArticleCleanerRunner>();
@@ -93,19 +100,12 @@ namespace NewsCrawler
 
         public static IServiceProvider CreateCnnServiceProvider()
         {
-            var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-            var config = builder.Build();
-            var connectionString = config.GetConnectionString("NewsArticleDatabase");
-
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
+            AddGenericServicesToCollection(serviceCollection);
+
             serviceCollection.AddScoped<INewsArticleDeterminationService, CnnArticleDeterminationService>();
             serviceCollection.AddScoped<INewsArticleFinderService, CnnArticleFinderService>();
-            serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
-            serviceCollection.AddScoped<INewsArticleFetchService, NewsArticleFetchService>();
             serviceCollection.AddScoped<INewsArticleTitleFetcherService, CnnArticleTitleFetcherService>();
-            serviceCollection.AddScoped<IArticleUpdaterRunner, ArticleUpdaterRunner>();
             serviceCollection.AddScoped<IArticlePublishedDateFetcherService, CnnArticlePublishedDateFetcherService>();
             serviceCollection.AddScoped<IArticleCleaner, CnnArticleCleaner>();
             serviceCollection.AddScoped<IArticleCleanerRunner, CnnArticleCleanerRunner>();

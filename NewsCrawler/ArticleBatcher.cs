@@ -27,7 +27,7 @@ namespace NewsCrawler
         /// This will create and dispose contexts regularly, resulting in less memory usage.
         /// </remarks>
         /// <param name="articlePredicate">Articles to operate on.</param>
-        /// <param name="articleFunction">Function to run on individual articles.</param>
+        /// <param name="articleFunction">Function to run on individual articles. Return true to prompt an update.</param>
         /// <returns></returns>
         public async Task RunArticleBatch(Expression<Func<Article, bool>> articlePredicate, Func<Article, Task<bool>> articleFunction)
         {
@@ -49,7 +49,6 @@ namespace NewsCrawler
                     using (var scope = serviceProvider.CreateScope())
                     {
                         var splitContext = scope.ServiceProvider.GetRequiredService<NewsArticleContext>();
-                        var articleCleaner = scope.ServiceProvider.GetRequiredService<IArticleCleaner>();
                         var articles = splitContext.Articles.Where(articlePredicate).Skip(articlesProcessed).Take(SplitArticleCount);
                         var articlesUpdateList = new List<Article>();
 

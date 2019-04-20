@@ -23,5 +23,5 @@ The connection string can be changed in NewsCrawler.Persistence/appsettings.json
 
 After making changes run the following to create a migration. Run the update command to apply changes.
 ```
-dotnet ef migrations add < migration of migration > --project NewsCrawler.Persistence --startup-project NewsCrawler.WebUI
+dotnet ef migrations add < name of migration > --project NewsCrawler.Persistence --startup-project NewsCrawler.WebUI
 ```
