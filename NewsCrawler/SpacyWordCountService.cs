@@ -39,7 +39,7 @@ namespace NewsCrawler
             int step = articleCount / 100;
             int count = 0;
 
-            var articleBatch = new ArticleBatcher(serviceProvider);
+            var articleBatch = new ArticleBatcher(serviceProvider) { ConcurrentArticlePredicates = 5 };
             await articleBatch.RunArticleBatch(
                 article => !article.IsIndexPage,
                 async article =>

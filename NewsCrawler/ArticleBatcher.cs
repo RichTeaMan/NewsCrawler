@@ -1,10 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence;
 using System;
-using System.Collections.Generic;
+using System.Collections.Async;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NewsCrawler
@@ -14,6 +15,8 @@ namespace NewsCrawler
         private const int SplitArticleCount = 200;
 
         private readonly IServiceProvider serviceProvider;
+
+        public int ConcurrentArticlePredicates { get; set; } = 1;
 
         public ArticleBatcher(IServiceProvider serviceProvider)
         {
@@ -50,9 +53,9 @@ namespace NewsCrawler
                     {
                         var splitContext = scope.ServiceProvider.GetRequiredService<NewsArticleContext>();
                         var articles = splitContext.Articles.Where(articlePredicate).Skip(articlesProcessed).Take(SplitArticleCount);
-                        var articlesUpdateList = new List<Article>();
+                        var articlesUpdateList = new ConcurrentBag<Article>();
 
-                        foreach (var article in articles)
+                        await articles.ParallelForEachAsync(async article =>
                         {
                             var toUpdate = await articleFunction(article);
                             if (toUpdate)
@@ -60,12 +63,12 @@ namespace NewsCrawler
                                 articlesUpdateList.Add(article);
                             }
 
-                            articlesProcessed++;
-                            if (articlesProcessed % (articlesCount / 100) == 0)
+                            int _count = Interlocked.Increment(ref articlesProcessed);
+                            if (_count % (articlesCount / 100) == 0)
                             {
-                                Console.WriteLine($"{articlesProcessed} of {articlesCount} articles processed.");
+                                Console.WriteLine($"{_count} of {articlesCount} articles processed.");
                             }
-                        }
+                        }, ConcurrentArticlePredicates);
 
                         if (articlesUpdateList.Any())
                         {
