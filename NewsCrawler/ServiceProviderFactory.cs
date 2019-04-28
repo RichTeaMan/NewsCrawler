@@ -39,7 +39,7 @@ namespace NewsCrawler
             serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
             serviceCollection.AddScoped<INewsArticleFetchService, NewsArticleFetchService>();
             serviceCollection.AddScoped<IArticleUpdaterRunner, ArticleUpdaterRunner>();
-            serviceCollection.AddScoped<IWordCountService, WordCountService>();
+            serviceCollection.AddScoped<IWordCountService, SpacyWordCountService>();
         }
 
         public static IEnumerable<IServiceProvider> CreateServiceProviders()

@@ -10,7 +10,7 @@ namespace NewsCrawler
 {
     public class WordCountService : IWordCountService
     {
-        private readonly string[] symbolsToClean = new[] { "“", "'s", ",", ".", "!", "?", "%", "£", "$", "(", ")", "/", "\"", ":", ";" };
+        private readonly string[] symbolsToClean = new[] { "”", "”", "“", "’s", "'s", ",", ".", "!", "?", "%", "£", "$", "(", ")", "/", "\"", ":", ";" };
 
         private readonly IServiceProvider serviceProvider;
 
