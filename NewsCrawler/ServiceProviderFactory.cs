@@ -31,7 +31,7 @@ namespace NewsCrawler
         private static void AddGenericServicesToCollection(ServiceCollection serviceCollection)
         {
             var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false);
             var config = builder.Build();
             var connectionString = config.GetConnectionString("NewsArticleDatabase");
 
