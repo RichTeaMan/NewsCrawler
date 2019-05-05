@@ -11,13 +11,13 @@ namespace NewsCrawler
 {
     internal class Program
     {
-        private static void Main(string[] args)
+        private static int Main(string[] args)
         {
             Console.WriteLine("Starting News Crawler.");
-            ParseCommand(args);
+            return ParseCommand(args);
         }
 
-        private static void ParseCommand(string[] args)
+        private static int ParseCommand(string[] args)
         {
             MethodInvoker command = null;
             try
@@ -34,6 +34,7 @@ namespace NewsCrawler
                 try
                 {
                     command.Invoke();
+                    return 0;
                 }
                 catch (Exception ex)
                 {
@@ -49,8 +50,11 @@ namespace NewsCrawler
                     }
 
                     Console.WriteLine(ex.StackTrace);
+
+                    return 1;
                 }
             }
+            return -1;
         }
 
         [DefaultClCommand]
