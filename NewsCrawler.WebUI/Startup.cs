@@ -28,7 +28,8 @@ namespace NewsCrawler.WebUI
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(Configuration.GetConnectionString("NewsArticleDatabase")));
+            services.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(
+                Configuration.GetConnectionString("NewsArticleDatabase")));
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
