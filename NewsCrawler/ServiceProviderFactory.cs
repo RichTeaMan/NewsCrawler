@@ -35,7 +35,9 @@ namespace NewsCrawler
             var config = builder.Build();
             var connectionString = config.GetConnectionString("NewsArticleDatabase");
 
-            serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString), ServiceLifetime.Transient);
+            serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString,
+                sqlServerOptions => sqlServerOptions.CommandTimeout(120)),
+                ServiceLifetime.Transient);
             serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
             serviceCollection.AddScoped<INewsArticleFetchService, NewsArticleFetchService>();
             serviceCollection.AddScoped<IArticleUpdaterRunner, ArticleUpdaterRunner>();

@@ -29,8 +29,8 @@ namespace NewsCrawler.WebUI
             });
 
             services.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(
-                Configuration.GetConnectionString("NewsArticleDatabase")));
-
+                Configuration.GetConnectionString("NewsArticleDatabase"),
+                sqlServerOptions => sqlServerOptions.CommandTimeout(120)));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
