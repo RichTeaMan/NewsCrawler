@@ -23,7 +23,7 @@ pipeline {
         }
         stage('Run container') { 
             steps {
-                sh "sudo docker run -d -p 8083:80 --name ${params.containerName} ${params.imageName}:${params.imageVersion}"
+                sh "sudo docker run -d -p 8083:80 --name ${params.containerName} --restart unless-stopped ${params.imageName}:${params.imageVersion}"
             }
         }
     }
