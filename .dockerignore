@@ -1,0 +1,5 @@
+.git/
+.gitignore
+tools/
+webui-dockerfile
+**/bin/**

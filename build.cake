@@ -126,8 +126,16 @@ Task("WebUI")
     DotNetCoreExecute($"./NewsCrawler.WebUI/bin/{buildDir}/netcoreapp2.2/publish/NewsCrawler.WebUI.dll");
 });
 
-Task("ProdWebUI")
+Task("ProdWebUIBuild")
     .IsDependentOn("Build")
+    .Does(() =>
+{
+    CopyFile("./NewsCrawler.WebUI/appsettings.docker.json",
+        $"./NewsCrawler.WebUI/bin/{buildDir}/netcoreapp2.2/publish/appsettings.json");
+});
+
+Task("ProdWebUI")
+    .IsDependentOn("ProdWebUIBuild")
     .Does(() =>
 {
     var publishDirectory = $"./NewsCrawler.WebUI/bin/{buildDir}/netcoreapp2.2/publish";
@@ -136,7 +144,6 @@ Task("ProdWebUI")
         WorkingDirectory = publishDirectory
     };
 
-    CopyFile("Docker/WebUI/appsettings.json", $"./NewsCrawler.WebUI/bin/{buildDir}/netcoreapp2.2/publish/appsettings.json");
     DotNetCoreExecute($"./NewsCrawler.WebUI/bin/{buildDir}/netcoreapp2.2/publish/NewsCrawler.WebUI.dll", string.Empty, executeSettings);
 });
 

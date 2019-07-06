@@ -1,0 +1,13 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2 AS builder
+
+RUN apt-get update
+RUN apt-get install -y unzip libunwind8 gettext
+ADD . /NewsCrawler
+WORKDIR /NewsCrawler
+RUN ./cake.sh -target=ProdWebUIBuild
+
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
+
+COPY --from=builder /NewsCrawler/NewsCrawler.WebUI/bin/Release/netcoreapp2.2/publish/ /NewsCrawler/
+WORKDIR /NewsCrawler
+ENTRYPOINT dotnet NewsCrawler.WebUI.dll
