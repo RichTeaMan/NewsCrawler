@@ -10,15 +10,14 @@ namespace NewsCrawler.WebUI.Models
 
         public string CleanedContent { get; }
 
-        public WordFrequency[] Nouns { get; }
+        public WordFrequency[] Nouns { get; set; } = new WordFrequency[0];
 
-        public ArticleDetail() : base() { }
+        public bool DocumentScannerError { get; set; }
 
-        public ArticleDetail(Persistence.Article article, IEnumerable<WordFrequency> nouns) : base(article)
+        public ArticleDetail(Persistence.Article article) : base(article)
         {
             Content = article.Content;
             CleanedContent = article.CleanedContent;
-            Nouns = nouns.ToArray();
         }
     }
 }

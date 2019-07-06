@@ -55,29 +55,42 @@
     </div>
 </div>
 <hr />
-<div class="row">
-    <div class="col-md">
-        <h3>Proper nouns in the article</h3>
+@if (Model.DocumentScannerError)
+{
+    <div class="row">
+        <div class="col-md">
+            <div class="alert alert-danger" role="alert">
+                Failed to load data from document scanner.
+            </div>
+        </div>
     </div>
-</div>
-<div class="row">
-    <div class="col-md">
-        <table>
-            <thead>
-                <tr>
-                    <th>Frequency</th>
-                    <th>Noun</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var noun in Model.Nouns)
-                {
+}
+else
+{
+    <div class="row">
+        <div class="col-md">
+            <h3>Proper nouns in the article</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <table class="table">
+                <thead>
                     <tr>
-                        <td>@noun.Frequency</td>
-                        <td>@noun.Word</td>
+                        <th scope="col">Frequency</th>
+                        <th scope="col">Noun</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var noun in Model.Nouns)
+                    {
+                        <tr>
+                            <td>@noun.Frequency</td>
+                            <td>@noun.Word</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
+}

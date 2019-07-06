@@ -1,6 +1,7 @@
 ﻿using DocumentScanner;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NewsCrawler.Persistence;
 using NewsCrawler.WebUI.Models;
 using System;
@@ -12,31 +13,56 @@ namespace NewsCrawler.WebUI.Controllers
 {
     public class ArticleDetailController : Controller
     {
+        private readonly ILogger logger;
+
         private readonly NewsArticleContext newsArticleContext;
 
         private readonly DocumentScannerService documentScannerService;
 
-        public ArticleDetailController(NewsArticleContext newsArticleContext, DocumentScannerService documentScannerService)
+        public ArticleDetailController(
+            ILogger<ArticleDetailController> logger,
+            NewsArticleContext newsArticleContext,
+            DocumentScannerService documentScannerService)
         {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.newsArticleContext = newsArticleContext ?? throw new ArgumentNullException(nameof(newsArticleContext));
             this.documentScannerService = documentScannerService ?? throw new ArgumentNullException(nameof(documentScannerService));
         }
 
         public async Task<IActionResult> Index(int id)
         {
+            IActionResult result;
             var article = await newsArticleContext.Articles
                 .SingleOrDefaultAsync(a => a.Id == id);
 
-            var scanResponse = await documentScannerService.ScanDocument(article.CleanedContent);
-            var nouns = scanResponse.DocumentTokens
-                .Where(t => t.IsProperNoun())
-                .GroupBy(t => t.Text)
-                .Select(g => new WordFrequency(g.Count(), g.Key))
-                .OrderByDescending(wf => wf.Frequency);
+            if (article == null)
+            {
+                result = NotFound();
+            }
+            else
+            {
+                var articleDetail = new ArticleDetail(article);
 
-            var articleDetail = new ArticleDetail(article, nouns);
+                try
+                {
+                    var scanResponse = await documentScannerService.ScanDocument(article.CleanedContent);
+                    var nouns = scanResponse.DocumentTokens
+                        .Where(t => t.IsProperNoun())
+                        .GroupBy(t => t.Text)
+                        .Select(g => new WordFrequency(g.Count(), g.Key))
+                        .OrderByDescending(wf => wf.Frequency)
+                        .ToArray();
 
-            return View("Index", articleDetail);
+                    articleDetail.Nouns = nouns;
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, $"Failed document scanning for article {id}.");
+                    articleDetail.DocumentScannerError = true;
+                }
+                result = View("Index", articleDetail);
+            }
+            return result;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
