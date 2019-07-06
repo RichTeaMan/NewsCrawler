@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DocumentScanner.Integration\DocumentScanner.Integration.csproj" />
     <ProjectReference Include="..\NewsCrawler.Persistence\NewsCrawler.Persistence.csproj" />
   </ItemGroup>
 

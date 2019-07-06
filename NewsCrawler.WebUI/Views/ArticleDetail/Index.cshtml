@@ -54,3 +54,30 @@
         <tt style="white-space: pre-line">@Model.CleanedContent</tt>
     </div>
 </div>
+<hr />
+<div class="row">
+    <div class="col-md">
+        <h3>Proper nouns in the article</h3>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md">
+        <table>
+            <thead>
+                <tr>
+                    <th>Frequency</th>
+                    <th>Noun</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var noun in Model.Nouns)
+                {
+                    <tr>
+                        <td>@noun.Frequency</td>
+                        <td>@noun.Word</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

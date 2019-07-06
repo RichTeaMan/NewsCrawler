@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using DocumentScanner;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,7 @@ namespace NewsCrawler.WebUI
             services.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(
                 Configuration.GetConnectionString("NewsArticleDatabase"),
                 sqlServerOptions => sqlServerOptions.CommandTimeout(120)));
+            services.AddTransient<DocumentScannerService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
