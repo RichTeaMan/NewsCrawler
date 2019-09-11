@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using NewsCrawler.Exceptions;
 using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence;
 using System;
@@ -77,6 +78,10 @@ namespace NewsCrawler
                 catch (DbUpdateException)
                 {
                     throw;
+                }
+                catch (UrlTooLongException ex)
+                {
+                    Console.WriteLine(ex.Message);
                 }
                 catch (Exception ex)
                 {

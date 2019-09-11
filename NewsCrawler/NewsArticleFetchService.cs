@@ -1,4 +1,5 @@
-﻿using NewsCrawler.Interfaces;
+﻿using NewsCrawler.Exceptions;
+using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence;
 using System;
 using System.Net.Http;
@@ -28,6 +29,10 @@ namespace NewsCrawler
 
         public async Task<Article> FetchArticleAsync(string url)
         {
+            if (url.Length >= Constants.MAX_URL_LENGTH)
+            {
+                throw new UrlTooLongException(url);
+            }
             var response = await httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
