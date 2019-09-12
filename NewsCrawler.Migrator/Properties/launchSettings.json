@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "NewsCrawler": {
+      "commandName": "Project"
+    }
+  }
+}
