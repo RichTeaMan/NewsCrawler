@@ -19,5 +19,11 @@ namespace NewsCrawler.WebUI.Models
             Content = article.Content;
             CleanedContent = article.CleanedContent;
         }
+
+        public ArticleDetail(Persistence.Postgres.Article article) : base(article)
+        {
+            Content = article.Content;
+            CleanedContent = article.CleanedContent;
+        }
     }
 }

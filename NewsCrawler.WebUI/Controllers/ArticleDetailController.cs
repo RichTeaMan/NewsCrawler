@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NewsCrawler.Persistence;
+using NewsCrawler.Persistence.Postgres;
 using NewsCrawler.WebUI.Models;
 using System;
 using System.Diagnostics;
@@ -15,13 +16,13 @@ namespace NewsCrawler.WebUI.Controllers
     {
         private readonly ILogger logger;
 
-        private readonly NewsArticleContext newsArticleContext;
+        private readonly PostgresNewsArticleContext newsArticleContext;
 
         private readonly DocumentScannerService documentScannerService;
 
         public ArticleDetailController(
             ILogger<ArticleDetailController> logger,
-            NewsArticleContext newsArticleContext,
+            PostgresNewsArticleContext newsArticleContext,
             DocumentScannerService documentScannerService)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));

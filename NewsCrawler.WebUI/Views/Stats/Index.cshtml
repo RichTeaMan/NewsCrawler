@@ -1,0 +1,36 @@
+﻿@model NewsCrawler.WebUI.Models.Stats
+
+<h3>Stats</h3>
+
+<div class="row">
+    <div class="col-md">
+        Postgres Count
+    </div>
+    <div class="col-md">
+        @Model.PostgresArticles
+    </div>
+</div>
+<div class="row">
+    <div class="col-md">
+        Latest Postgres Article
+    </div>
+    <div class="col-md">
+        @Model.LatestPostgresArticle
+    </div>
+</div>
+<div class="row">
+    <div class="col-md">
+        SQL Server Count
+    </div>
+    <div class="col-md">
+        @Model.SqlServerArticles
+    </div>
+</div>
+<div class="row">
+    <div class="col-md">
+        Latest SQL Server Article
+    </div>
+    <div class="col-md">
+        @Model.LatestSqlServerArticle
+    </div>
+</div>

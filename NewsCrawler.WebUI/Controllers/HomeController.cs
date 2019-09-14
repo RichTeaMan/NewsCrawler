@@ -5,17 +5,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NewsCrawler.Persistence;
+using NewsCrawler.Persistence.Postgres;
 using NewsCrawler.WebUI.Models;
 
 namespace NewsCrawler.WebUI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly NewsArticleContext newsArticleContext;
+        private readonly PostgresNewsArticleContext newsArticleContext;
 
         private const int ArticlesPerPage = 100;
 
-        public HomeController(NewsArticleContext newsArticleContext)
+        public HomeController(PostgresNewsArticleContext newsArticleContext)
         {
             this.newsArticleContext = newsArticleContext ?? throw new ArgumentNullException(nameof(newsArticleContext));
         }
