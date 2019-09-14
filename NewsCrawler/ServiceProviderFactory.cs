@@ -7,6 +7,7 @@ using NewsCrawler.DailyMail;
 using NewsCrawler.Guardian;
 using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence;
+using NewsCrawler.Persistence.Postgres;
 using System;
 using System.Collections.Generic;
 
@@ -33,11 +34,17 @@ namespace NewsCrawler
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false);
             var config = builder.Build();
-            var connectionString = config.GetConnectionString("NewsArticleDatabase");
 
+            var connectionString = config.GetConnectionString("NewsArticleDatabase");
             serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString,
                 sqlServerOptions => sqlServerOptions.CommandTimeout(120)),
                 ServiceLifetime.Transient);
+
+            var postgresConnectionString = config.GetConnectionString("PostgresNewsArticleDatabase");
+            serviceCollection.AddDbContext<PostgresNewsArticleContext>(options => options.UseNpgsql(connectionString,
+                pgOptions => pgOptions.CommandTimeout(120)),
+                ServiceLifetime.Transient);
+
             serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
             serviceCollection.AddScoped<INewsArticleFetchService, NewsArticleFetchService>();
             serviceCollection.AddScoped<IArticleUpdaterRunner, ArticleUpdaterRunner>();

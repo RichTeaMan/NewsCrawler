@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NewsCrawler.Persistence.Postgres\NewsCrawler.Persistence.Postgres.csproj" />
     <ProjectReference Include="..\NewsCrawler.Persistence\NewsCrawler.Persistence.csproj" />
   </ItemGroup>
 

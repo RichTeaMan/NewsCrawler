@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NewsCrawler.Exceptions;
 using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence;
+using NewsCrawler.Persistence.Postgres;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +49,7 @@ namespace NewsCrawler
 
             Console.WriteLine($"Found {articleLinks.Count()} articles.");
 
-            List<Article> articles = new List<Article>();
+            var articles = new List<Persistence.Article>();
             int fetchedArticles = 0;
             foreach (var articleLink in articleLinks)
             {
@@ -67,11 +68,32 @@ namespace NewsCrawler
                     {
                         using (var scope = serviceProvider.CreateScope())
                         {
-                            Console.WriteLine("Saving articles...");
+                            Console.WriteLine("Saving articles to Postgres...");
+                            var postgresArticles = articles
+                                .Select(a => new Persistence.Postgres.Article
+                                {
+                                    CleanedContent = a.CleanedContent,
+                                    CleanedContentLength = a.CleanedContentLength,
+                                    Content = a.Content,
+                                    ContentLength = a.ContentLength,
+                                    IsIndexPage = a.IsIndexPage,
+                                    NewsSource = a.NewsSource,
+                                    PublishedDate = a.PublishedDate,
+                                    RecordedDate = a.RecordedDate,
+                                    Title = a.Title,
+                                    Url = a.Url
+                                })
+                                .ToArray();
+                            var scopedPostgresNewsArticleContext = scope.ServiceProvider.GetRequiredService<PostgresNewsArticleContext>();
+                            await scopedPostgresNewsArticleContext.Articles.AddRangeAsync(postgresArticles);
+                            await scopedPostgresNewsArticleContext.SaveChangesAsync();
+
+                            Console.WriteLine("Saving articles to SQL Server...");
                             var scopedNewsArticleContext = scope.ServiceProvider.GetRequiredService<NewsArticleContext>();
                             await scopedNewsArticleContext.Articles.AddRangeAsync(articles);
                             await scopedNewsArticleContext.SaveChangesAsync();
-                            articles = new List<Article>();
+
+                            articles = new List<Persistence.Article>();
                         }
                     }
                 }

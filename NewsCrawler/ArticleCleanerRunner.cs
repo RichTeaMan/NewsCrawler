@@ -24,7 +24,7 @@ namespace NewsCrawler
         public async Task CleanArticles()
         {
             Console.WriteLine($"Cleaning articles containing '{ArticleUrlContains}'.");
-            var articleBatcher = new ArticleBatcher(serviceProvider);
+            var articleBatcher = new Persistence.ArticleBatcher(serviceProvider);
             Directory.CreateDirectory(CleanedArticleDirectory);
 
             await articleBatcher.RunArticleBatch(
