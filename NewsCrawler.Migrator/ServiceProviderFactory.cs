@@ -36,7 +36,7 @@ namespace NewsCrawler
                 sqlServerOptions => sqlServerOptions.CommandTimeout(120 * 2)),
                 ServiceLifetime.Transient);
             serviceCollection.AddDbContext<PostgresNewsArticleContext>(options => options.UseNpgsql(postgresConnectionString,
-                contextOptions => contextOptions.CommandTimeout(120)),
+                contextOptions => contextOptions.CommandTimeout(120 * 2)),
                 ServiceLifetime.Transient);
             serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
         }

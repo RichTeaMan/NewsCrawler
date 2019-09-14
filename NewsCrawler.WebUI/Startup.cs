@@ -35,7 +35,7 @@ namespace NewsCrawler.WebUI
                 sqlServerOptions => sqlServerOptions.CommandTimeout(120)));
             services.AddDbContext<PostgresNewsArticleContext>(options => options.UseNpgsql(
                 Configuration.GetConnectionString("PostgresNewsArticleDatabase"),
-                contextOptions => contextOptions.CommandTimeout(120)),
+                contextOptions => contextOptions.CommandTimeout(120 * 2)),
                 ServiceLifetime.Transient);
             services.AddTransient<DocumentScannerService>();
 

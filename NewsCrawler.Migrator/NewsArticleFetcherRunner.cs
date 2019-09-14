@@ -2,6 +2,7 @@
 using NewsCrawler.Interfaces;
 using System;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace NewsCrawler
 {
@@ -10,7 +11,7 @@ namespace NewsCrawler
 
         private readonly IServiceProvider serviceProvider;
 
-        private readonly int batchSize = 200;
+        private readonly int batchSize = 100;
 
         public NewsArticleFetcherRunner(IServiceProvider serviceProvider)
         {
@@ -21,12 +22,20 @@ namespace NewsCrawler
         {
             Console.WriteLine("Starting migration.");
 
+            DateTimeOffset latestDate;
+            using (var dataPostGresContext = serviceProvider.GetRequiredService<NewsCrawler.Persistence.Postgres.PostgresNewsArticleContext>())
+            {
+                latestDate = dataPostGresContext.Articles.Max(a => a.RecordedDate);
+            }
+
+            Console.WriteLine($"Getting articles recorded after {latestDate}");
+
             int batchedArticles = 0;
             int totalArticles = 0;
             var postGresContext = serviceProvider.GetRequiredService<NewsCrawler.Persistence.Postgres.PostgresNewsArticleContext>();
             var sqlBatcher = new NewsCrawler.Persistence.ArticleBatcher(serviceProvider);
             await sqlBatcher.RunArticleBatch(
-                sourceArticle => sourceArticle.RecordedDate < new DateTimeOffset(2019, 4, 1, 0, 0, 0, TimeSpan.Zero),
+                sourceArticle => sourceArticle.RecordedDate > latestDate,
                 async sourceArticle =>
             {
                 NewsCrawler.Persistence.Postgres.Article pgArticle = new Persistence.Postgres.Article()
@@ -48,6 +57,7 @@ namespace NewsCrawler
                 if (batchedArticles > batchSize)
                 {
                     batchedArticles = 0;
+                    Console.WriteLine($"Saving...");
                     await postGresContext.SaveChangesAsync();
                     postGresContext.Dispose();
                     postGresContext = serviceProvider.GetRequiredService<NewsCrawler.Persistence.Postgres.PostgresNewsArticleContext>();
