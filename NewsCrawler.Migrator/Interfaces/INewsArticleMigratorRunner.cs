@@ -2,8 +2,8 @@
 
 namespace NewsCrawler.Interfaces
 {
-    public interface INewsArticleFetcherRunner
+    public interface INewsArticleMigratorRunner
     {
-        Task RunFetcher();
+        Task RunMigrator();
     }
 }

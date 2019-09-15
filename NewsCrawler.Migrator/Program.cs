@@ -63,8 +63,8 @@ namespace NewsCrawler
             var serviceProvider = ServiceProviderFactory.CreateGenericServiceProvider();
             using (var scope = serviceProvider.CreateScope())
             {
-                var newsArticleFetcherRunner = scope.ServiceProvider.GetRequiredService<INewsArticleFetcherRunner>();
-                await newsArticleFetcherRunner.RunFetcher();
+                var newsArticleFetcherRunner = scope.ServiceProvider.GetRequiredService<INewsArticleMigratorRunner>();
+                await newsArticleFetcherRunner.RunMigrator();
             }
         }
 
