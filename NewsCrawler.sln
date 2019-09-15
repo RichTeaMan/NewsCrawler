@@ -11,8 +11,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		build.cake = build.cake
 		cake.sh = cake.sh
+		docker-run-news-crawler-build-image.jdp = docker-run-news-crawler-build-image.jdp
+		docker-run-news-crawler-web-ui.jdp = docker-run-news-crawler-web-ui.jdp
+		docker-run-news-crawler.jdp = docker-run-news-crawler.jdp
+		dockerfile = dockerfile
 		dotnet-install.sh = dotnet-install.sh
 		readme.md = readme.md
+		webui-dockerfile = webui-dockerfile
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsCrawler.Tests", "NewsCrawler.Tests\NewsCrawler.Tests.csproj", "{16A79867-3BEE-4321-BAD0-895184B495AA}"
@@ -24,13 +29,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Crawler", "Crawler", "{6EEA079F-2F36-4A2D-B778-CF1B309B3B72}"
 	ProjectSection(SolutionItems) = preProject
 		Docker\Crawler\appsettings.json = Docker\Crawler\appsettings.json
-		Docker\Crawler\dockerfile = Docker\Crawler\dockerfile
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ci", "ci", "{68BE8E99-DEF2-49CB-8535-752BDE215947}"
-	ProjectSection(SolutionItems) = preProject
-		ci\docker-run-news-crawler-web-ui.jdp = ci\docker-run-news-crawler-web-ui.jdp
-		ci\docker-run-news-crawler.jdp = ci\docker-run-news-crawler.jdp
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentScanner.Integration", "DocumentScanner.Integration\DocumentScanner.Integration.csproj", "{8B15EE23-9221-4A83-A460-952D37E58B91}"

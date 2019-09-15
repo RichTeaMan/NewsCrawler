@@ -1,0 +1,18 @@
+pipeline {
+    agent { label "linux" }
+    
+    parameters {
+        string(name: 'imageName', description: 'Name of the Docker image once it is built.', defaultValue: 'news-crawler')
+        string(name: 'imageVersion', description: 'Version of the Docker image once it is built.', defaultValue: 'latest')
+    }
+    
+    stages {
+        stage('Build image') { 
+            steps {
+                dir("Docker/Crawler") {
+                    sh "sudo docker build -t ${params.imageName}:${params.imageVersion} ."
+                }
+            }
+        }
+    }
+}
