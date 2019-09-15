@@ -66,35 +66,8 @@ namespace NewsCrawler
 
                     if (articles.Count >= batchSize)
                     {
-                        using (var scope = serviceProvider.CreateScope())
-                        {
-                            Console.WriteLine("Saving articles to Postgres...");
-                            var postgresArticles = articles
-                                .Select(a => new Persistence.Postgres.Article
-                                {
-                                    CleanedContent = a.CleanedContent,
-                                    CleanedContentLength = a.CleanedContentLength,
-                                    Content = a.Content,
-                                    ContentLength = a.ContentLength,
-                                    IsIndexPage = a.IsIndexPage,
-                                    NewsSource = a.NewsSource,
-                                    PublishedDate = a.PublishedDate,
-                                    RecordedDate = a.RecordedDate,
-                                    Title = a.Title,
-                                    Url = a.Url
-                                })
-                                .ToArray();
-                            var scopedPostgresNewsArticleContext = scope.ServiceProvider.GetRequiredService<PostgresNewsArticleContext>();
-                            await scopedPostgresNewsArticleContext.Articles.AddRangeAsync(postgresArticles);
-                            await scopedPostgresNewsArticleContext.SaveChangesAsync();
-
-                            Console.WriteLine("Saving articles to SQL Server...");
-                            var scopedNewsArticleContext = scope.ServiceProvider.GetRequiredService<NewsArticleContext>();
-                            await scopedNewsArticleContext.Articles.AddRangeAsync(articles);
-                            await scopedNewsArticleContext.SaveChangesAsync();
-
-                            articles = new List<Persistence.Article>();
-                        }
+                        await SaveArticles(articles);
+                        articles = new List<Persistence.Article>();
                     }
                 }
                 catch (DbUpdateException)
@@ -115,17 +88,47 @@ namespace NewsCrawler
             if (articles.Any())
             {
                 Console.WriteLine("Saving articles...");
-                using (var scope = serviceProvider.CreateScope())
-                {
-                    Console.WriteLine("Saving articles...");
-                    var scopedNewsArticleContext = scope.ServiceProvider.GetRequiredService<NewsArticleContext>();
-                    await scopedNewsArticleContext.Articles.AddRangeAsync(articles);
-                    await scopedNewsArticleContext.SaveChangesAsync();
-                }
+                await SaveArticles(articles);
             }
 
             Console.WriteLine($"Complete: {fetchedArticles} articles loaded.");
             Console.WriteLine("Crawling complete!");
+        }
+
+        private async Task SaveArticles(List<Persistence.Article> articles)
+        {
+            using (var scope = serviceProvider.CreateScope())
+            {
+                Console.WriteLine("Saving articles to Postgres...");
+                var postgresArticles = articles
+                    .Select(a => new Persistence.Postgres.Article
+                    {
+                        CleanedContent = a.CleanedContent,
+                        CleanedContentLength = a.CleanedContentLength,
+                        Content = a.Content,
+                        ContentLength = a.ContentLength,
+                        IsIndexPage = a.IsIndexPage,
+                        NewsSource = a.NewsSource,
+                        PublishedDate = a.PublishedDate,
+                        RecordedDate = a.RecordedDate,
+                        Title = a.Title,
+                        Url = a.Url
+                    })
+                    .ToArray();
+                using (var scopedPostgresNewsArticleContext = scope.ServiceProvider.GetRequiredService<PostgresNewsArticleContext>())
+                {
+                    await scopedPostgresNewsArticleContext.Articles.AddRangeAsync(postgresArticles);
+                    await scopedPostgresNewsArticleContext.SaveChangesAsync();
+                }
+
+                Console.WriteLine("Saving articles to SQL Server...");
+                using (var scopedNewsArticleContext = scope.ServiceProvider.GetRequiredService<NewsArticleContext>())
+                {
+                    await scopedNewsArticleContext.Articles.AddRangeAsync(articles);
+                    await scopedNewsArticleContext.SaveChangesAsync();
+                }
+
+            }
         }
     }
 }
