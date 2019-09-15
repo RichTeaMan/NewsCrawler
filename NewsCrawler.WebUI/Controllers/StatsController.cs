@@ -16,30 +16,23 @@ namespace NewsCrawler.WebUI.Controllers
     {
         private readonly ILogger logger;
 
-        private readonly PostgresNewsArticleContext newsArticleContext;
-
         private readonly PostgresNewsArticleContext postgresNewsArticleContext;
 
         public StatsController(ILogger<StatsController> logger, PostgresNewsArticleContext newsArticleContext, PostgresNewsArticleContext postgresNewsArticleContext)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this.newsArticleContext = newsArticleContext ?? throw new ArgumentNullException(nameof(newsArticleContext));
             this.postgresNewsArticleContext = postgresNewsArticleContext ?? throw new ArgumentNullException(nameof(postgresNewsArticleContext));
         }
 
         public async Task<IActionResult> Index()
         {
             int postgresCount = await postgresNewsArticleContext.Articles.CountAsync();
-            int sqlCount = await newsArticleContext.Articles.CountAsync();
             var latestPostgres = await postgresNewsArticleContext.Articles.MaxAsync(a => a.RecordedDate);
-            var latestSql = await newsArticleContext.Articles.MaxAsync(a => a.RecordedDate);
 
             var stats = new Stats
             {
                 PostgresArticles = postgresCount,
-                SqlServerArticles = sqlCount,
                 LatestPostgresArticle = latestPostgres,
-                LatestSqlServerArticle = latestSql
             };
             return View("Index", stats);
         }
