@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace NewsCrawler.WebUI.Models
+﻿namespace NewsCrawler.WebUI.Models
 {
     public class ArticleDetail : Article
     {
@@ -13,12 +10,6 @@ namespace NewsCrawler.WebUI.Models
         public WordFrequency[] Nouns { get; set; } = new WordFrequency[0];
 
         public bool DocumentScannerError { get; set; }
-
-        public ArticleDetail(Persistence.Article article) : base(article)
-        {
-            Content = article.Content;
-            CleanedContent = article.CleanedContent;
-        }
 
         public ArticleDetail(Persistence.Postgres.Article article) : base(article)
         {

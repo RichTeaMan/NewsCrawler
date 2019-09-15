@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NewsCrawler.Persistence;
 using NewsCrawler.Persistence.Postgres;
 
 namespace NewsCrawler.WebUI
@@ -30,9 +29,6 @@ namespace NewsCrawler.WebUI
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(
-                Configuration.GetConnectionString("NewsArticleDatabase"),
-                sqlServerOptions => sqlServerOptions.CommandTimeout(120)));
             services.AddDbContext<PostgresNewsArticleContext>(options => options.UseNpgsql(
                 Configuration.GetConnectionString("PostgresNewsArticleDatabase"),
                 contextOptions => contextOptions.CommandTimeout(120 * 2)),

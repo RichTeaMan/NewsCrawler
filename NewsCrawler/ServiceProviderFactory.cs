@@ -35,13 +35,8 @@ namespace NewsCrawler
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false);
             var config = builder.Build();
 
-            var connectionString = config.GetConnectionString("NewsArticleDatabase");
-            serviceCollection.AddDbContext<NewsArticleContext>(options => options.UseSqlServer(connectionString,
-                sqlServerOptions => sqlServerOptions.CommandTimeout(120)),
-                ServiceLifetime.Transient);
-
             var postgresConnectionString = config.GetConnectionString("PostgresNewsArticleDatabase");
-            serviceCollection.AddDbContext<PostgresNewsArticleContext>(options => options.UseNpgsql(connectionString,
+            serviceCollection.AddDbContext<PostgresNewsArticleContext>(options => options.UseNpgsql(postgresConnectionString,
                 pgOptions => pgOptions.CommandTimeout(120)),
                 ServiceLifetime.Transient);
 

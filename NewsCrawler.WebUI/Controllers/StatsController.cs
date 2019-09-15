@@ -16,11 +16,11 @@ namespace NewsCrawler.WebUI.Controllers
     {
         private readonly ILogger logger;
 
-        private readonly NewsArticleContext newsArticleContext;
+        private readonly PostgresNewsArticleContext newsArticleContext;
 
         private readonly PostgresNewsArticleContext postgresNewsArticleContext;
 
-        public StatsController(ILogger<StatsController> logger, NewsArticleContext newsArticleContext, PostgresNewsArticleContext postgresNewsArticleContext)
+        public StatsController(ILogger<StatsController> logger, PostgresNewsArticleContext newsArticleContext, PostgresNewsArticleContext postgresNewsArticleContext)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.newsArticleContext = newsArticleContext ?? throw new ArgumentNullException(nameof(newsArticleContext));

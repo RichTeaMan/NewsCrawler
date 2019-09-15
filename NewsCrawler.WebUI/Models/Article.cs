@@ -27,19 +27,6 @@ namespace NewsCrawler.WebUI.Models
 
         public Article() { }
 
-        public Article(Persistence.Article article)
-        {
-            Id = article.Id;
-            Title = article.Title;
-            NewsSource = article.NewsSource;
-            IsIndexPage = article.IsIndexPage;
-            RecordedDate = article.RecordedDate;
-            PublishedDate = article.PublishedDate;
-            Link = article.Url;
-            ContentLength = article.ContentLength;
-            CleanedContentLength = article.CleanedContentLength;
-        }
-
         public Article(Persistence.Postgres.Article article)
         {
             Id = article.Id;

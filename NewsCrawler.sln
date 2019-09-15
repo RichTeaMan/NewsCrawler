@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29230.47
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsCrawler", "NewsCrawler\NewsCrawler.csproj", "{2AA6B961-5E10-41B6-AD9E-BBD1762C00BF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsCrawler.Persistence", "NewsCrawler.Persistence\NewsCrawler.Persistence.csproj", "{1EAAB314-4EA8-4EDC-8689-AD4EDB20BCCC}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D6A35BF2-B950-4783-AA9B-5F585C62B33C}"
 	ProjectSection(SolutionItems) = preProject
 		build.cake = build.cake
@@ -35,8 +33,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DocumentScanner.Integration
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsCrawler.Persistence.Postgres", "NewsCrawler.Persistence.Postgres\NewsCrawler.Persistence.Postgres.csproj", "{C0A78409-A544-446D-BD42-426B37B81758}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsCrawler.Migrator", "NewsCrawler.Migrator\NewsCrawler.Migrator.csproj", "{D3983BD3-BAD9-4D28-AF4E-0A01D6902920}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,10 +43,6 @@ Global
 		{2AA6B961-5E10-41B6-AD9E-BBD1762C00BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AA6B961-5E10-41B6-AD9E-BBD1762C00BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AA6B961-5E10-41B6-AD9E-BBD1762C00BF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1EAAB314-4EA8-4EDC-8689-AD4EDB20BCCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1EAAB314-4EA8-4EDC-8689-AD4EDB20BCCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1EAAB314-4EA8-4EDC-8689-AD4EDB20BCCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1EAAB314-4EA8-4EDC-8689-AD4EDB20BCCC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{16A79867-3BEE-4321-BAD0-895184B495AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{16A79867-3BEE-4321-BAD0-895184B495AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16A79867-3BEE-4321-BAD0-895184B495AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -67,10 +59,6 @@ Global
 		{C0A78409-A544-446D-BD42-426B37B81758}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0A78409-A544-446D-BD42-426B37B81758}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0A78409-A544-446D-BD42-426B37B81758}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D3983BD3-BAD9-4D28-AF4E-0A01D6902920}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D3983BD3-BAD9-4D28-AF4E-0A01D6902920}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D3983BD3-BAD9-4D28-AF4E-0A01D6902920}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D3983BD3-BAD9-4D28-AF4E-0A01D6902920}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using NewsCrawler.Persistence;
+using NewsCrawler.Persistence.Postgres;
 
 namespace NewsCrawler.Interfaces
 {

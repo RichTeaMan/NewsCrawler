@@ -1,7 +1,5 @@
-﻿using NewsCrawler.Persistence;
+﻿using NewsCrawler.Persistence.Postgres;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace NewsCrawler.Exceptions
 {

@@ -1,4 +1,5 @@
 ﻿using NewsCrawler.Interfaces;
+using NewsCrawler.Persistence.Postgres;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace NewsCrawler
         public async Task CleanArticles()
         {
             Console.WriteLine($"Cleaning articles containing '{ArticleUrlContains}'.");
-            var articleBatcher = new Persistence.ArticleBatcher(serviceProvider);
+            var articleBatcher = new ArticleBatcher(serviceProvider);
             Directory.CreateDirectory(CleanedArticleDirectory);
 
             await articleBatcher.RunArticleBatch(

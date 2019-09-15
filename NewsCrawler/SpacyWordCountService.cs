@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NewsCrawler.Interfaces;
-using NewsCrawler.Persistence;
+using NewsCrawler.Persistence.Postgres;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -31,7 +31,7 @@ namespace NewsCrawler
             var wordsByNewsSource = new Dictionary<string, Dictionary<string, int>>();
 
             int articleCount = 0;
-            using (var context = serviceProvider.GetRequiredService<NewsArticleContext>())
+            using (var context = serviceProvider.GetRequiredService<PostgresNewsArticleContext>())
             {
                 articleCount = context.Articles.Count();
             }
@@ -100,7 +100,7 @@ namespace NewsCrawler
             Console.WriteLine($"Completed {count} of {articleCount} articles.");
 
             Console.WriteLine("Updating word counts...");
-            using (var context = serviceProvider.GetRequiredService<NewsArticleContext>())
+            using (var context = serviceProvider.GetRequiredService<PostgresNewsArticleContext>())
             {
                 context.WordCount.RemoveRange(context.WordCount.ToArray());
                 await context.SaveChangesAsync();
