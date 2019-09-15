@@ -8,6 +8,6 @@ RUN ./cake.sh -target=ProdBuild
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
 
-COPY --from=builder /NewsCrawler/NewsCrawler/bin/Release/netcoreapp2.2 /NewsCrawler/
+COPY --from=builder /NewsCrawler/NewsCrawler/bin/Release/netcoreapp2.2/ /NewsCrawler/
 WORKDIR /NewsCrawler
 ENTRYPOINT dotnet NewsCrawler.dll
