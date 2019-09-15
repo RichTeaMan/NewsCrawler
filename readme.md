@@ -2,13 +2,14 @@
 
 ## Database Setup
 
-The database layer is built upon [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/).
+The database layer is built upon [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) with [Npgsql](http://www.npgsql.org/efcore/)
+for PostgreSQL integration.
 
 ### Creating a Database Server
 
-This project uses SQL Server. You can use set this up locally or use a Docker container:
-```
-# docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=Password1*' -p 1433:1433 -v mssql:/var/opt/mssql -d --name sql-server mcr.microsoft.com/mssql/server:2017-latest
+This project uses [PostgreSQL](https://www.postgresql.org/). You can use set this up locally or use a Docker container:
+```bash
+# docker run --name postgres -p 5432:5432 -v /postgres:/var/lib/postgresql/data -e POSTGRES_PASSWORD=Password1* -d postgres
 ```
 
 ### Deployment
