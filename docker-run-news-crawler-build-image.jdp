@@ -9,9 +9,7 @@ pipeline {
     stages {
         stage('Build image') { 
             steps {
-                dir("Docker/Crawler") {
-                    sh "sudo docker build -t ${params.imageName}:${params.imageVersion} ."
-                }
+                sh "sudo docker build -t ${params.imageName}:${params.imageVersion} ."
             }
         }
     }
