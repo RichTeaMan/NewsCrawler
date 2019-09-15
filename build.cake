@@ -49,6 +49,7 @@ Task("Build")
         Configuration = configuration
     };
     DotNetCorePublish("./NewsCrawler.WebUI/NewsCrawler.WebUI.csproj", publishSettings);
+    DotNetCorePublish("./NewsCrawler/NewsCrawler.csproj", publishSettings);
 });
 
 Task("Test")
@@ -115,7 +116,7 @@ Task("ProdBuild")
     .IsDependentOn("Build")
     .Does(() =>
 {
-    CopyFile("Docker/Crawler/appsettings.json", $"./NewsCrawler/bin/{buildDir}/netcoreapp2.2/appsettings.json");
+    CopyFile("Docker/Crawler/appsettings.json", $"./NewsCrawler/bin/{buildDir}/netcoreapp2.2/publish/appsettings.json");
     CopyFile("./NewsCrawler.WebUI/appsettings.docker.json",
         $"./NewsCrawler.WebUI/bin/{buildDir}/netcoreapp2.2/publish/appsettings.json");
 });
@@ -123,8 +124,8 @@ Task("ProdRun")
     .IsDependentOn("Build")
     .Does(() =>
 {
-    CopyFile("Docker/Crawler/appsettings.json", $"./NewsCrawler/bin/{buildDir}/netcoreapp2.2/appsettings.json");
-    DotNetCoreExecute($"./NewsCrawler/bin/{buildDir}/netcoreapp2.2/NewsCrawler.dll");
+    CopyFile("Docker/Crawler/appsettings.json", $"./NewsCrawler/bin/{buildDir}/netcoreapp2.2/publish/appsettings.json");
+    DotNetCoreExecute($"./NewsCrawler/bin/{buildDir}/netcoreapp2.2/publish/NewsCrawler.dll");
 });
 
 Task("WebUI")
