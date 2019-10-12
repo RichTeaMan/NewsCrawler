@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using NewsCrawler.Persistence;
 using NewsCrawler.Persistence.Postgres;
 using NewsCrawler.WebUI.Models;
@@ -12,17 +14,21 @@ namespace NewsCrawler.WebUI.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly ILogger logger;
+
         private readonly PostgresNewsArticleContext newsArticleContext;
 
         private const int ArticlesPerPage = 100;
 
-        public HomeController(PostgresNewsArticleContext newsArticleContext)
+        public HomeController(ILogger<HomeController> logger, PostgresNewsArticleContext newsArticleContext)
         {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.newsArticleContext = newsArticleContext ?? throw new ArgumentNullException(nameof(newsArticleContext));
         }
 
         public IActionResult Index(int page = 1, string searchTerm = null, string[] newsSources = null)
         {
+            logger.LogInformation("Index requested.");
             var resultNewsSources = newsArticleContext.Articles.Select(a => a.NewsSource).Distinct().ToArray();
 
             var articles = newsArticleContext.Articles
@@ -30,7 +36,8 @@ namespace NewsCrawler.WebUI.Controllers
                 .Where(a => string.IsNullOrEmpty(searchTerm) || a.Title.Contains(searchTerm))
                 .Where(a => newsSources == null || !newsSources.Any() || newsSources.Contains(a.NewsSource))
                 .OrderByDescending(a => a.RecordedDate)
-                .Select(a => new Models.Article {
+                .Select(a => new Models.Article
+                {
                     Id = a.Id,
                     Title = a.Title,
                     Link = a.Url,
@@ -69,6 +76,16 @@ namespace NewsCrawler.WebUI.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
+            var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+            if (exceptionHandlerPathFeature?.Error != null)
+            {
+                logger.LogError(exceptionHandlerPathFeature.Error, "Exception occured.");
+            }
+            else
+            {
+                logger.LogError("Error occured. Exception is null.");
+            }
+
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
