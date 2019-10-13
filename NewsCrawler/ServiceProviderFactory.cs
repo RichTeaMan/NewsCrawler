@@ -6,6 +6,7 @@ using NewsCrawler.Cnn;
 using NewsCrawler.DailyMail;
 using NewsCrawler.Guardian;
 using NewsCrawler.Interfaces;
+using NewsCrawler.NewYorkTimes;
 using NewsCrawler.Persistence;
 using NewsCrawler.Persistence.Postgres;
 using System;
@@ -52,6 +53,7 @@ namespace NewsCrawler
             yield return CreateDailyMailServiceProvider();
             yield return CreateGuardianServiceProvider();
             yield return CreateCnnServiceProvider();
+            yield return CreateNewYorkTimesServiceProvider();
         }
 
         public static IServiceProvider CreateBbcServiceProvider()
@@ -113,6 +115,22 @@ namespace NewsCrawler
             serviceCollection.AddScoped<IArticlePublishedDateFetcherService, CnnArticlePublishedDateFetcherService>();
             serviceCollection.AddScoped<IArticleCleaner, CnnArticleCleaner>();
             serviceCollection.AddScoped<IArticleCleanerRunner, CnnArticleCleanerRunner>();
+
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            return serviceProvider;
+        }
+
+        public static IServiceProvider CreateNewYorkTimesServiceProvider()
+        {
+            var serviceCollection = new ServiceCollection();
+            AddGenericServicesToCollection(serviceCollection);
+
+            serviceCollection.AddScoped<INewsArticleDeterminationService, NewYorkTimesArticleDeterminationService>();
+            serviceCollection.AddScoped<INewsArticleFinderService, NewYorkTimesArticleFinderService>();
+            serviceCollection.AddScoped<INewsArticleTitleFetcherService, NewYorkTimesArticleTitleFetcherService>();
+            serviceCollection.AddScoped<IArticlePublishedDateFetcherService, NewYorkTimesArticlePublishedDateFetcherService>();
+            serviceCollection.AddScoped<IArticleCleaner, NewYorkTimesArticleCleaner>();
+            serviceCollection.AddScoped<IArticleCleanerRunner, NewYorkTimesArticleCleanerRunner>();
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
             return serviceProvider;
