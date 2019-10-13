@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NewsCrawler.Exceptions;
 using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence.Postgres;
@@ -12,6 +13,7 @@ namespace NewsCrawler
 {
     public class NewsArticleFetcherRunner : INewsArticleFetcherRunner
     {
+        private readonly ILogger logger;
 
         private readonly INewsArticleFetchService newsArticleFetchService;
 
@@ -19,22 +21,23 @@ namespace NewsCrawler
 
         private readonly int batchSize = 50;
 
-        public NewsArticleFetcherRunner(INewsArticleFetchService newsArticleFetchService, IServiceProvider serviceProvider)
+        public NewsArticleFetcherRunner(ILogger<NewsArticleFetcherRunner> logger, INewsArticleFetchService newsArticleFetchService, IServiceProvider serviceProvider)
         {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.newsArticleFetchService = newsArticleFetchService ?? throw new ArgumentNullException(nameof(newsArticleFetchService));
             this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
         public async Task RunFetcher()
         {
-            Console.WriteLine("Loading existing articles.");
+            logger.LogInformation("Loading existing articles.");
             HashSet<string> existingArticles;
             using (var scope = serviceProvider.CreateScope())
             {
                 var scopedNewsArticleContext = scope.ServiceProvider.GetRequiredService<PostgresNewsArticleContext>();
                 existingArticles = new HashSet<string>(scopedNewsArticleContext.Articles.Select(a => a.Url));
             }
-            Console.WriteLine($"{existingArticles.Count} existing articles loaded.");
+            logger.LogInformation($"{existingArticles.Count} existing articles loaded.");
 
             List<string> articleLinks;
             string sourceName;
@@ -44,9 +47,9 @@ namespace NewsCrawler
                 articleLinks = newsArticleFinderService.FindNewsArticles().Distinct().Where(a => !existingArticles.Contains(a)).ToList();
                 sourceName = newsArticleFinderService.SourceName;
             }
-            Console.WriteLine($"Getting articles from news source: '{sourceName}'");
+            logger.LogInformation($"Getting articles from news source: '{sourceName}'");
 
-            Console.WriteLine($"Found {articleLinks.Count()} articles.");
+            logger.LogInformation($"Found {articleLinks.Count()} articles.");
 
             var articles = new List<Article>();
             int fetchedArticles = 0;
@@ -75,30 +78,29 @@ namespace NewsCrawler
                 }
                 catch (UrlTooLongException ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    logger.LogError(ex, "URL too long exception.");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"An error occurred retrieving '{articleLink}': {ex.Message}");
-                    Console.WriteLine(ex.StackTrace);
+                    logger.LogError(ex, $"An error occurred retrieving '{articleLink}'.");
                 }
             }
 
             if (articles.Any())
             {
-                Console.WriteLine("Saving articles...");
+                logger.LogInformation("Saving articles...");
                 await SaveArticles(articles);
             }
 
-            Console.WriteLine($"Complete: {fetchedArticles} articles loaded.");
-            Console.WriteLine("Crawling complete!");
+            logger.LogInformation($"Complete: {fetchedArticles} articles loaded.");
+            logger.LogInformation("Crawling complete!");
         }
 
         private async Task SaveArticles(List<Article> articles)
         {
             using (var scope = serviceProvider.CreateScope())
             {
-                Console.WriteLine("Saving articles to Postgres...");
+                logger.LogInformation("Saving articles to Postgres...");
                 using (var scopedPostgresNewsArticleContext = scope.ServiceProvider.GetRequiredService<PostgresNewsArticleContext>())
                 {
                     await scopedPostgresNewsArticleContext.Articles.AddRangeAsync(articles);

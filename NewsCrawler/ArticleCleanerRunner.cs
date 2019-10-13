@@ -1,4 +1,5 @@
-﻿using NewsCrawler.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence.Postgres;
 using System;
 using System.IO;
@@ -8,6 +9,8 @@ namespace NewsCrawler
 {
     public abstract class ArticleCleanerRunner : IArticleCleanerRunner
     {
+        private readonly ILogger logger;
+
         private readonly IServiceProvider serviceProvider;
 
         private readonly IArticleCleaner articleCleaner;
@@ -16,15 +19,16 @@ namespace NewsCrawler
 
         protected string CleanedArticleDirectory { get; set; } = "cleanedArticles";
 
-        public ArticleCleanerRunner(IServiceProvider serviceProvider, IArticleCleaner articleCleaner)
+        protected ArticleCleanerRunner(ILogger logger, IServiceProvider serviceProvider, IArticleCleaner articleCleaner)
         {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             this.articleCleaner = articleCleaner ?? throw new ArgumentNullException(nameof(articleCleaner));
         }
 
         public async Task CleanArticles()
         {
-            Console.WriteLine($"Cleaning articles containing '{ArticleUrlContains}'.");
+            logger.LogInformation($"Cleaning articles containing '{ArticleUrlContains}'.");
             var articleBatcher = new ArticleBatcher(serviceProvider);
             Directory.CreateDirectory(CleanedArticleDirectory);
 
@@ -50,7 +54,7 @@ namespace NewsCrawler
                 }
             });
 
-            Console.WriteLine($"Completed cleaning articles containing '{ArticleUrlContains}'.");
+            logger.LogInformation($"Completed cleaning articles containing '{ArticleUrlContains}'.");
         }
     }
 

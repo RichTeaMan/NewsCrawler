@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NewsCrawler.Bbc;
 using NewsCrawler.Cnn;
 using NewsCrawler.DailyMail;
@@ -40,7 +41,8 @@ namespace NewsCrawler
             serviceCollection.AddDbContext<PostgresNewsArticleContext>(options => options.UseNpgsql(postgresConnectionString,
                 pgOptions => pgOptions.CommandTimeout(120)),
                 ServiceLifetime.Transient);
-
+            
+            serviceCollection.AddLogging(configure => { configure.AddConfiguration(config.GetSection("Logging")); configure.AddConsole(); });
             serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
             serviceCollection.AddScoped<INewsArticleFetchService, NewsArticleFetchService>();
             serviceCollection.AddScoped<IArticleUpdaterRunner, ArticleUpdaterRunner>();

@@ -1,4 +1,5 @@
-﻿using NewsCrawler.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using NewsCrawler.Interfaces;
 using System;
 
 namespace NewsCrawler.Bbc
@@ -7,7 +8,7 @@ namespace NewsCrawler.Bbc
     {
         protected override string ArticleUrlContains { get; set; } = "bbc.co.uk";
 
-        public BbcArticleCleanerRunner(IServiceProvider serviceProvider, IArticleCleaner articleCleaner) : base(serviceProvider, articleCleaner)
+        public BbcArticleCleanerRunner(ILogger<BbcArticleCleanerRunner> logger, IServiceProvider serviceProvider, IArticleCleaner articleCleaner) : base(logger, serviceProvider, articleCleaner)
         {
             CleanedArticleDirectory = "cleanedArticles/BBC";
         }

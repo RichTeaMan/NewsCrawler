@@ -1,14 +1,16 @@
-﻿using NewsCrawler.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence.Postgres;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace NewsCrawler
 {
     public class ArticleUpdaterRunner : IArticleUpdaterRunner
     {
+        private readonly ILogger logger;
+
         private readonly INewsArticleTitleFetcherService newsArticleTitleFetcherService;
 
         private readonly IArticlePublishedDateFetcherService articlePublishedDateFetcherService;
@@ -17,22 +19,25 @@ namespace NewsCrawler
 
         private readonly IServiceProvider serviceProvider;
 
-        public ArticleUpdaterRunner(INewsArticleTitleFetcherService newsArticleTitleFetcherService,
-            INewsArticleDeterminationService newsArticleDeterminationService,
+        public ArticleUpdaterRunner(
+            ILogger<ArticleUpdaterRunner> logger,
+            INewsArticleTitleFetcherService newsArticleTitleFetcherService,
             IArticlePublishedDateFetcherService articlePublishedDateFetcherService,
+            INewsArticleDeterminationService newsArticleDeterminationService,
             IServiceProvider serviceProvider)
         {
-            this.newsArticleTitleFetcherService = newsArticleTitleFetcherService;
-            this.newsArticleDeterminationService = newsArticleDeterminationService;
-            this.articlePublishedDateFetcherService = articlePublishedDateFetcherService;
-            this.serviceProvider = serviceProvider;
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.newsArticleTitleFetcherService = newsArticleTitleFetcherService ?? throw new ArgumentNullException(nameof(newsArticleTitleFetcherService));
+            this.articlePublishedDateFetcherService = articlePublishedDateFetcherService ?? throw new ArgumentNullException(nameof(articlePublishedDateFetcherService));
+            this.newsArticleDeterminationService = newsArticleDeterminationService ?? throw new ArgumentNullException(nameof(newsArticleDeterminationService));
+            this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
         public async Task RunTitleUpdater(string urlContains)
         {
             List<Article> articles = new List<Article>();
 
-            Console.WriteLine("Updating titles of existing articles.");
+            logger.LogInformation("Updating titles of existing articles.");
 
             var articleBatcher = new ArticleBatcher(serviceProvider);
             int updates = 0;
@@ -69,8 +74,8 @@ namespace NewsCrawler
                 return Task.FromResult(hasUpdates);
             });
 
-            Console.WriteLine($"{updates} articles updated.");
-            Console.WriteLine("Title update complete!");
+            logger.LogInformation($"{updates} articles updated.");
+            logger.LogInformation("Title update complete!");
         }
 
         private string Truncate(string value, int maxLength)

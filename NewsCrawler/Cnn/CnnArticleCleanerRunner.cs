@@ -1,4 +1,5 @@
-﻿using NewsCrawler.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using NewsCrawler.Interfaces;
 using System;
 
 namespace NewsCrawler.Cnn
@@ -7,7 +8,7 @@ namespace NewsCrawler.Cnn
     {
         protected override string ArticleUrlContains { get; set; } = "edition.cnn.com";
 
-        public CnnArticleCleanerRunner(IServiceProvider serviceProvider, IArticleCleaner articleCleaner) : base(serviceProvider, articleCleaner)
+        public CnnArticleCleanerRunner(ILogger<CnnArticleCleanerRunner> logger, IServiceProvider serviceProvider, IArticleCleaner articleCleaner) : base(logger, serviceProvider, articleCleaner)
         {
             CleanedArticleDirectory = "cleanedArticles/CNN";
         }

@@ -1,4 +1,5 @@
-﻿using NewsCrawler.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using NewsCrawler.Interfaces;
 using System;
 
 namespace NewsCrawler.DailyMail
@@ -7,7 +8,7 @@ namespace NewsCrawler.DailyMail
     {
         protected override string ArticleUrlContains { get; set; } = "dailymail.co.uk";
 
-        public DailyMailArticleCleanerRunner(IServiceProvider serviceProvider, IArticleCleaner articleCleaner) : base(serviceProvider, articleCleaner)
+        public DailyMailArticleCleanerRunner(ILogger<DailyMailArticleCleanerRunner> logger, IServiceProvider serviceProvider, IArticleCleaner articleCleaner) : base(logger, serviceProvider, articleCleaner)
         {
             CleanedArticleDirectory = "cleanedArticles/DailyMail";
         }

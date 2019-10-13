@@ -1,4 +1,5 @@
-﻿using NewsCrawler.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using NewsCrawler.Interfaces;
 using System;
 
 namespace NewsCrawler.Guardian
@@ -7,7 +8,7 @@ namespace NewsCrawler.Guardian
     {
         protected override string ArticleUrlContains { get; set; } = "theguardian.com";
 
-        public GuardianArticleCleanerRunner(IServiceProvider serviceProvider, IArticleCleaner articleCleaner) : base(serviceProvider, articleCleaner)
+        public GuardianArticleCleanerRunner(ILogger<GuardianArticleCleanerRunner> logger, IServiceProvider serviceProvider, IArticleCleaner articleCleaner) : base(logger, serviceProvider, articleCleaner)
         {
             CleanedArticleDirectory = "cleanedArticles/Guardian";
         }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence.Postgres;
 using Newtonsoft.Json;
@@ -16,18 +17,21 @@ namespace NewsCrawler
     {
         private const string DOCUMENT_SCANNER_URL = "http://localhost:5002/scanUpload";
 
+        private readonly ILogger logger;
+
         private readonly IServiceProvider serviceProvider;
 
         private readonly HttpClient client = new HttpClient();
 
-        public SpacyWordCountService(IServiceProvider serviceProvider)
+        public SpacyWordCountService(ILogger<SpacyWordCountService> logger, IServiceProvider serviceProvider)
         {
-            this.serviceProvider = serviceProvider;
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
         public async Task UpdateWordCount()
         {
-            Console.WriteLine("Updating word count...");
+            logger.LogInformation("Updating word count...");
             var wordsByNewsSource = new Dictionary<string, Dictionary<string, int>>();
 
             int articleCount = 0;
@@ -35,7 +39,7 @@ namespace NewsCrawler
             {
                 articleCount = context.Articles.Count();
             }
-            Console.WriteLine($"Updating word count for {articleCount} articles");
+            logger.LogInformation($"Updating word count for {articleCount} articles");
             int step = articleCount / 100;
             int count = 0;
 
@@ -81,30 +85,30 @@ namespace NewsCrawler
                             }
                             else
                             {
-                                Console.WriteLine($"Could not conact document service: {response.StatusCode}");
+                                logger.LogWarning($"Could not contact document service: {response.StatusCode}");
                             }
                         }
                     }
                     else
                     {
-                        Console.WriteLine($"Article {article.Id} does not have a cleaned article.");
+                        logger.LogInformation($"Article {article.Id} does not have a cleaned article.");
                     }
                     count++;
                     if (count % step == 0)
                     {
-                        Console.WriteLine($"Completed {count} of {articleCount} articles.");
+                        logger.LogInformation($"Completed {count} of {articleCount} articles.");
                     }
 
                     return false;
                 });
-            Console.WriteLine($"Completed {count} of {articleCount} articles.");
+            logger.LogInformation($"Completed {count} of {articleCount} articles.");
 
-            Console.WriteLine("Updating word counts...");
+            logger.LogInformation("Updating word counts...");
             using (var context = serviceProvider.GetRequiredService<PostgresNewsArticleContext>())
             {
                 context.WordCount.RemoveRange(context.WordCount.ToArray());
                 await context.SaveChangesAsync();
-                Console.WriteLine("Removed old word counts.");
+                logger.LogInformation("Removed old word counts.");
 
                 foreach (var words in wordsByNewsSource)
                 {
@@ -115,7 +119,7 @@ namespace NewsCrawler
                         var wordCount = new WordCount { NewsSource = newsSource, Word = word.Key, Count = word.Value };
                         if (wordCount.Word.Length > Constants.MAX_WORD_LENGTH)
                         {
-                            Console.WriteLine($"Word '{wordCount.Word}' is longer than the maximum word length.");
+                            logger.LogInformation($"Word '{wordCount.Word}' is longer than the maximum word length.");
                         }
                         else
                         {
@@ -123,9 +127,9 @@ namespace NewsCrawler
                         }
                     }
                 }
-                Console.WriteLine("Committing word counts...");
+                logger.LogInformation("Committing word counts...");
                 await context.SaveChangesAsync();
-                Console.WriteLine("Updating word count complete.");
+                logger.LogInformation("Updating word count complete.");
             }
         }
 
