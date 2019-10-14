@@ -16,13 +16,13 @@ This project uses [PostgreSQL](https://www.postgresql.org/). You can use set thi
 
 The following command will deploy the database to localhost:
 ```
-dotnet ef database update --project NewsCrawler.Persistence --startup-project NewsCrawler.WebUI
+dotnet ef database update --project NewsCrawler.Persistence.Postgres --startup-project NewsCrawler.WebUI
 ```
-The connection string can be changed in NewsCrawler.Persistence/appsettings.json.
+The connection string can be changed in NewsCrawler.Persistence.Postgres/appsettings.json.
 
 ### Creating a Migration
 
 After making changes run the following to create a migration. Run the update command to apply changes.
 ```
-dotnet ef migrations add < name of migration > --project NewsCrawler.Persistence --startup-project NewsCrawler.WebUI
+dotnet ef migrations add < name of migration > --project NewsCrawler.Persistence.Postgres --startup-project NewsCrawler.WebUI
 ```

@@ -9,6 +9,8 @@ namespace NewsCrawler.Persistence.Postgres
 
         public DbSet<WordCount> WordCount { get; set; }
 
+        public DbSet<Source> Source { get; set; }
+
         public PostgresNewsArticleContext(DbContextOptions<PostgresNewsArticleContext> options)
             :base(options)
         {

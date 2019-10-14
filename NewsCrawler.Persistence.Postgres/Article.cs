@@ -39,6 +39,9 @@ namespace NewsCrawler.Persistence.Postgres
 
         [Required]
         [MaxLength(Constants.MAX_NEWS_SOURCE_LENGTH)]
+        [Obsolete]
         public string NewsSource { get; set; }
+
+        public Source Source { get; set; }
     }
 }

@@ -31,7 +31,7 @@ namespace NewsCrawler.WebUI.Models
         {
             Id = article.Id;
             Title = article.Title;
-            NewsSource = article.NewsSource;
+            NewsSource = article.Source.Name;
             IsIndexPage = article.IsIndexPage;
             RecordedDate = article.RecordedDate;
             PublishedDate = article.PublishedDate;

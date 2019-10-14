@@ -40,14 +40,12 @@ namespace NewsCrawler
             logger.LogInformation($"{existingArticles.Count} existing articles loaded.");
 
             List<string> articleLinks;
-            string sourceName;
             using (var scope = serviceProvider.CreateScope())
             {
                 var newsArticleFinderService = scope.ServiceProvider.GetRequiredService<INewsArticleFinderService>();
                 articleLinks = newsArticleFinderService.FindNewsArticles().Distinct().Where(a => !existingArticles.Contains(a)).ToList();
-                sourceName = newsArticleFinderService.SourceName;
+                logger.LogInformation($"Getting articles from news source: '{newsArticleFinderService.SourceName}'");
             }
-            logger.LogInformation($"Getting articles from news source: '{sourceName}'");
 
             logger.LogInformation($"Found {articleLinks.Count()} articles.");
 
@@ -58,7 +56,6 @@ namespace NewsCrawler
                 try
                 {
                     var article = await newsArticleFetchService.FetchArticleAsync(articleLink);
-                    article.NewsSource = sourceName;
                     articles.Add(article);
                     fetchedArticles++;
                     if (fetchedArticles % 10 == 0)
@@ -103,6 +100,11 @@ namespace NewsCrawler
                 logger.LogInformation("Saving articles to Postgres...");
                 using (var scopedPostgresNewsArticleContext = scope.ServiceProvider.GetRequiredService<PostgresNewsArticleContext>())
                 {
+                    var newsArticleFinderService = scope.ServiceProvider.GetRequiredService<INewsArticleFinderService>();
+                    var source = await newsArticleFinderService.FetchSource(scopedPostgresNewsArticleContext);
+
+                    articles.ForEach(a => a.Source = source);
+
                     await scopedPostgresNewsArticleContext.Articles.AddRangeAsync(articles);
                     await scopedPostgresNewsArticleContext.SaveChangesAsync();
                 }

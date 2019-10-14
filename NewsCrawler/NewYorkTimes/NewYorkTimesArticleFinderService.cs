@@ -1,8 +1,11 @@
 ﻿using HtmlAgilityPack;
+using Microsoft.EntityFrameworkCore;
 using NewsCrawler.Interfaces;
+using NewsCrawler.Persistence.Postgres;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace NewsCrawler.NewYorkTimes
 {
@@ -65,13 +68,27 @@ namespace NewsCrawler.NewYorkTimes
             "https://www.nytimes.com/section/arts/television"
         };
 
+        public string SourceName => "New York Times";
 
         public NewYorkTimesArticleFinderService(INewsArticleDeterminationService newsArticleDeterminationService)
         {
             this.newsArticleDeterminationService = newsArticleDeterminationService ?? throw new ArgumentNullException(nameof(newsArticleDeterminationService));
         }
 
-        public string SourceName => "New York Times";
+        public async Task<Source> FetchSource(PostgresNewsArticleContext postgresNewsArticleContext)
+        {
+            var source = await postgresNewsArticleContext.Source.FirstOrDefaultAsync(s => s.Name == SourceName);
+            if (source == null)
+            {
+                source = new Source()
+                {
+                    Name = SourceName
+                };
+                await postgresNewsArticleContext.Source.AddAsync(source);
+                await postgresNewsArticleContext.SaveChangesAsync();
+            }
+            return source;
+        }
 
         public IEnumerable<string> FindNewsArticles()
         {

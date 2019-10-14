@@ -26,7 +26,7 @@ namespace NewsCrawler
         public async Task UpdateWordCount()
         {
             logger.LogInformation("Updating word count...");
-            var wordsByNewsSource = new Dictionary<string, Dictionary<string, int>>();
+            var wordsByNewsSource = new Dictionary<Source, Dictionary<string, int>>();
 
             int articleCount = 0;
             using (var context = serviceProvider.GetRequiredService<PostgresNewsArticleContext>())
@@ -44,10 +44,10 @@ namespace NewsCrawler
                 {
 
                     Dictionary<string, int> words;
-                    if (!wordsByNewsSource.TryGetValue(article.NewsSource, out words))
+                    if (!wordsByNewsSource.TryGetValue(article.Source, out words))
                     {
                         words = new Dictionary<string, int>();
-                        wordsByNewsSource.Add(article.NewsSource, words);
+                        wordsByNewsSource.Add(article.Source, words);
                     }
 
                     var splitWords = article.CleanedContent?.Split(' ');
@@ -88,7 +88,7 @@ namespace NewsCrawler
 
                 foreach (var words in wordsByNewsSource)
                 {
-                    string newsSource = words.Key;
+                    string newsSource = words.Key.Name;
                     foreach (var word in words.Value)
                     {
 

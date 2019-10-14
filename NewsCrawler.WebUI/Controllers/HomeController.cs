@@ -29,12 +29,12 @@ namespace NewsCrawler.WebUI.Controllers
         public IActionResult Index(int page = 1, string searchTerm = null, string[] newsSources = null)
         {
             logger.LogInformation("Index requested.");
-            var resultNewsSources = newsArticleContext.Articles.Select(a => a.NewsSource).Distinct().ToArray();
+            var resultNewsSources = newsArticleContext.Articles.Select(a => a.Source).Distinct().ToArray();
 
             var articles = newsArticleContext.Articles
                 .Where(a => !a.IsIndexPage)
                 .Where(a => string.IsNullOrEmpty(searchTerm) || a.Title.Contains(searchTerm))
-                .Where(a => newsSources == null || !newsSources.Any() || newsSources.Contains(a.NewsSource))
+                .Where(a => newsSources == null || !newsSources.Any() || newsSources.Contains(a.Source.Name))
                 .OrderByDescending(a => a.RecordedDate)
                 .Select(a => new Models.Article
                 {
@@ -44,7 +44,7 @@ namespace NewsCrawler.WebUI.Controllers
                     IsIndexPage = a.IsIndexPage,
                     RecordedDate = a.RecordedDate,
                     PublishedDate = a.PublishedDate,
-                    NewsSource = a.NewsSource,
+                    NewsSource = a.Source.Name,
                     ContentLength = a.ContentLength,
                     CleanedContentLength = a.CleanedContentLength
                 });
@@ -57,7 +57,7 @@ namespace NewsCrawler.WebUI.Controllers
             var articleResult = new ArticleResult
             {
                 ArticleList = pagedArticles,
-                NewsSources = resultNewsSources,
+                NewsSources = resultNewsSources.Select(s => s.Name).ToArray(),
                 SelectedNewsSources = newsSources,
                 SearchTerm = searchTerm,
                 Page = page,
