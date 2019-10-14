@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NewsCrawler.Persistence;
 using NewsCrawler.Persistence.Postgres;
@@ -29,9 +30,9 @@ namespace NewsCrawler.WebUI.Controllers
         public IActionResult Index(int page = 1, string searchTerm = null, string[] newsSources = null)
         {
             logger.LogInformation("Index requested.");
-            var resultNewsSources = newsArticleContext.Articles.Select(a => a.Source).Distinct().ToArray();
+            var resultNewsSources = newsArticleContext.Source.Select(s => s.Name).Distinct().ToArray();
 
-            var articles = newsArticleContext.Articles
+            var articles = newsArticleContext.Articles.Include(a => a.Source)
                 .Where(a => !a.IsIndexPage)
                 .Where(a => string.IsNullOrEmpty(searchTerm) || a.Title.Contains(searchTerm))
                 .Where(a => newsSources == null || !newsSources.Any() || newsSources.Contains(a.Source.Name))
@@ -57,7 +58,7 @@ namespace NewsCrawler.WebUI.Controllers
             var articleResult = new ArticleResult
             {
                 ArticleList = pagedArticles,
-                NewsSources = resultNewsSources.Select(s => s.Name).ToArray(),
+                NewsSources = resultNewsSources.ToArray(),
                 SelectedNewsSources = newsSources,
                 SearchTerm = searchTerm,
                 Page = page,
