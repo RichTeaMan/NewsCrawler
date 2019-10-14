@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NewsCrawler.Persistence.Postgres;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -9,9 +10,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace NewsCrawler.Persistence.Postgres.Migrations
 {
     [DbContext(typeof(PostgresNewsArticleContext))]
-    partial class PostgresNewsArticleContextModelSnapshot : ModelSnapshot
+    [Migration("20191014220034_RemovedNewsSource")]
+    partial class RemovedNewsSource
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

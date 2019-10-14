@@ -19,11 +19,11 @@ namespace NewsCrawler.Persistence.Postgres
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Article>()
-                .Property(a => a.NewsSource)
-                .HasDefaultValue("Unspecified");
+            modelBuilder.Entity<Article>();
 
             modelBuilder.Entity<WordCount>();
+
+            modelBuilder.Entity<Source>();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
