@@ -34,6 +34,7 @@ namespace NewsCrawler.WebUI.Controllers
         {
             IActionResult result;
             var article = await newsArticleContext.Articles
+                .Include(a => a.Source)
                 .SingleOrDefaultAsync(a => a.Id == id);
 
             if (article == null)
