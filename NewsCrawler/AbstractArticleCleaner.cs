@@ -26,10 +26,16 @@ namespace NewsCrawler
             {
                 foreach (var paragraph in FindParagraphNodes(contentNode))
                 {
-                    // Paragraphs don't always end with a space so the space trimming doesn't work well. This hacks a space in.
+                    // Paragraphs don't always end with a space so the space trimming doesn't work well. This hacks a space in to be replaced later.
                     paragraph.InnerHtml = paragraph.InnerHtml + " #P#";
                 }
-                var cleanedArticle = string.Join(" ", contentNode.InnerText.Replace("\r", string.Empty).Replace("\n", string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries)).Replace("#P#", "\n\n");
+                var cleanedArticle = string.Join(" ", contentNode.InnerText.Replace("\r", string.Empty).Replace("\n", string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                    .Replace("#P#", "\n\n")
+                    .Replace("’", "'")
+                    .Replace("“", "\"")
+                    .Replace("”", "\"")
+                    .Replace("—", "-")
+                    .Replace("…", "...");
                 return HttpUtility.HtmlDecode(cleanedArticle);
             }
         }
