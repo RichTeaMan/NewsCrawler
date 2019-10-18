@@ -31,13 +31,31 @@ namespace NewsCrawler
         public async Task RunFetcher()
         {
             logger.LogInformation("Loading existing articles.");
-            HashSet<string> existingArticles;
-            using (var scope = serviceProvider.CreateScope())
+            HashSet<string> existingArticles = null;
+            int existingArticlesAttempt = 0;
+            while (existingArticles == null)
             {
-                var scopedNewsArticleContext = scope.ServiceProvider.GetRequiredService<PostgresNewsArticleContext>();
-                existingArticles = new HashSet<string>(scopedNewsArticleContext.Articles.Select(a => a.Url));
+                try
+                {
+                    using (var scope = serviceProvider.CreateScope())
+                    {
+                        var scopedNewsArticleContext = scope.ServiceProvider.GetRequiredService<PostgresNewsArticleContext>();
+                        var newsArticleFinderService = scope.ServiceProvider.GetRequiredService<INewsArticleFinderService>();
+                        var source = await newsArticleFinderService.FetchSource(scopedNewsArticleContext);
+                        var urls = await scopedNewsArticleContext.Articles.Where(a => a.Source == source).Select(a => a.Url).ToArrayAsync();
+                        existingArticles = new HashSet<string>(urls);
+                        logger.LogInformation($"{existingArticles.Count} existing articles from source {source.Name} loaded.");
+                    }
+                    existingArticlesAttempt++;
+                }
+                catch (Exception)
+                {
+                    if (existingArticlesAttempt >= 5)
+                    {
+                        throw;
+                    }
+                }
             }
-            logger.LogInformation($"{existingArticles.Count} existing articles loaded.");
 
             List<string> articleLinks;
             using (var scope = serviceProvider.CreateScope())
@@ -50,17 +68,17 @@ namespace NewsCrawler
             logger.LogInformation($"Found {articleLinks.Count()} articles.");
 
             var articles = new List<Article>();
-            int fetchedArticles = 0;
+            int fetchedArticleCount = 0;
             foreach (var articleLink in articleLinks)
             {
                 try
                 {
                     var article = await newsArticleFetchService.FetchArticleAsync(articleLink);
                     articles.Add(article);
-                    fetchedArticles++;
-                    if (fetchedArticles % 10 == 0)
+                    fetchedArticleCount++;
+                    if (fetchedArticleCount % 10 == 0)
                     {
-                        Console.WriteLine($"{fetchedArticles} of {articleLinks.Count()} articles loaded.");
+                        logger.LogInformation($"{fetchedArticleCount} of {articleLinks.Count()} articles loaded.");
                     }
 
                     if (articles.Count >= batchSize)
@@ -85,29 +103,26 @@ namespace NewsCrawler
 
             if (articles.Any())
             {
-                logger.LogInformation("Saving articles...");
                 await SaveArticles(articles);
             }
 
-            logger.LogInformation($"Complete: {fetchedArticles} articles loaded.");
+            logger.LogInformation($"Complete: {fetchedArticleCount} articles loaded.");
             logger.LogInformation("Crawling complete!");
         }
 
         private async Task SaveArticles(List<Article> articles)
         {
             using (var scope = serviceProvider.CreateScope())
+            using (var scopedPostgresNewsArticleContext = scope.ServiceProvider.GetRequiredService<PostgresNewsArticleContext>())
             {
-                logger.LogInformation("Saving articles to Postgres...");
-                using (var scopedPostgresNewsArticleContext = scope.ServiceProvider.GetRequiredService<PostgresNewsArticleContext>())
-                {
-                    var newsArticleFinderService = scope.ServiceProvider.GetRequiredService<INewsArticleFinderService>();
-                    var source = await newsArticleFinderService.FetchSource(scopedPostgresNewsArticleContext);
+                logger.LogInformation("Saving articles...");
+                var newsArticleFinderService = scope.ServiceProvider.GetRequiredService<INewsArticleFinderService>();
+                var source = await newsArticleFinderService.FetchSource(scopedPostgresNewsArticleContext);
 
-                    articles.ForEach(a => a.Source = source);
+                articles.ForEach(a => a.Source = source);
 
-                    await scopedPostgresNewsArticleContext.Articles.AddRangeAsync(articles);
-                    await scopedPostgresNewsArticleContext.SaveChangesAsync();
-                }
+                await scopedPostgresNewsArticleContext.Articles.AddRangeAsync(articles);
+                await scopedPostgresNewsArticleContext.SaveChangesAsync();
             }
         }
     }
