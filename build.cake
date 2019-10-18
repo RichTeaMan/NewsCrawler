@@ -1,3 +1,15 @@
+#tool nuget:?package=MSBuild.SonarQube.Runner.Tool
+      
+
+      
+        
+#addin nuget:?package=Cake.Sonar
+      
+
+      
+        
+
+
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
 //////////////////////////////////////////////////////////////////////
@@ -39,7 +51,7 @@ Task("Build")
     .IsDependentOn("Restore-NuGet-Packages")
     .Does(() =>
 {
-    DotNetCoreBuild("NewsCrawler.sln", new DotNetCoreBuildSettings {
+    DotNetCoreBuild("D:/Projects/NewsCrawler/NewsCrawler.sln", new DotNetCoreBuildSettings {
         Verbosity = DotNetCoreVerbosity.Minimal,
         Configuration = configuration
     });
@@ -48,8 +60,11 @@ Task("Build")
     {
         Configuration = configuration
     };
-    DotNetCorePublish("./NewsCrawler.WebUI/NewsCrawler.WebUI.csproj", publishSettings);
-    DotNetCorePublish("./NewsCrawler/NewsCrawler.csproj", publishSettings);
+    //DotNetCorePublish("./NewsCrawler.WebUI/NewsCrawler.WebUI.csproj", publishSettings);
+    //DotNetCorePublish("./NewsCrawler/NewsCrawler.csproj", publishSettings);
+
+	//DotNetCorePublish("D:/Projects/NewsCrawler/NewsCrawler/NewsCrawler.csproj", publishSettings);
+
 });
 
 Task("Test")
@@ -59,6 +74,28 @@ Task("Test")
 {
     DotNetCoreTest("NewsCrawler.sln");
 });
+
+Task("SonarStart")
+   .Does(() =>
+{
+    SonarBegin(new SonarBeginSettings
+	{
+        Key = "newscrawler",
+        Url = "https://sonarqube.richteaman.com"
+    });
+});
+
+Task("SonarEnd")
+  .Does(() =>
+{
+    SonarEnd(new SonarEndSettings());
+});
+
+Task("Sonar")
+	.IsDependentOn("SonarStart")
+	.IsDependentOn("Test")
+	.IsDependentOn("SonarEnd")
+	.Does(() => {});
 
 Task("TitleUpdate")
     .IsDependentOn("Build")
