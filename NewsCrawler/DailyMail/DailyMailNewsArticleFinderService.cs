@@ -1,16 +1,20 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence.Postgres;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace NewsCrawler.DailyMail
 {
     public class DailyMailNewsArticleFinderService : INewsArticleFinderService
     {
+        private readonly ILogger logger;
+
         private readonly INewsArticleDeterminationService newsArticleDeterminationService;
 
         private readonly string baseUrl = "https://www.dailymail.co.uk";
@@ -52,8 +56,9 @@ namespace NewsCrawler.DailyMail
 
         public string SourceName => "Daily Mail";
 
-        public DailyMailNewsArticleFinderService(INewsArticleDeterminationService newsArticleDeterminationService)
+        public DailyMailNewsArticleFinderService(ILogger<DailyMailNewsArticleFinderService> logger, INewsArticleDeterminationService newsArticleDeterminationService)
         {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.newsArticleDeterminationService = newsArticleDeterminationService ?? throw new ArgumentNullException(nameof(newsArticleDeterminationService));
         }
 
@@ -77,9 +82,16 @@ namespace NewsCrawler.DailyMail
             var documentNodes = new List<HtmlNode>();
             foreach (var indexUrl in indexUrls)
             {
-                var web = new HtmlWeb();
-                var doc = web.Load(indexUrl);
-                documentNodes.Add(doc.DocumentNode);
+                try
+                {
+                    var web = new HtmlWeb();
+                    var doc = web.Load(indexUrl);
+                    documentNodes.Add(doc.DocumentNode);
+                }
+                catch (WebException ex)
+                {
+                    logger.LogError(ex, $"Error fetching index page: '{indexUrl}'.");
+                }
             }
 
             var links = documentNodes.SelectMany(n => n.Descendants())

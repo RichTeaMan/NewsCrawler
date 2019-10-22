@@ -1,16 +1,20 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence.Postgres;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace NewsCrawler.Bbc
 {
     public class BbcNewsArticleFinderService : INewsArticleFinderService
     {
+        private readonly ILogger logger;
+
         private readonly INewsArticleDeterminationService newsArticleDeterminationService;
 
         private readonly string baseUrl = "https://www.bbc.co.uk";
@@ -122,8 +126,9 @@ namespace NewsCrawler.Bbc
 
         public string SourceName => "BBC News";
 
-        public BbcNewsArticleFinderService(INewsArticleDeterminationService newsArticleDeterminationService)
+        public BbcNewsArticleFinderService(ILogger<BbcNewsArticleFinderService> logger, INewsArticleDeterminationService newsArticleDeterminationService)
         {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.newsArticleDeterminationService = newsArticleDeterminationService ?? throw new ArgumentNullException(nameof(newsArticleDeterminationService));
         }
 
@@ -144,15 +149,22 @@ namespace NewsCrawler.Bbc
 
         public IEnumerable<string> FindNewsArticles()
         {
-            var docuemntNodes = new List<HtmlNode>();
+            var documentNodes = new List<HtmlNode>();
             foreach (var indexUrl in indexUrls)
             {
-                var web = new HtmlWeb();
-                var doc = web.Load(indexUrl);
-                docuemntNodes.Add(doc.DocumentNode);
+                try
+                {
+                    var web = new HtmlWeb();
+                    var doc = web.Load(indexUrl);
+                    documentNodes.Add(doc.DocumentNode);
+                }
+                catch (WebException ex)
+                {
+                    logger.LogError(ex, $"Error fetching index page: '{indexUrl}'.");
+                }
             }
 
-            var links = docuemntNodes.SelectMany(n => n.Descendants())
+            var links = documentNodes.SelectMany(n => n.Descendants())
                 .Where(n => n.Name == "a")
                 .Select(n => FindHref(n))
                 .Where(v => newsArticleDeterminationService.IsNewsArticle(v))
