@@ -4,6 +4,6 @@ namespace NewsCrawler.Interfaces
 {
     public interface INewsArticleFetcherRunner
     {
-        Task RunFetcher();
+        Task<FetcherResult> RunFetcher();
     }
 }

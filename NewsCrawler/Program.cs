@@ -3,6 +3,7 @@ using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence;
 using RichTea.CommandLineParser;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -60,14 +61,8 @@ namespace NewsCrawler
         [DefaultClCommand]
         public static async Task RunCrawler()
         {
-            foreach (var serviceProvider in ServiceProviderFactory.CreateServiceProviders())
-            {
-                using (var scope = serviceProvider.CreateScope())
-                {
-                    var newsArticleFetcherRunner = scope.ServiceProvider.GetRequiredService<INewsArticleFetcherRunner>();
-                    await newsArticleFetcherRunner.RunFetcher();
-                }
-            }
+            var crawlerRunner = ServiceProviderFactory.CreateGenericServiceProvider().GetRequiredService<CrawlerRunner>();
+            await crawlerRunner.RunCrawler();
         }
 
         [ClCommand("Title-Update")]

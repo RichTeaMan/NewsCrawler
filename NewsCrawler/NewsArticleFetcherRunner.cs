@@ -28,8 +28,9 @@ namespace NewsCrawler
             this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
-        public async Task RunFetcher()
+        public async Task<FetcherResult> RunFetcher()
         {
+            string newsSource;
             logger.LogInformation("Loading existing articles.");
             HashSet<string> existingArticles = null;
             int existingArticlesAttempt = 0;
@@ -63,12 +64,14 @@ namespace NewsCrawler
                 var newsArticleFinderService = scope.ServiceProvider.GetRequiredService<INewsArticleFinderService>();
                 articleLinks = newsArticleFinderService.FindNewsArticles().Distinct().Where(a => !existingArticles.Contains(a)).ToList();
                 logger.LogInformation($"Getting articles from news source: '{newsArticleFinderService.SourceName}'");
+                newsSource = newsArticleFinderService.SourceName;
             }
 
             logger.LogInformation($"Found {articleLinks.Count()} articles.");
 
             var articles = new List<Article>();
             int fetchedArticleCount = 0;
+            int errorCount = 0;
             foreach (var articleLink in articleLinks)
             {
                 try
@@ -94,10 +97,12 @@ namespace NewsCrawler
                 catch (UrlTooLongException ex)
                 {
                     logger.LogError(ex, "URL too long exception.");
+                    errorCount++;
                 }
                 catch (Exception ex)
                 {
                     logger.LogError(ex, $"An error occurred retrieving '{articleLink}'.");
+                    errorCount++;
                 }
             }
 
@@ -108,6 +113,8 @@ namespace NewsCrawler
 
             logger.LogInformation($"Complete: {fetchedArticleCount} articles loaded.");
             logger.LogInformation("Crawling complete!");
+
+            return new FetcherResult(newsSource, articleLinks.Count, fetchedArticleCount, errorCount);
         }
 
         private async Task SaveArticles(List<Article> articles)

@@ -47,6 +47,7 @@ namespace NewsCrawler
             serviceCollection.AddScoped<INewsArticleFetchService, NewsArticleFetchService>();
             serviceCollection.AddScoped<IArticleUpdaterRunner, ArticleUpdaterRunner>();
             serviceCollection.AddScoped<IWordCountService, SpacyWordCountService>();
+            serviceCollection.AddSingleton<CrawlerRunner>();
         }
 
         public static IEnumerable<IServiceProvider> CreateServiceProviders()
