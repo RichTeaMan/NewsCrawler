@@ -27,6 +27,7 @@ namespace NewsCrawler
                 {
                     var newsArticleFetcherRunner = scope.ServiceProvider.GetRequiredService<INewsArticleFetcherRunner>();
                     var result = await newsArticleFetcherRunner.RunFetcher();
+                    LogFetcherResult(result);
                     fetcherResults.Add(result);
                 }
             }
@@ -41,7 +42,7 @@ namespace NewsCrawler
                 $"\n\tLinks Found: {fetcherResult.ArticleLinksFound}" +
                 $"\n\tArticles Saved: {fetcherResult.ArticlesSaved}" +
                 $"\n\tError Count: {fetcherResult.ErrorCounts}" +
-                $"\n\tElapsed Time (minutes): {fetcherResult.ElapsedTimeSpan.TotalMinutes.ToString("0:N1")}\n");
+                $"\n\tElapsed Time (minutes): {fetcherResult.ElapsedTimeSpan.TotalMinutes.ToString("0.#")}\n");
         }
     }
 }
