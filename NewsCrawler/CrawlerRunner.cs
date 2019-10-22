@@ -27,7 +27,6 @@ namespace NewsCrawler
                 {
                     var newsArticleFetcherRunner = scope.ServiceProvider.GetRequiredService<INewsArticleFetcherRunner>();
                     var result = await newsArticleFetcherRunner.RunFetcher();
-                    LogFetcherResult(result);
                     fetcherResults.Add(result);
                 }
             }
