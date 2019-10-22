@@ -21,7 +21,19 @@ namespace NewsCrawler.DailyMail
             {
                 return false;
             }
-            return !Regex.IsMatch(articleLink, @"\d") && !articleLink.Contains("news/article-") && !articleLink.EndsWith(".rss") && !articleLink.EndsWith(".uk") && !articleLink.EndsWith(".com");
+            return !Regex.IsMatch(articleLink, @"\d") &&
+                !articleLink.Contains("news/article-") &&
+                !articleLink.EndsWith(".rss") &&
+                !articleLink.EndsWith(".uk") &&
+                !articleLink.EndsWith(".com") &&
+                !articleLink.EndsWith(".com/") &&
+                !articleLink.Contains("twitter.com") &&
+                !articleLink.Contains("digg.com") &&
+                !articleLink.Contains("feedly.com") &&
+                !articleLink.Contains("www.linkedin.com") &&
+                !articleLink.Contains("mozilla.org") &&
+                !articleLink.Contains("mailtravel.co.uk") &&
+                !articleLink.Contains("wikipedia.org/");
         }
     }
 }
