@@ -9,7 +9,8 @@ namespace NewsCrawler.DailyMail
         public bool IsNewsArticle(string articleLink)
         {
             bool isNews = false;
-            if (!string.IsNullOrEmpty(articleLink)) {
+            if (!string.IsNullOrEmpty(articleLink))
+            {
                 isNews = articleLink.StartsWith("/news/article-") && !articleLink.EndsWith(".rss");
             }
             return isNews;
@@ -33,7 +34,15 @@ namespace NewsCrawler.DailyMail
                 !articleLink.Contains("www.linkedin.com") &&
                 !articleLink.Contains("mozilla.org") &&
                 !articleLink.Contains("mailtravel.co.uk") &&
-                !articleLink.Contains("wikipedia.org/");
+                !articleLink.Contains("wikipedia.org/") &&
+                !articleLink.Contains("/breakdown-cover") &&
+                !articleLink.Contains("/mortgage-finder") &&
+                !articleLink.Contains("/fuel-bills-finder") &&
+                !articleLink.Contains("/sharedealing") &&
+                !articleLink.Contains("/creditcardfinder") &&
+                !articleLink.Contains("/broadband-finder") &&
+                !articleLink.Contains("/homepagemortgages");
+
         }
     }
 }
