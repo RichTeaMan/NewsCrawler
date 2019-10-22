@@ -12,12 +12,15 @@ namespace NewsCrawler.Interfaces
 
         public int ErrorCounts { get; }
 
-        public FetcherResult(string newsSource, int articleLinksFound, int articlesSaved, int errorCount)
+        public TimeSpan ElapsedTimeSpan { get; }
+
+        public FetcherResult(string newsSource, int articleLinksFound, int articlesSaved, int errorCounts, TimeSpan elapsedTimeSpan)
         {
             NewsSource = newsSource ?? throw new ArgumentNullException(nameof(newsSource));
             ArticleLinksFound = articleLinksFound;
             ArticlesSaved = articlesSaved;
-            ErrorCounts = errorCount;
+            ErrorCounts = errorCounts;
+            ElapsedTimeSpan = elapsedTimeSpan;
         }
 
         public static FetcherResult operator+(FetcherResult a, FetcherResult b)
@@ -34,8 +37,9 @@ namespace NewsCrawler.Interfaces
             int aggregateArticleLinksFound = a.ArticleLinksFound + b.ArticleLinksFound;
             int aggregateArticlesSaved = a.ArticlesSaved + b.ArticlesSaved;
             int aggregateErrorCount = a.ErrorCounts + b.ErrorCounts;
+            var aggregateElapsedTimeSpan = a.ElapsedTimeSpan + b.ElapsedTimeSpan;
 
-            var aggregate = new FetcherResult(aggregateNewsSource, aggregateArticleLinksFound, aggregateArticlesSaved, aggregateErrorCount);
+            var aggregate = new FetcherResult(aggregateNewsSource, aggregateArticleLinksFound, aggregateArticlesSaved, aggregateErrorCount, aggregateElapsedTimeSpan);
             return aggregate;
         }
     }

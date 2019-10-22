@@ -28,10 +28,10 @@ namespace NewsCrawler
                     var newsArticleFetcherRunner = scope.ServiceProvider.GetRequiredService<INewsArticleFetcherRunner>();
                     var result = await newsArticleFetcherRunner.RunFetcher();
                     fetcherResults.Add(result);
-                    LogFetcherResult(result);
                 }
             }
             logger.LogInformation("Article crawler complete.");
+            fetcherResults.ForEach(r => LogFetcherResult(r));
             LogFetcherResult(fetcherResults.Aggregate((x, y) => x + y));
         }
 
@@ -40,7 +40,8 @@ namespace NewsCrawler
             logger.LogInformation($"\tNews Source: {fetcherResult.NewsSource}" +
                 $"\n\tLinks Found: {fetcherResult.ArticleLinksFound}" +
                 $"\n\tArticles Saved: {fetcherResult.ArticlesSaved}" +
-                $"\n\tError Count: {fetcherResult.ErrorCounts}");
+                $"\n\tError Count: {fetcherResult.ErrorCounts}" +
+                $"\n\tElapsed Time (minutes): {fetcherResult.ElapsedTimeSpan.TotalMinutes.ToString("0:N1")}\n");
         }
     }
 }

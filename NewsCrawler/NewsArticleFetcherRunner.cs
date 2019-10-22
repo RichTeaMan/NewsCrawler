@@ -6,7 +6,9 @@ using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence.Postgres;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace NewsCrawler
@@ -30,6 +32,8 @@ namespace NewsCrawler
 
         public async Task<FetcherResult> RunFetcher()
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             string newsSource;
             logger.LogInformation("Loading existing articles.");
             HashSet<string> existingArticles = null;
@@ -99,9 +103,9 @@ namespace NewsCrawler
                     logger.LogError(ex, "URL too long exception.");
                     errorCount++;
                 }
-                catch (Exception ex)
+                catch (HttpClientException ex)
                 {
-                    logger.LogError(ex, $"An error occurred retrieving '{articleLink}'.");
+                    logger.LogError($"Article returned non success code: {ex.StatusCode} - '{articleLink}'.");
                     errorCount++;
                 }
             }
@@ -113,8 +117,9 @@ namespace NewsCrawler
 
             logger.LogInformation($"Complete: {fetchedArticleCount} articles loaded.");
             logger.LogInformation("Crawling complete!");
+            stopwatch.Stop();
 
-            return new FetcherResult(newsSource, articleLinks.Count, fetchedArticleCount, errorCount);
+            return new FetcherResult(newsSource, articleLinks.Count, fetchedArticleCount, errorCount, stopwatch.Elapsed);
         }
 
         private async Task SaveArticles(List<Article> articles)

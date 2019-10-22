@@ -33,43 +33,45 @@ namespace NewsCrawler
             {
                 throw new UrlTooLongException(url);
             }
-            var response = await httpClient.GetAsync(url);
-            if (response.IsSuccessStatusCode)
+            using (var response = await httpClient.GetAsync(url))
             {
-                var content = await response.Content.ReadAsStringAsync();
-                string title = Truncate(newsArticleTitleFetcherService.FetchTitle(content), Constants.MAX_TITLE_LENGTH);
-                var publishedDate = articlePublishedDateFetcherService.FetchDate(content);
-                var cleanedArticle = articleCleaner.CleanArticle(content);
-                int cleanedArticleLength = 0;
-                int contentLength = 0;
-
-                if (!string.IsNullOrEmpty(cleanedArticle))
+                if (response.IsSuccessStatusCode)
                 {
-                    cleanedArticleLength = cleanedArticle.Length;
+                    var content = await response.Content.ReadAsStringAsync();
+                    string title = Truncate(newsArticleTitleFetcherService.FetchTitle(content), Constants.MAX_TITLE_LENGTH);
+                    var publishedDate = articlePublishedDateFetcherService.FetchDate(content);
+                    var cleanedArticle = articleCleaner.CleanArticle(content);
+                    int cleanedArticleLength = 0;
+                    int contentLength = 0;
+
+                    if (!string.IsNullOrEmpty(cleanedArticle))
+                    {
+                        cleanedArticleLength = cleanedArticle.Length;
+                    }
+                    if (!string.IsNullOrEmpty(content))
+                    {
+                        contentLength = content.Length;
+                    }
+
+                    var article = new Article
+                    {
+                        Content = content,
+                        Title = title,
+                        Url = Truncate(url, Constants.MAX_URL_LENGTH),
+                        RecordedDate = DateTimeOffset.Now,
+                        PublishedDate = publishedDate,
+                        CleanedContent = cleanedArticle,
+                        CleanedContentLength = cleanedArticleLength,
+                        ContentLength = contentLength
+                    };
+                    article.IsIndexPage = newsArticleDeterminationService.IsIndexPage(article.Url);
+
+                    return article;
                 }
-                if (!string.IsNullOrEmpty(content))
+                else
                 {
-                    contentLength = content.Length;
+                    throw new HttpClientException(url, response.StatusCode);
                 }
-
-                var article = new Article
-                {
-                    Content = content,
-                    Title = title,
-                    Url = Truncate(url, Constants.MAX_URL_LENGTH),
-                    RecordedDate = DateTimeOffset.Now,
-                    PublishedDate = publishedDate,
-                    CleanedContent = cleanedArticle,
-                    CleanedContentLength = cleanedArticleLength,
-                    ContentLength = contentLength
-                };
-                article.IsIndexPage = newsArticleDeterminationService.IsIndexPage(article.Url);
-
-                return article;
-            }
-            else
-            {
-                throw new Exception($"{response.StatusCode} Could not fetch from {url}.");
             }
         }
 
