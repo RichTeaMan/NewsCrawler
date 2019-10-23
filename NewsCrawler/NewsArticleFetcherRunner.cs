@@ -23,6 +23,8 @@ namespace NewsCrawler
 
         private readonly int batchSize = 50;
 
+        private readonly int maximumArticleRetrievalAttempt = 5;
+
         public NewsArticleFetcherRunner(ILogger<NewsArticleFetcherRunner> logger, INewsArticleFetchService newsArticleFetchService, IServiceProvider serviceProvider)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -42,6 +44,7 @@ namespace NewsCrawler
             {
                 try
                 {
+                    existingArticlesAttempt++;
                     using (var scope = serviceProvider.CreateScope())
                     {
                         var scopedNewsArticleContext = scope.ServiceProvider.GetRequiredService<PostgresNewsArticleContext>();
@@ -51,13 +54,17 @@ namespace NewsCrawler
                         existingArticles = new HashSet<string>(urls);
                         logger.LogInformation($"{existingArticles.Count} existing articles from source {source.Name} loaded.");
                     }
-                    existingArticlesAttempt++;
                 }
-                catch (Exception)
+                catch (TimeoutException)
                 {
-                    if (existingArticlesAttempt >= 5)
+                    if (existingArticlesAttempt >= maximumArticleRetrievalAttempt)
                     {
+                        logger.LogError($"Failed to load existing articles after {maximumArticleRetrievalAttempt} attempts.");
                         throw;
+                    }
+                    else
+                    {
+                        logger.LogWarning($"Loading existing articles attempt {existingArticlesAttempt} of {maximumArticleRetrievalAttempt} failed due to a timeout error. Trying again...");
                     }
                 }
             }
