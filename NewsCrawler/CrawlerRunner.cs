@@ -37,11 +37,12 @@ namespace NewsCrawler
 
         private void LogFetcherResult(FetcherResult fetcherResult)
         {
-            logger.LogInformation($"\tNews Source: {fetcherResult.NewsSource}" +
-                $"\n\tLinks Found: {fetcherResult.ArticleLinksFound}" +
-                $"\n\tArticles Saved: {fetcherResult.ArticlesSaved}" +
-                $"\n\tError Count: {fetcherResult.ErrorCounts}" +
-                $"\n\tElapsed Time (minutes): {fetcherResult.ElapsedTimeSpan.TotalMinutes.ToString("0.#")}\n");
+            logger.LogInformation(
+                $"           News Source: {fetcherResult.NewsSource}\n" +
+                $"           Links Found: {fetcherResult.ArticleLinksFound}\n" +
+                $"        Articles Saved: {fetcherResult.ArticlesSaved}\n" +
+                $"           Error Count: {fetcherResult.ErrorCounts}\n" +
+                $"Elapsed Time (minutes): {fetcherResult.ElapsedTimeSpan.TotalMinutes.ToString("0.#")}\n");
         }
     }
 }
