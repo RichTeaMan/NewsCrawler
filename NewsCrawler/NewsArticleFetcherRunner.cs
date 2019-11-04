@@ -25,6 +25,11 @@ namespace NewsCrawler
 
         private readonly int maximumArticleRetrievalAttempt = 5;
 
+        /// <summary>
+        /// Batch cut off for how many bytes should be insterted in a single batch.
+        /// </summary>
+        private readonly int byteBatchCount = 5 * 1000 * 1000;
+
         public NewsArticleFetcherRunner(ILogger<NewsArticleFetcherRunner> logger, INewsArticleFetchService newsArticleFetchService, IServiceProvider serviceProvider)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -131,18 +136,42 @@ namespace NewsCrawler
 
         private async Task SaveArticles(List<Article> articles)
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             using (var scope = serviceProvider.CreateScope())
             using (var scopedPostgresNewsArticleContext = scope.ServiceProvider.GetRequiredService<PostgresNewsArticleContext>())
             {
                 logger.LogInformation("Saving articles...");
+                logger.LogInformation("   Loading source...");
                 var newsArticleFinderService = scope.ServiceProvider.GetRequiredService<INewsArticleFinderService>();
                 var source = await newsArticleFinderService.FetchSource(scopedPostgresNewsArticleContext);
+                logger.LogInformation($"   Source loaded in {stopwatch.Elapsed.TotalSeconds} seconds.");
 
                 articles.ForEach(a => a.Source = source);
+                var articleStack = new Stack<Article>(articles);
+                var batchedArticles = new List<Article>();
+                int batchBytes = 0;
 
-                await scopedPostgresNewsArticleContext.Articles.AddRangeAsync(articles);
-                await scopedPostgresNewsArticleContext.SaveChangesAsync();
+                while (articleStack.Any())
+                {
+                    var poppedArticle = articleStack.Pop();
+                    batchBytes = batchBytes + poppedArticle.CleanedContentLength + poppedArticle.ContentLength;
+                    batchedArticles.Add(poppedArticle);
+
+                    if (batchBytes > byteBatchCount || !articleStack.Any())
+                    {
+                        await scopedPostgresNewsArticleContext.Articles.AddRangeAsync(batchedArticles);
+                        logger.LogInformation($"   Submitting {batchedArticles.Count} articles of combined size {batchBytes}...");
+                        await scopedPostgresNewsArticleContext.SaveChangesAsync();
+                        logger.LogInformation($"   Batch articles saved in {stopwatch.Elapsed.TotalSeconds} seconds.");
+
+                        batchedArticles = new List<Article>();
+                        batchBytes = 0;
+                    }
+                }
             }
+            logger.LogInformation($"   Articles saved in {stopwatch.Elapsed.TotalSeconds} seconds.");
+            stopwatch.Stop();
         }
     }
 }
