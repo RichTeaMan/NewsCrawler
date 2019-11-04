@@ -33,6 +33,7 @@ namespace NewsCrawler
             logger.LogInformation("Article crawler complete.");
             fetcherResults.ForEach(r => LogFetcherResult(r));
             LogFetcherResult(fetcherResults.Aggregate((x, y) => x + y));
+            logger.LogInformation("Article crawler closing.");
         }
 
         private void LogFetcherResult(FetcherResult fetcherResult)
