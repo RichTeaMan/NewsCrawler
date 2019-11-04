@@ -54,7 +54,7 @@ namespace NewsCrawler
                     {
                         var scopedNewsArticleContext = scope.ServiceProvider.GetRequiredService<PostgresNewsArticleContext>();
                         var newsArticleFinderService = scope.ServiceProvider.GetRequiredService<INewsArticleFinderService>();
-                        var source = await newsArticleFinderService.FetchSource(scopedNewsArticleContext);
+                        var source = await LoadSource(scopedNewsArticleContext, newsArticleFinderService);
                         var urls = await scopedNewsArticleContext.Articles.Where(a => a.Source == source).Select(a => a.Url).ToArrayAsync();
                         existingArticles = new HashSet<string>(urls);
                         logger.LogInformation($"{existingArticles.Count} existing articles from source {source.Name} loaded.");
@@ -144,7 +144,7 @@ namespace NewsCrawler
                 logger.LogInformation("Saving articles...");
                 logger.LogInformation("   Loading source...");
                 var newsArticleFinderService = scope.ServiceProvider.GetRequiredService<INewsArticleFinderService>();
-                var source = await newsArticleFinderService.FetchSource(scopedPostgresNewsArticleContext);
+                var source = await LoadSource(scopedPostgresNewsArticleContext, newsArticleFinderService);
                 logger.LogInformation($"   Source loaded in {stopwatch.Elapsed.TotalSeconds} seconds.");
 
                 articles.ForEach(a => a.Source = source);
@@ -172,6 +172,23 @@ namespace NewsCrawler
             }
             logger.LogInformation($"   Articles saved in {stopwatch.Elapsed.TotalSeconds} seconds.");
             stopwatch.Stop();
+        }
+
+        private async Task<Source> LoadSource(PostgresNewsArticleContext postgresNewsArticleContext, INewsArticleFinderService newsArticleFinderService)
+        {
+            Source source = null;
+            while (source == null)
+            {
+                try
+                {
+                    source = await newsArticleFinderService.FetchSource(postgresNewsArticleContext);
+                }
+                catch (System.IO.EndOfStreamException)
+                {
+                    logger.LogInformation("Failed to retrieve source due to EndOfStreamException. Trying again...");
+                }
+            }
+            return source;
         }
     }
 }
