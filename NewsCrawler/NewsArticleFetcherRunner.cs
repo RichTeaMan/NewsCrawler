@@ -78,7 +78,8 @@ namespace NewsCrawler
             using (var scope = serviceProvider.CreateScope())
             {
                 var newsArticleFinderService = scope.ServiceProvider.GetRequiredService<INewsArticleFinderService>();
-                articleLinks = newsArticleFinderService.FindNewsArticles().Distinct().Where(a => !existingArticles.Contains(a)).ToList();
+                var existing = newsArticleFinderService.FindNewsArticles().Distinct().ToArray();
+                articleLinks = existing.Where(a => !existingArticles.Contains(a)).ToList();
                 logger.LogInformation($"Getting articles from news source: '{newsArticleFinderService.SourceName}'");
                 newsSource = newsArticleFinderService.SourceName;
             }

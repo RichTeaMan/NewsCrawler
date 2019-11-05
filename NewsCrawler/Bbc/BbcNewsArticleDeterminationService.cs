@@ -8,7 +8,7 @@ namespace NewsCrawler.Bbc
     {
         public bool IsNewsArticle(string articleLink)
         {
-            return articleLink?.StartsWith("/news/") == true;
+            return articleLink?.StartsWith("https://www.bbc.co.uk/news/") == true;
         }
 
         public bool IsIndexPage(string articleLink)

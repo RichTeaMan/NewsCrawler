@@ -64,8 +64,8 @@ namespace NewsCrawler
             var links = documentNodes.SelectMany(n => n.Descendants())
                 .Where(n => n.Name == "a")
                 .Select(n => FindHref(n))
-                .Where(v => newsArticleDeterminationService.IsNewsArticle(v))
                 .Distinct()
+                .Where(v => newsArticleDeterminationService.IsNewsArticle(v))
                 .ToArray();
             return links;
         }
