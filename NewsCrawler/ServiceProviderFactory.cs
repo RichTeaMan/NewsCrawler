@@ -48,15 +48,16 @@ namespace NewsCrawler
             serviceCollection.AddScoped<IArticleUpdaterRunner, ArticleUpdaterRunner>();
             serviceCollection.AddScoped<IWordCountService, SpacyWordCountService>();
             serviceCollection.AddSingleton<CrawlerRunner>();
+            serviceCollection.AddSingleton<ContentMigrator>();
         }
 
         public static IEnumerable<IServiceProvider> CreateServiceProviders()
         {
             yield return CreateBbcServiceProvider();
-            yield return CreateDailyMailServiceProvider();
-            yield return CreateGuardianServiceProvider();
-            yield return CreateCnnServiceProvider();
-            yield return CreateNewYorkTimesServiceProvider();
+            //yield return CreateDailyMailServiceProvider();
+            //yield return CreateGuardianServiceProvider();
+            //yield return CreateCnnServiceProvider();
+            //yield return CreateNewYorkTimesServiceProvider();
         }
 
         public static IServiceProvider CreateBbcServiceProvider()

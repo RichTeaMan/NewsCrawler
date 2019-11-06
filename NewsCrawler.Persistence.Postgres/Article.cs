@@ -38,5 +38,11 @@ namespace NewsCrawler.Persistence.Postgres
         public bool IsIndexPage { get; set; }
 
         public Source Source { get; set; }
+
+        public ArticleContent ArticleContent { get; set; }
+
+        public ArticleCleanedContent ArticleCleanedContent { get; set; }
+
+        public bool IsTransferred { get; set; }
     }
 }

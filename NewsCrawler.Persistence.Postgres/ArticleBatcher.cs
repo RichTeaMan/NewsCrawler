@@ -11,11 +11,17 @@ namespace NewsCrawler.Persistence.Postgres
 {
     public class ArticleBatcher
     {
-        private const int SplitArticleCount = 200;
 
         private readonly IServiceProvider serviceProvider;
 
         public int ConcurrentArticlePredicates { get; set; } = 1;
+
+        public int SplitArticleCount { get; set; } = 200;
+
+        /// <summary>
+        /// Gets the current active context. Be extremely mindful when using this directly.
+        /// </summary>
+        public PostgresNewsArticleContext CurrentContext { get; private set; } = null;
 
         public ArticleBatcher(IServiceProvider serviceProvider)
         {
@@ -50,8 +56,8 @@ namespace NewsCrawler.Persistence.Postgres
                 {
                     using (var scope = serviceProvider.CreateScope())
                     {
-                        var splitContext = scope.ServiceProvider.GetRequiredService<PostgresNewsArticleContext>();
-                        var articles = splitContext.Articles.Where(articlePredicate).Skip(articlesProcessed).Take(SplitArticleCount);
+                        CurrentContext = scope.ServiceProvider.GetRequiredService<PostgresNewsArticleContext>();
+                        var articles = CurrentContext.Articles.Where(articlePredicate).OrderBy(a => a.Id).Skip(articlesProcessed).Take(SplitArticleCount);
                         var articlesUpdateList = new ConcurrentBag<Article>();
 
                         await articles.ParallelForEachAsync(async article =>
@@ -71,8 +77,9 @@ namespace NewsCrawler.Persistence.Postgres
 
                         if (articlesUpdateList.Any())
                         {
-                            await splitContext.SaveChangesAsync();
+                            await CurrentContext.SaveChangesAsync();
                         }
+                        CurrentContext = null;
                     }
                 }
                 Console.WriteLine($"{articlesProcessed} articles processed.");
