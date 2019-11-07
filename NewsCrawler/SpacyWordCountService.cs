@@ -50,7 +50,7 @@ namespace NewsCrawler
                 {
                     if (!string.IsNullOrWhiteSpace(article.ArticleCleanedContent?.CleanedContent))
                     {
-                        var payload = Encoding.UTF8.GetBytes(article.ArticleCleanedContent.CleanedContent);                       
+                        var payload = Encoding.UTF8.GetBytes(article.ArticleCleanedContent.CleanedContent);
                         var multipartContent = new MultipartFormDataContent();
                         multipartContent.Add(new ByteArrayContent(payload), "document", "document.txt");
 

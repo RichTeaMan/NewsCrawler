@@ -66,7 +66,8 @@ namespace NewsCrawler
                         CleanedContentLength = cleanedArticleLength,
                         ContentLength = contentLength,
                         ArticleContent = new ArticleContent() { Content = content },
-                        ArticleCleanedContent = new ArticleCleanedContent() { CleanedContent = cleanedArticle }
+                        ArticleCleanedContent = new ArticleCleanedContent() { CleanedContent = cleanedArticle },
+                        IsTransferred = true
                     };
                     article.IsIndexPage = newsArticleDeterminationService.IsIndexPage(article.Url);
 
