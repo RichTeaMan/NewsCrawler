@@ -54,10 +54,10 @@ namespace NewsCrawler
         public static IEnumerable<IServiceProvider> CreateServiceProviders()
         {
             yield return CreateBbcServiceProvider();
-            //yield return CreateDailyMailServiceProvider();
-            //yield return CreateGuardianServiceProvider();
-            //yield return CreateCnnServiceProvider();
-            //yield return CreateNewYorkTimesServiceProvider();
+            yield return CreateDailyMailServiceProvider();
+            yield return CreateGuardianServiceProvider();
+            yield return CreateCnnServiceProvider();
+            yield return CreateNewYorkTimesServiceProvider();
         }
 
         public static IServiceProvider CreateBbcServiceProvider()
