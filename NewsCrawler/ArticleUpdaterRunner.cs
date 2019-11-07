@@ -46,7 +46,7 @@ namespace NewsCrawler
             article =>
             {
                 bool hasUpdates = false;
-                string title = Truncate(newsArticleTitleFetcherService.FetchTitle(article.Content), Constants.MAX_TITLE_LENGTH);
+                string title = Truncate(newsArticleTitleFetcherService.FetchTitle(article.ArticleContent.Content), Constants.MAX_TITLE_LENGTH);
                 if (article.Title != title)
                 {
                     article.Title = title;
@@ -59,7 +59,7 @@ namespace NewsCrawler
                     article.IsIndexPage = isIndexPage;
                     hasUpdates = true;
                 }
-                var publishedDate = articlePublishedDateFetcherService.FetchDate(article.Content);
+                var publishedDate = articlePublishedDateFetcherService.FetchDate(article.ArticleContent.Content);
                 if (publishedDate != article.PublishedDate)
                 {
                     article.PublishedDate = publishedDate;

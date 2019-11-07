@@ -50,7 +50,7 @@ namespace NewsCrawler
                         wordsByNewsSource.Add(article.Source, words);
                     }
 
-                    var splitWords = article.CleanedContent?.Split(' ');
+                    var splitWords = article.ArticleCleanedContent?.CleanedContent?.Split(' ');
                     if (splitWords != null)
                     {
                         foreach (var word in splitWords.Select(w => cleanString(w)).Where(w => !string.IsNullOrEmpty(w)))

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Async;
 using System.Collections.Concurrent;
@@ -17,6 +18,11 @@ namespace NewsCrawler.Persistence.Postgres
         public int ConcurrentArticlePredicates { get; set; } = 1;
 
         public int SplitArticleCount { get; set; } = 200;
+
+        /// <summary>
+        /// Gets or sets if content and cleaned content should be included in the batch.
+        /// </summary>
+        public bool IncludeContent { get; set; } = false;
 
         /// <summary>
         /// Gets the current active context. Be extremely mindful when using this directly.
@@ -57,7 +63,21 @@ namespace NewsCrawler.Persistence.Postgres
                     using (var scope = serviceProvider.CreateScope())
                     {
                         CurrentContext = scope.ServiceProvider.GetRequiredService<PostgresNewsArticleContext>();
-                        var articles = CurrentContext.Articles.Where(articlePredicate).OrderBy(a => a.Id).Skip(articlesProcessed).Take(SplitArticleCount);
+
+                        IQueryable<Article> articlesToFilter;
+                        if (IncludeContent)
+                        {
+                            articlesToFilter = CurrentContext.Articles
+                                .Include(a => a.Source)
+                                .Include(a => a.ArticleContent)
+                                .Include(a => a.ArticleCleanedContent);
+                        }
+                        else
+                        {
+                            articlesToFilter = CurrentContext.Articles
+                                .Include(a => a.Source);
+                        }
+                        var articles = articlesToFilter.Where(articlePredicate).OrderBy(a => a.Id).Skip(articlesProcessed).Take(SplitArticleCount);
                         var articlesUpdateList = new ConcurrentBag<Article>();
 
                         await articles.ParallelForEachAsync(async article =>

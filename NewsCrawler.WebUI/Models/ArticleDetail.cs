@@ -13,8 +13,8 @@
 
         public ArticleDetail(Persistence.Postgres.Article article) : base(article)
         {
-            Content = article.Content;
-            CleanedContent = article.CleanedContent;
+            Content = article.ArticleContent?.Content;
+            CleanedContent = article.ArticleCleanedContent?.CleanedContent;
         }
     }
 }

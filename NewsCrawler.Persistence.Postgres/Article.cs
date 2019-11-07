@@ -20,11 +20,13 @@ namespace NewsCrawler.Persistence.Postgres
 
         [Required]
         [Column(TypeName = "text")]
+        [Obsolete]
         public string Content { get; set; }
 
         public int ContentLength { get; set; }
 
         [Column(TypeName = "text")]
+        [Obsolete]
         public string CleanedContent { get; set; }
 
         public int CleanedContentLength { get; set; }

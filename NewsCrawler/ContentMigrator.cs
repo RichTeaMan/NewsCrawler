@@ -21,11 +21,14 @@ namespace NewsCrawler
         public async Task RunMigrator()
         {
             logger.LogInformation("Running article migrator.");
-            ArticleBatcher articleBatcher = new ArticleBatcher(serviceProvider);
-            articleBatcher.SplitArticleCount = 5;
+            ArticleBatcher articleBatcher = new ArticleBatcher(serviceProvider)
+            {
+                SplitArticleCount = 5
+            };
             await articleBatcher.RunArticleBatch(a => !a.IsTransferred,
                 a =>
                 {
+#pragma warning disable CS0612 // Type or member is obsolete
                     var content = new ArticleContent()
                     {
                         Content = a.Content
@@ -45,6 +48,7 @@ namespace NewsCrawler
                     a.IsTransferred = true;
 
                     return Task.FromResult(true);
+#pragma warning restore CS0612 // Type or member is obsolete
                 });
 
             logger.LogInformation("Article migrator complete.");

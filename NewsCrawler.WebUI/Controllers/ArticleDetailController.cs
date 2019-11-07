@@ -35,6 +35,8 @@ namespace NewsCrawler.WebUI.Controllers
             IActionResult result;
             var article = await newsArticleContext.Articles
                 .Include(a => a.Source)
+                .Include(a => a.ArticleContent)
+                .Include(a => a.ArticleCleanedContent)
                 .SingleOrDefaultAsync(a => a.Id == id);
 
             if (article == null)
@@ -47,7 +49,7 @@ namespace NewsCrawler.WebUI.Controllers
 
                 try
                 {
-                    var scanResponse = await documentScannerService.ScanDocument(article.CleanedContent);
+                    var scanResponse = await documentScannerService.ScanDocument(article.ArticleCleanedContent.CleanedContent);
                     var nouns = scanResponse.DocumentTokens
                         .Where(t => t.IsProperNoun())
                         .GroupBy(t => t.Text)

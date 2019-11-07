@@ -29,17 +29,24 @@ namespace NewsCrawler
         public async Task CleanArticles()
         {
             logger.LogInformation($"Cleaning articles containing '{ArticleUrlContains}'.");
-            var articleBatcher = new ArticleBatcher(serviceProvider);
+            var articleBatcher = new ArticleBatcher(serviceProvider)
+            {
+                IncludeContent = true
+            };
             Directory.CreateDirectory(CleanedArticleDirectory);
 
             await articleBatcher.RunArticleBatch(
             article => article.Url.Contains(ArticleUrlContains),
             async article =>
             {
-                var clean = articleCleaner.CleanArticle(article.Content);
-                if (clean != article.CleanedContent)
+                var clean = articleCleaner.CleanArticle(article.ArticleContent.Content);
+                if (clean != article.ArticleCleanedContent?.CleanedContent)
                 {
-                    article.CleanedContent = clean;
+                    if (article.ArticleCleanedContent == null)
+                    {
+                        article.ArticleCleanedContent = new ArticleCleanedContent();
+                    }
+                    article.ArticleCleanedContent.CleanedContent = clean;
                     int cleanLength = 0;
                     if (!string.IsNullOrEmpty(clean))
                     {

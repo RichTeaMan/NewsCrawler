@@ -55,14 +55,18 @@ namespace NewsCrawler
 
                     var article = new Article
                     {
-                        Content = content,
+#pragma warning disable CS0612 // Type or member is obsolete
+                        Content = string.Empty,
+                        CleanedContent = string.Empty,
+#pragma warning restore CS0612 // Type or member is obsolete
                         Title = title,
                         Url = Truncate(url, Constants.MAX_URL_LENGTH),
                         RecordedDate = DateTimeOffset.Now,
                         PublishedDate = publishedDate,
-                        CleanedContent = cleanedArticle,
                         CleanedContentLength = cleanedArticleLength,
-                        ContentLength = contentLength
+                        ContentLength = contentLength,
+                        ArticleContent = new ArticleContent() { Content = content },
+                        ArticleCleanedContent = new ArticleCleanedContent() { CleanedContent = cleanedArticle }
                     };
                     article.IsIndexPage = newsArticleDeterminationService.IsIndexPage(article.Url);
 
