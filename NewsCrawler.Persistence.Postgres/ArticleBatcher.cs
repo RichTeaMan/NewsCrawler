@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Async;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -23,6 +24,16 @@ namespace NewsCrawler.Persistence.Postgres
         /// Gets or sets if content and cleaned content should be included in the batch.
         /// </summary>
         public bool IncludeContent { get; set; } = false;
+
+        /// <summary>
+        /// Gets or sets if entity IDs should be entirely determined before writing any changes.
+        /// </summary>
+        /// <remarks>
+        /// This should be set to true if the article function is expected to make changes that will change the result
+        /// of the predicate. If this is not done the function is likely to skip over some entities as the predicate
+        /// will find different entities for every iteration. However, this is likely to come wit performance penalties.
+        /// </remarks>
+        public bool PreLoadEntityIds { get; set; } = false;
 
         /// <summary>
         /// Gets the current active context. Be extremely mindful when using this directly.
@@ -48,13 +59,21 @@ namespace NewsCrawler.Persistence.Postgres
             try
             {
                 int articlesCount;
+                var articleIds = new List<int>();
                 using (var scope = serviceProvider.CreateScope())
                 {
                     var context = scope.ServiceProvider.GetRequiredService<PostgresNewsArticleContext>();
                     articlesCount = context.Articles.Count(articlePredicate);
+                    Console.WriteLine($"Processing {articlesCount} articles.");
+                    if (PreLoadEntityIds)
+                    {
+                        Console.WriteLine("Getting articles IDs...");
+                        articleIds.AddRange(context.Articles.Where(articlePredicate).Select(a => a.Id).OrderBy(a => a));
+                        Console.WriteLine("Fetched article IDs.");
+                    }
                 }
 
-                Console.WriteLine($"Processing {articlesCount} articles.");
+
                 int articlesProcessed = 0;
 
                 int scopeCount = (articlesCount / SplitArticleCount) + 1;
@@ -77,7 +96,17 @@ namespace NewsCrawler.Persistence.Postgres
                             articlesToFilter = CurrentContext.Articles
                                 .Include(a => a.Source);
                         }
-                        var articles = articlesToFilter.Where(articlePredicate).OrderBy(a => a.Id).Skip(articlesProcessed).Take(SplitArticleCount);
+
+                        IQueryable<Article> articles;
+                        if (PreLoadEntityIds)
+                        {
+                            var ids = articleIds.Skip(articlesProcessed).Take(SplitArticleCount);
+                            articles = articlesToFilter.Where(a => ids.Contains(a.Id)).OrderBy(a => a.Id);
+                        }
+                        else
+                        {
+                            articles = articlesToFilter.Where(articlePredicate).OrderBy(a => a.Id).Skip(articlesProcessed).Take(SplitArticleCount);
+                        }
                         var articlesUpdateList = new ConcurrentBag<Article>();
 
                         await articles.ParallelForEachAsync(async article =>

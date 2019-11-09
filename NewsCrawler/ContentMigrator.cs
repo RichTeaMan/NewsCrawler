@@ -23,7 +23,8 @@ namespace NewsCrawler
             logger.LogInformation("Running article migrator.");
             ArticleBatcher articleBatcher = new ArticleBatcher(serviceProvider)
             {
-                SplitArticleCount = 5
+                SplitArticleCount = 5,
+                PreLoadEntityIds = true
             };
             await articleBatcher.RunArticleBatch(a => !a.IsTransferred,
                 a =>
