@@ -1,8 +1,7 @@
 {
   "profiles": {
     "NewsCrawler": {
-      "commandName": "Project",
-      "commandLineArgs": "Migrate"
+      "commandName": "Project"
     }
   }
 }

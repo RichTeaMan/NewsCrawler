@@ -33,7 +33,6 @@ namespace NewsCrawler.WebUI.Controllers
             var resultNewsSources = newsArticleContext.Source.Select(s => s.Name).Distinct().ToArray();
 
             var articles = newsArticleContext.Articles.Include(a => a.Source)
-                .Where(a => a.IsTransferred)
                 .Where(a => !a.IsIndexPage)
                 .Where(a => string.IsNullOrEmpty(searchTerm) || a.Title.Contains(searchTerm))
                 .Where(a => newsSources == null || !newsSources.Any() || newsSources.Contains(a.Source.Name))

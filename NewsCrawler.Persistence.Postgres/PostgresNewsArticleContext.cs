@@ -19,7 +19,7 @@ namespace NewsCrawler.Persistence.Postgres
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Article>().Property(p => p.IsTransferred).HasDefaultValue(false);
+            modelBuilder.Entity<Article>();
 
             modelBuilder.Entity<WordCount>();
 

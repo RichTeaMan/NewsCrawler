@@ -18,16 +18,7 @@ namespace NewsCrawler.Persistence.Postgres
         [MaxLength(Constants.MAX_TITLE_LENGTH)]
         public string Title { get; set; }
 
-        [Required]
-        [Column(TypeName = "text")]
-        [Obsolete]
-        public string Content { get; set; }
-
         public int ContentLength { get; set; }
-
-        [Column(TypeName = "text")]
-        [Obsolete]
-        public string CleanedContent { get; set; }
 
         public int CleanedContentLength { get; set; }
 
@@ -44,7 +35,5 @@ namespace NewsCrawler.Persistence.Postgres
         public ArticleContent ArticleContent { get; set; }
 
         public ArticleCleanedContent ArticleCleanedContent { get; set; }
-
-        public bool IsTransferred { get; set; }
     }
 }
