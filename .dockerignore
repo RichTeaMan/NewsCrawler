@@ -1,4 +1,7 @@
+.dotnet/
 .git/
+obj/
+tools/
 .gitignore
 tools/
 webui-dockerfile
