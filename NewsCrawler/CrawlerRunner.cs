@@ -17,11 +17,11 @@ namespace NewsCrawler
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task RunCrawler()
+        public async Task RunCrawler(string databaseString)
         {
             logger.LogInformation("Running article crawler.");
             var fetcherResults = new List<FetcherResult>();
-            foreach (var serviceProvider in ServiceProviderFactory.CreateServiceProviders())
+            foreach (var serviceProvider in ServiceProviderFactory.CreateServiceProviders(databaseString))
             {
                 using (var scope = serviceProvider.CreateScope())
                 {

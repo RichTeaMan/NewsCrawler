@@ -10,6 +10,7 @@ using NewsCrawler.Interfaces;
 using NewsCrawler.NewYorkTimes;
 using NewsCrawler.Persistence;
 using NewsCrawler.Persistence.Postgres;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 
@@ -22,47 +23,61 @@ namespace NewsCrawler
         /// so some service lookup will not be resolved.
         /// </summary>
         /// <returns></returns>
-        public static IServiceProvider CreateGenericServiceProvider()
+        public static IServiceProvider CreateGenericServiceProvider(string databaseString)
         {
             var serviceCollection = new ServiceCollection();
-            AddGenericServicesToCollection(serviceCollection);
+            AddGenericServicesToCollection(serviceCollection, databaseString);
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
             return serviceProvider;
         }
 
-        private static void AddGenericServicesToCollection(ServiceCollection serviceCollection)
+        private static void AddGenericServicesToCollection(ServiceCollection serviceCollection, string databaseString)
         {
+            var inMemoryCommand = new Dictionary<string, string>();
+            if (!string.IsNullOrWhiteSpace(databaseString))
+            {
+                inMemoryCommand.Add("ConnectionStrings:PostgresNewsArticleDatabase", databaseString);
+            }
+
             var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false);
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+                .AddInMemoryCollection(inMemoryCommand);
             var config = builder.Build();
 
             var postgresConnectionString = config.GetConnectionString("PostgresNewsArticleDatabase");
+
+            var postgresConnection = new NpgsqlConnectionStringBuilder(postgresConnectionString);
+            Console.WriteLine($"Database host: {postgresConnection.Host}");
+            Console.WriteLine($"Database name: {postgresConnection.Database}");
+            Console.WriteLine($"Database username: {postgresConnection.Username}");
             serviceCollection.AddDbContext<PostgresNewsArticleContext>(options => options.UseNpgsql(postgresConnectionString,
                 pgOptions => pgOptions.CommandTimeout(120)),
                 ServiceLifetime.Transient);
-            
+
             serviceCollection.AddLogging(configure => { configure.AddConfiguration(config.GetSection("Logging")); configure.AddConsole(); });
             serviceCollection.AddScoped<INewsArticleFetcherRunner, NewsArticleFetcherRunner>();
             serviceCollection.AddScoped<INewsArticleFetchService, NewsArticleFetchService>();
             serviceCollection.AddScoped<IArticleUpdaterRunner, ArticleUpdaterRunner>();
             serviceCollection.AddScoped<IWordCountService, SpacyWordCountService>();
             serviceCollection.AddSingleton<CrawlerRunner>();
+
+
         }
 
-        public static IEnumerable<IServiceProvider> CreateServiceProviders()
+        public static IEnumerable<IServiceProvider> CreateServiceProviders(string databaseString)
         {
-            yield return CreateBbcServiceProvider();
-            yield return CreateDailyMailServiceProvider();
-            yield return CreateGuardianServiceProvider();
-            yield return CreateCnnServiceProvider();
-            yield return CreateNewYorkTimesServiceProvider();
+            yield return CreateBbcServiceProvider(databaseString);
+            yield return CreateDailyMailServiceProvider(databaseString);
+            yield return CreateGuardianServiceProvider(databaseString);
+            yield return CreateCnnServiceProvider(databaseString);
+            yield return CreateNewYorkTimesServiceProvider(databaseString);
         }
 
-        public static IServiceProvider CreateBbcServiceProvider()
+        public static IServiceProvider CreateBbcServiceProvider(string databaseString)
         {
             var serviceCollection = new ServiceCollection();
-            AddGenericServicesToCollection(serviceCollection);
+            AddGenericServicesToCollection(serviceCollection, databaseString);
 
             serviceCollection.AddScoped<INewsArticleDeterminationService, BbcNewsArticleDeterminationService>();
             serviceCollection.AddScoped<INewsArticleFinderService, BbcNewsArticleFinderService>();
@@ -75,10 +90,10 @@ namespace NewsCrawler
             return serviceProvider;
         }
 
-        public static IServiceProvider CreateDailyMailServiceProvider()
+        public static IServiceProvider CreateDailyMailServiceProvider(string databaseString)
         {
             var serviceCollection = new ServiceCollection();
-            AddGenericServicesToCollection(serviceCollection);
+            AddGenericServicesToCollection(serviceCollection, databaseString);
 
             serviceCollection.AddScoped<INewsArticleDeterminationService, DailyMailNewsArticleDeterminationService>();
             serviceCollection.AddScoped<INewsArticleFinderService, DailyMailNewsArticleFinderService>();
@@ -91,10 +106,10 @@ namespace NewsCrawler
             return serviceProvider;
         }
 
-        public static IServiceProvider CreateGuardianServiceProvider()
+        public static IServiceProvider CreateGuardianServiceProvider(string databaseString)
         {
             var serviceCollection = new ServiceCollection();
-            AddGenericServicesToCollection(serviceCollection);
+            AddGenericServicesToCollection(serviceCollection, databaseString);
 
             serviceCollection.AddScoped<INewsArticleDeterminationService, GuardianArticleDeterminationService>();
             serviceCollection.AddScoped<INewsArticleFinderService, GuardianArticleFinderService>();
@@ -107,10 +122,10 @@ namespace NewsCrawler
             return serviceProvider;
         }
 
-        public static IServiceProvider CreateCnnServiceProvider()
+        public static IServiceProvider CreateCnnServiceProvider(string databaseString)
         {
             var serviceCollection = new ServiceCollection();
-            AddGenericServicesToCollection(serviceCollection);
+            AddGenericServicesToCollection(serviceCollection, databaseString);
 
             serviceCollection.AddScoped<INewsArticleDeterminationService, CnnArticleDeterminationService>();
             serviceCollection.AddScoped<INewsArticleFinderService, CnnArticleFinderService>();
@@ -123,10 +138,10 @@ namespace NewsCrawler
             return serviceProvider;
         }
 
-        public static IServiceProvider CreateNewYorkTimesServiceProvider()
+        public static IServiceProvider CreateNewYorkTimesServiceProvider(string databaseString)
         {
             var serviceCollection = new ServiceCollection();
-            AddGenericServicesToCollection(serviceCollection);
+            AddGenericServicesToCollection(serviceCollection, databaseString);
 
             serviceCollection.AddScoped<INewsArticleDeterminationService, NewYorkTimesArticleDeterminationService>();
             serviceCollection.AddScoped<INewsArticleFinderService, NewYorkTimesArticleFinderService>();
