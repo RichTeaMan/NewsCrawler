@@ -133,7 +133,7 @@ namespace NewsCrawler
                     Console.WriteLine("Migration successful.");
                     return 0;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine("Migration failed.");
                     Console.Write(ex);

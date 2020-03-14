@@ -29,16 +29,5 @@ namespace NewsCrawler.Persistence.Postgres
 
             modelBuilder.Entity<ArticleCleanedContent>();
         }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-
-            var builder = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false);
-            var config = builder.Build();
-
-            var connectionString = config.GetConnectionString("PostgresNewsArticleDatabase");
-            optionsBuilder.UseNpgsql(connectionString);
-        }
     }
 }
