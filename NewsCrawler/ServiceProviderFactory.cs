@@ -46,11 +46,19 @@ namespace NewsCrawler
             var config = builder.Build();
 
             var postgresConnectionString = config.GetConnectionString("PostgresNewsArticleDatabase");
+            try
+            {
 
-            var postgresConnection = new NpgsqlConnectionStringBuilder(postgresConnectionString);
-            Console.WriteLine($"Database host: {postgresConnection.Host}");
-            Console.WriteLine($"Database name: {postgresConnection.Database}");
-            Console.WriteLine($"Database username: {postgresConnection.Username}");
+                var postgresConnection = new NpgsqlConnectionStringBuilder(postgresConnectionString);
+                Console.WriteLine($"Database host: {postgresConnection.Host}");
+                Console.WriteLine($"Database name: {postgresConnection.Database}");
+                Console.WriteLine($"Database username: {postgresConnection.Username}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Could not parse connection string.");
+                throw ex;
+            }
             serviceCollection.AddDbContext<PostgresNewsArticleContext>(options => options.UseNpgsql(postgresConnectionString,
                 pgOptions => pgOptions.CommandTimeout(120)),
                 ServiceLifetime.Transient);
