@@ -56,8 +56,7 @@ namespace NewsCrawler
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Could not parse connection string.");
-                throw ex;
+                throw new Exception("Could not parse connection string.", ex);
             }
             serviceCollection.AddDbContext<PostgresNewsArticleContext>(options => options.UseNpgsql(postgresConnectionString,
                 pgOptions => pgOptions.CommandTimeout(120)),
