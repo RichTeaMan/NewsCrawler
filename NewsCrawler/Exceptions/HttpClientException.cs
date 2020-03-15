@@ -9,12 +9,18 @@ namespace NewsCrawler.Exceptions
     {
         public string Url { get; }
 
-        public HttpStatusCode StatusCode { get; }
+        public HttpStatusCode? StatusCode { get; }
 
         public HttpClientException(string url, HttpStatusCode statusCode) : base($"{statusCode} Could not fetch from {url}.")
         {
             Url = url ?? throw new ArgumentNullException(nameof(url));
             StatusCode = statusCode;
+        }
+
+        public HttpClientException(string url, Exception ex) : base($"Could not fetch from {url}: {ex.Message}")
+        {
+            Url = url ?? throw new ArgumentNullException(nameof(url));
+            StatusCode = null;
         }
     }
 }

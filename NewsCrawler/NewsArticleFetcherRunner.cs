@@ -118,7 +118,7 @@ namespace NewsCrawler
                 }
                 catch (HttpClientException ex)
                 {
-                    logger.LogError($"Article returned non success code: {ex.StatusCode} - '{articleLink}'.");
+                    logger.LogError($"Article returned non success code: {ex?.StatusCode} - '{articleLink}'.");
                     errorCount++;
                 }
             }
