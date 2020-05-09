@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NewsCrawler.Persistence.Postgres;
+using NewsCrawler.WebUI.Services;
 
 namespace NewsCrawler.WebUI
 {
@@ -34,6 +35,7 @@ namespace NewsCrawler.WebUI
                 contextOptions => contextOptions.CommandTimeout(120 * 2)),
                 ServiceLifetime.Transient);
             services.AddTransient<DocumentScannerService>();
+            services.AddHostedService<RecentArticleWorker>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

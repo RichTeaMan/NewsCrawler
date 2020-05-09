@@ -13,7 +13,7 @@ using NewsCrawler.WebUI.Models;
 
 namespace NewsCrawler.WebUI.Controllers
 {
-    public class HomeController : Controller
+    public class ArchiveController : Controller
     {
         private readonly ILogger logger;
 
@@ -21,7 +21,7 @@ namespace NewsCrawler.WebUI.Controllers
 
         private const int ArticlesPerPage = 100;
 
-        public HomeController(ILogger<HomeController> logger, PostgresNewsArticleContext newsArticleContext)
+        public ArchiveController(ILogger<HomeController> logger, PostgresNewsArticleContext newsArticleContext)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.newsArticleContext = newsArticleContext ?? throw new ArgumentNullException(nameof(newsArticleContext));
@@ -29,7 +29,7 @@ namespace NewsCrawler.WebUI.Controllers
 
         public IActionResult Index(int page = 1, string searchTerm = null, string[] newsSources = null)
         {
-            logger.LogInformation("Home index requested.");
+            logger.LogInformation("Archive index requested.");
             var resultNewsSources = newsArticleContext.Source.Select(s => s.Name).Distinct().ToArray();
 
             var articles = newsArticleContext.Articles.Include(a => a.Source)
