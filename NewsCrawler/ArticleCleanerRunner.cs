@@ -39,6 +39,7 @@ namespace NewsCrawler
             article => article.Url.Contains(ArticleUrlContains),
             async article =>
             {
+                bool updateRequired = await article.ArticleContent.UpdateCompression();
                 var clean = articleCleaner.CleanArticle(article.ArticleContent.Content);
                 if (clean != article.ArticleCleanedContent?.CleanedContent)
                 {
@@ -53,12 +54,9 @@ namespace NewsCrawler
                         cleanLength = clean.Length;
                     }
                     article.CleanedContentLength = cleanLength;
-                    return await Task.FromResult(true);
+                    updateRequired = true;
                 }
-                else
-                {
-                    return await Task.FromResult(false);
-                }
+                return updateRequired;
             });
 
             logger.LogInformation($"Completed cleaning articles containing '{ArticleUrlContains}'.");
