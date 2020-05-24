@@ -18,7 +18,7 @@ namespace NewsCrawler
 
         private readonly HttpClient httpClient = new HttpClient();
 
-        private readonly string documentUrl = "https://document-store.richteaman.com/document";
+        private readonly string documentUrl = "http://tomserver:5003/document";
 
         private readonly int maxAttempts = 10;
 
@@ -40,9 +40,6 @@ namespace NewsCrawler
             article => article.ArticleContent != null && article.ArticleContent.Content != string.Empty,
             async article =>
             {
-
-                // curl - X PUT http://localhost:5002/document -F "document=@amazon.sh" -H "key: test-docker" -v
-
                 string articleText = article.ArticleContent.Content;
                 string articleKey = article.Url;
 
