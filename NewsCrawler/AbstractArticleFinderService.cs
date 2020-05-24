@@ -46,26 +46,35 @@ namespace NewsCrawler
 
         public IEnumerable<string> FindNewsArticles()
         {
-            var documentNodes = new List<HtmlNode>();
-            foreach (var indexUrl in FetchIndexUrls())
+            var documentLinks = new List<string>();
+            var indexUrls = FetchIndexUrls();
+            logger.LogInformation($"Fetching {indexUrls.Length} index pages.");
+            int i = 0;
+            foreach (var indexUrl in indexUrls)
             {
                 try
                 {
                     var web = new HtmlWeb();
                     var doc = web.Load(indexUrl);
-                    documentNodes.Add(doc.DocumentNode);
+                    var docLinks = doc.DocumentNode.Descendants()
+                        .Where(n => n.Name == "a")
+                        .Select(n => FindHref(n))
+                        .Where(v => !string.IsNullOrWhiteSpace(v))
+                        .Distinct()
+                        .ToArray();
+                    documentLinks.AddRange(docLinks);
                 }
                 catch (WebException ex)
                 {
                     logger.LogError(ex, $"Error fetching index page: '{indexUrl}'.");
                 }
+                i++;
+                logger.LogInformation($"Index page {i} of {indexUrls.Length} fetched.");
             }
 
-            var links = documentNodes.SelectMany(n => n.Descendants())
-                .Where(n => n.Name == "a")
-                .Select(n => FindHref(n))
+            var links = documentLinks
                 .Distinct()
-                .Where(v => newsArticleDeterminationService.IsNewsArticle(v))
+                .Where(v => newsArticleDeterminationService.IsNewsArticle(v) || newsArticleDeterminationService.IsIndexPage(v))
                 .ToArray();
             return links;
         }
@@ -73,13 +82,35 @@ namespace NewsCrawler
         private string FindHref(HtmlNode htmlNode)
         {
             var href = htmlNode.Attributes.FirstOrDefault(attr => attr.Name == "href")?.Value;
-            if (href?.StartsWith("//") == true)
+            if (href != null)
             {
-                href = href.Remove(0, 2);
-            }
-            else if (href?.StartsWith("/") == true)
-            {
-                href = $"{BaseUrl}{href}";
+                if (href.StartsWith("//"))
+                {
+                    href = href.Remove(0, 2);
+                }
+                else if (href.StartsWith("/"))
+                {
+                    href = $"{BaseUrl}{href}";
+                }
+
+                // remove query params
+                int questionIndex = href.IndexOf('?');
+                if (questionIndex != -1)
+                {
+                    href = href.Substring(0, questionIndex);
+                }
+
+                // remove anchors
+                int hashIndex = href.IndexOf('#');
+                if (hashIndex != -1)
+                {
+                    href = href.Substring(0, hashIndex);
+                }
+
+                if (href.EndsWith("/"))
+                {
+                    href = href.TrimEnd('/');
+                }
             }
             return href;
         }

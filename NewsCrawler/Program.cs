@@ -104,6 +104,19 @@ namespace NewsCrawler
             }
         }
 
+        [ClCommand("Article-Storage")]
+        public static async Task RunStoreArticle([ClArgs("databaseString", "db")] string databaseString = null)
+        {
+            foreach (var serviceProvider in ServiceProviderFactory.CreateServiceProviders(databaseString))
+            {
+                using (var scope = serviceProvider.CreateScope())
+                {
+                    var newsArticleStoreRunner = scope.ServiceProvider.GetRequiredService<IArticleStoreRunner>();
+                    await newsArticleStoreRunner.StoreArticles();
+                }
+            }
+        }
+
         [ClCommand("Update-Word-Count")]
         public static async Task RunWordCount([ClArgs("databaseString", "db")] string databaseString = null)
         {
