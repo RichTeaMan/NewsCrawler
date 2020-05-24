@@ -19,7 +19,7 @@ namespace NewsCrawler
         private readonly INewsArticleDeterminationService newsArticleDeterminationService;
         private readonly IArticleCleaner articleCleaner;
 
-        private const string DOCUMENT_STORE_URL = "http://172.18.54.195:5002/document?key=";
+        private const string DOCUMENT_STORE_URL = "https://document-store.richteaman.com/document?key=";
 
         public NewsArticleFetchService(
             ILogger<NewsArticleFetchService> logger,

@@ -12,18 +12,17 @@ namespace NewsCrawler.Guardian
             bool isNewsArticle = false;
             if (!string.IsNullOrEmpty(articleLink))
             {
-                isNewsArticle = !articleLink.Contains("support.theguardian") && !articleLink.EndsWith("/all") && newsRegex.IsMatch(articleLink);
+                isNewsArticle = articleLink.Contains("theguardian.com") &&
+                    !articleLink.Contains("support.theguardian") &&
+                    !articleLink.EndsWith("/all") &&
+                    newsRegex.IsMatch(articleLink);
             }
             return isNewsArticle;
         }
 
         public bool IsIndexPage(string articleLink)
         {
-            if (!string.IsNullOrEmpty(articleLink))
-            {
-                return articleLink.Contains("https://www.theguardian.com/") && !IsNewsArticle(articleLink);
-            }
-            return false;
+            return articleLink?.Contains("https://www.theguardian.com/") == true && !IsNewsArticle(articleLink);
         }
     }
 }

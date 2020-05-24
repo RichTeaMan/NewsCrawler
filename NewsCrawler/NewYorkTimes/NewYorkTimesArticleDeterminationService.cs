@@ -1,5 +1,4 @@
 ﻿using NewsCrawler.Interfaces;
-using NewsCrawler.Persistence;
 using System.Text.RegularExpressions;
 
 namespace NewsCrawler.NewYorkTimes

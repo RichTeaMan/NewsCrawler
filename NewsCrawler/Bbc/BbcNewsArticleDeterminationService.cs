@@ -13,7 +13,7 @@ namespace NewsCrawler.Bbc
 
         public bool IsIndexPage(string articleLink)
         {
-            return !Regex.IsMatch(articleLink, @"\d") && !articleLink.Contains("correspondents");
+            return articleLink?.StartsWith("https://www.bbc.co.uk/news/") == true && !Regex.IsMatch(articleLink, @"\d") && !articleLink.Contains("correspondents");
         }
     }
 }

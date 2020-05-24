@@ -1,5 +1,4 @@
 ﻿using NewsCrawler.Interfaces;
-using NewsCrawler.Persistence;
 using System.Text.RegularExpressions;
 
 namespace NewsCrawler.DailyMail
@@ -11,7 +10,7 @@ namespace NewsCrawler.DailyMail
             bool isNews = false;
             if (!string.IsNullOrEmpty(articleLink))
             {
-                isNews = articleLink.StartsWith("/news/article-") && !articleLink.EndsWith(".rss");
+                isNews = articleLink.StartsWith("https://www.dailymail.co.uk/news/article-") && !articleLink.EndsWith(".rss");
             }
             return isNews;
         }
@@ -22,7 +21,8 @@ namespace NewsCrawler.DailyMail
             {
                 return false;
             }
-            return !Regex.IsMatch(articleLink, @"\d") &&
+            return articleLink.StartsWith("https://www.dailymail.co.uk/") &&
+                !Regex.IsMatch(articleLink, @"\d") &&
                 !articleLink.Contains("news/article-") &&
                 !articleLink.EndsWith(".rss") &&
                 !articleLink.EndsWith(".uk") &&
