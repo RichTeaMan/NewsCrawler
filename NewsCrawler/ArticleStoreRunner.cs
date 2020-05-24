@@ -18,7 +18,7 @@ namespace NewsCrawler
 
         private readonly HttpClient httpClient = new HttpClient();
 
-        private readonly string documentUrl = "http://172.18.49.79:5002/document";
+        private readonly string documentUrl = "https://document-store.richteaman.com/document";
 
         private readonly int maxAttempts = 10;
 
