@@ -38,10 +38,12 @@ namespace NewsCrawler
         private async Task<string> FetchContentFromUrl(string url)
         {
             logger.LogDebug($"Attempting to download from '{url}'.");
-            using var response = await httpClient.GetAsync(url);
-            response.EnsureSuccessStatusCode();
-            string content = await response.Content.ReadAsStringAsync();
-            return content;
+            using (var response = await httpClient.GetAsync(url))
+            {
+                response.EnsureSuccessStatusCode();
+                string content = await response.Content.ReadAsStringAsync();
+                return content;
+            }
         }
 
         public async Task<string> FetchContent(string url)

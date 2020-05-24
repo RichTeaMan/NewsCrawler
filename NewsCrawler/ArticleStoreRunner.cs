@@ -46,34 +46,36 @@ namespace NewsCrawler
                 string articleText = article.ArticleContent.Content;
                 string articleKey = article.Url;
 
-                using var content = new StringContent(articleText, Encoding.UTF8, "application/x-www-form-urlencoded");
-                content.Headers.Add("key", articleKey);
-
-                int attempts = 0;
                 bool deleteArticle = false;
-                while (attempts < maxAttempts)
+                using (var content = new StringContent(articleText, Encoding.UTF8, "application/x-www-form-urlencoded"))
                 {
-                    // probably needs a DDOS guard
-                    using (var response = await httpClient.PutAsync(documentUrl, content))
+                    content.Headers.Add("key", articleKey);
+
+                    int attempts = 0;
+                    while (attempts < maxAttempts)
                     {
-                        if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+                        // probably needs a DDOS guard
+                        using (var response = await httpClient.PutAsync(documentUrl, content))
                         {
-                            logger.LogWarning($"Article with  key '{articleKey}' has already been logged.");
-                            break;
+                            if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+                            {
+                                logger.LogWarning($"Article with  key '{articleKey}' has already been logged.");
+                                break;
+                            }
+                            else if (response.IsSuccessStatusCode)
+                            {
+                                //logger.LogDebug($"Article with  key '{articleKey}' successfully stored.");
+                                deleteArticle = true;
+                                break;
+                            }
+                            else
+                            {
+                                logger.LogError($"Unknown response code '{response.StatusCode}' - {response.ReasonPhrase}");
+                                logger.LogError(response.ToString());
+                            }
                         }
-                        else if (response.IsSuccessStatusCode)
-                        {
-                            //logger.LogDebug($"Article with  key '{articleKey}' successfully stored.");
-                            deleteArticle = true;
-                            break;
-                        }
-                        else
-                        {
-                            logger.LogError($"Unknown response code '{response.StatusCode}' - {response.ReasonPhrase}");
-                            logger.LogError(response.ToString());
-                        }
+                        attempts++;
                     }
-                    attempts++;
                 }
 
                 if (deleteArticle)
