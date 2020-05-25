@@ -4,9 +4,11 @@ using Microsoft.Extensions.Logging;
 using NewsCrawler.Interfaces;
 using NewsCrawler.Persistence.Postgres;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NewsCrawler
@@ -46,11 +48,11 @@ namespace NewsCrawler
 
         public IEnumerable<string> FindNewsArticles()
         {
-            var documentLinks = new List<string>();
+            var documentLinks = new ConcurrentBag<string>();
             var indexUrls = FetchIndexUrls();
             logger.LogInformation($"Fetching {indexUrls.Length} index pages.");
             int i = 0;
-            foreach (var indexUrl in indexUrls)
+            Parallel.ForEach(indexUrls, indexUrl =>
             {
                 try
                 {
@@ -61,16 +63,17 @@ namespace NewsCrawler
                         .Select(n => FindHref(n))
                         .Where(v => !string.IsNullOrWhiteSpace(v))
                         .Distinct()
-                        .ToArray();
-                    documentLinks.AddRange(docLinks);
+                        .ToList();
+
+                    docLinks.ForEach(l => documentLinks.Add(l));
                 }
                 catch (WebException ex)
                 {
                     logger.LogError(ex, $"Error fetching index page: '{indexUrl}'.");
                 }
-                i++;
-                logger.LogInformation($"Index page {i} of {indexUrls.Length} fetched.");
-            }
+                int _i = Interlocked.Increment(ref i);
+                logger.LogInformation($"Index page {_i} of {indexUrls.Length} fetched.");
+            });
 
             var links = documentLinks
                 .Distinct()
