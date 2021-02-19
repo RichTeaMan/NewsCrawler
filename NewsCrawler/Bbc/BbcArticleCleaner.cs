@@ -14,6 +14,29 @@ namespace NewsCrawler.Bbc
                 node.Remove();
             }
             var contentNode = htmlNode.Descendants().FirstOrDefault(n => n.Attributes.Any(attr => attr.Name == "class" && attr.Value == "story-body__inner"));
+
+            if (contentNode == null)
+            {
+                var articleWrapper = htmlNode.Descendants().FirstOrDefault(n => n.Name == "article");
+
+                if (articleWrapper != null)
+                {
+                    // remove final sections
+                    var dataComponentsToRemove = new HashSet<string>(new[] {
+                        "tag-list",
+                        "see-alsos",
+                        "related-internet-link"
+                    });
+                    var sectionsToRemove = articleWrapper.Descendants().Where(n => n.Attributes.Any(attr => attr.Name == "data-component" && dataComponentsToRemove.Contains(attr.Value))).ToArray();
+
+                    foreach (var section in sectionsToRemove)
+                    {
+                        articleWrapper.RemoveChild(section);
+                    }
+                }
+                contentNode = articleWrapper;
+            }
+
             return contentNode;
         }
 

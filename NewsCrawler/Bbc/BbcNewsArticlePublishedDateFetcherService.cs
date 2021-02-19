@@ -22,6 +22,20 @@ namespace NewsCrawler.Bbc
             {
                 dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(seconds);
             }
+
+            if (dateTimeOffset == null)
+            {
+                var timeNode = doc.DocumentNode.Descendants().FirstOrDefault(n => n.Name == "time");
+                if (timeNode != null)
+                {
+                    var dateTimeAttr = timeNode.Attributes.FirstOrDefault(attr => attr.Name == "datetime");
+                    if (dateTimeAttr != null && DateTimeOffset.TryParse(dateTimeAttr.Value, out DateTimeOffset parsedDateTimeOffset))
+                    {
+                        dateTimeOffset = parsedDateTimeOffset;
+                    }
+                }
+            }
+
             return dateTimeOffset;
         }
 

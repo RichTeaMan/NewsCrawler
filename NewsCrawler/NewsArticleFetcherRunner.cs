@@ -95,6 +95,10 @@ namespace NewsCrawler
                 {
                     var article = await newsArticleFetchService.FetchArticleAsync(articleLink);
                     articles.Add(article);
+                    if (article.CleanedContentLength == 0)
+                    {
+                        logger.LogDebug($"'{article.Url}' has no cleaned content.");
+                    }
                     fetchedArticleCount++;
                     if (fetchedArticleCount % 10 == 0)
                     {
