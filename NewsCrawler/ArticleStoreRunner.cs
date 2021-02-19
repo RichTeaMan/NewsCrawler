@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Net.WebSockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NewsCrawler
@@ -51,27 +53,45 @@ namespace NewsCrawler
                     int attempts = 0;
                     while (attempts < maxAttempts)
                     {
-                        // probably needs a DDOS guard
-                        using (var response = await httpClient.PutAsync(documentUrl, content))
+                        try
                         {
-                            if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+                            using (var response = await httpClient.PutAsync(documentUrl, content))
                             {
-                                logger.LogWarning($"Article with  key '{articleKey}' has already been logged.");
-                                break;
-                            }
-                            else if (response.IsSuccessStatusCode)
-                            {
-                                //logger.LogDebug($"Article with  key '{articleKey}' successfully stored.");
-                                deleteArticle = true;
-                                break;
-                            }
-                            else
-                            {
-                                logger.LogError($"Unknown response code '{response.StatusCode}' - {response.ReasonPhrase}");
-                                logger.LogError(response.ToString());
+                                if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+                                {
+                                    logger.LogWarning($"Article with  key '{articleKey}' has already been logged.");
+                                    deleteArticle = true;
+                                    break;
+                                }
+                                else if (response.IsSuccessStatusCode)
+                                {
+                                    //logger.LogDebug($"Article with  key '{articleKey}' successfully stored.");
+                                    deleteArticle = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    logger.LogError($"Unknown response code '{response.StatusCode}' - {response.ReasonPhrase}");
+                                    logger.LogError(response.ToString());
+                                }
                             }
                         }
-                        attempts++;
+
+                        catch (HttpRequestException ex)
+                        {
+                            logger.LogError($"HttpRequestException from document store: {ex.Message}");
+                            await Task.Delay(1000);
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.LogError(ex, "Error from document store.");
+                            await Task.Delay(1000);
+                        }
+                        finally
+                        {
+                            attempts++;
+                        }
+
                     }
                 }
 
