@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,7 +14,14 @@ namespace NewsCrawler.Guardian
             {
                 node.Remove();
             }
-            var contentNode = htmlNode.Descendants().FirstOrDefault(n => n.Attributes.Any(attr => attr.Name == "itemprop" && attr.Value == "articleBody"));
+            var contentNode = htmlNode.Descendants().FirstOrDefault(n => n.Attributes.Any(attr => attr.Name == "itemprop" && attr.Value == "articleBody")) ??
+                htmlNode.Descendants().FirstOrDefault(n => n.Attributes.Any(attr => attr.Name == "class" && attr.Value.Contains("article-body-viewer-selector")));
+
+            if (contentNode == null)
+            {
+                Console.WriteLine("?");
+            }
+
             return contentNode;
         }
 
