@@ -31,7 +31,7 @@ namespace NewsCrawler.Bbc
 
                     foreach (var section in sectionsToRemove)
                     {
-                        articleWrapper.RemoveChild(section);
+                        section.Remove();
                     }
                 }
                 contentNode = articleWrapper;
