@@ -23,6 +23,21 @@ namespace NewsCrawler
         {
             logger.LogInformation("Running article crawler.");
             var fetcherResults = new List<FetcherResult>();
+
+            var sp = ServiceProviderFactory.CreateGenericServiceProvider(databaseString);
+            using (var sp_scope = sp.CreateScope())
+            {
+                var context = sp_scope.ServiceProvider.GetRequiredService<PostgresNewsArticleContext>();
+                logger.LogInformation("Checking if database is migrated.");
+                logger.LogInformation(databaseString);
+                bool created = await context.Database.EnsureCreatedAsync();
+                if (created)
+                {
+                    logger.LogInformation("Database migrated.");
+                }
+            }
+
+
             foreach (var serviceProvider in ServiceProviderFactory.CreateServiceProviders(databaseString))
             {
                 using (var scope = serviceProvider.CreateScope())
