@@ -8,6 +8,8 @@ RUN ./cake.sh -target=ProdBuild
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2
 
+LABEL org.opencontainers.image.source https://github.com/RichTeaMan/NewsCrawler
+
 ENV connectionString=
 
 COPY --from=builder /NewsCrawler/NewsCrawler/bin/Release/netcoreapp2.2/publish/ /NewsCrawler/
