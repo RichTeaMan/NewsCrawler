@@ -31,41 +31,6 @@ jobs:
     - name: Build crawler image
       run: docker build --tag news-crawler .
 
-    - name: Log into GitHub Package Registry
-      run: echo "${{ secrets.CR_PAT }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-
-    - name: Push webui image to GitHub Package Registry
-      run: |
-        IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/news-crawler-webui
-        # Change all uppercase to lowercase
-        IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-        # Strip git ref prefix from version
-        VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-        # Strip "v" prefix from tag name
-        [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-        # Use Docker `latest` tag convention
-        [ "$VERSION" == "master" ] && VERSION=latest
-        echo IMAGE_ID=$IMAGE_ID
-        echo VERSION=$VERSION
-        docker tag news-crawler-webui $IMAGE_ID:$VERSION
-        docker push $IMAGE_ID:$VERSION
-
-    - name: Push crawler image to GitHub Package Registry
-      run: |
-        IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/news-crawler
-        # Change all uppercase to lowercase
-        IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-        # Strip git ref prefix from version
-        VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-        # Strip "v" prefix from tag name
-        [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-        # Use Docker `latest` tag convention
-        [ "$VERSION" == "master" ] && VERSION=latest
-        echo IMAGE_ID=$IMAGE_ID
-        echo VERSION=$VERSION
-        docker tag news-crawler $IMAGE_ID:$VERSION
-        docker push $IMAGE_ID:$VERSION
-
     - name: Log into GitHub Container Registry
       run: echo "${{ secrets.CR_PAT }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
 
@@ -102,8 +67,6 @@ jobs:
         echo VERSION=$VERSION
         docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
         docker push $IMAGE_ID:$VERSION
-
-
 
     - name: Remove latest tag
       uses: dev-drprasad/delete-tag-and-release@v0.1.2
