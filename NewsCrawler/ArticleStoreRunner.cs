@@ -20,14 +20,15 @@ namespace NewsCrawler
 
         private readonly HttpClient httpClient = new HttpClient();
 
-        private readonly string documentUrl = "http://tomserver:5003/document";
+        private readonly string documentUrl;
 
         private readonly int maxAttempts = 10;
 
-        public ArticleStoreRunner(ILogger<ArticleStoreRunner> logger, IServiceProvider serviceProvider)
+        public ArticleStoreRunner(ILogger<ArticleStoreRunner> logger, IServiceProvider serviceProvider, Configuration configuration)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            documentUrl = configuration.DocumentServerUrl;
         }
 
         public async Task StoreArticles()

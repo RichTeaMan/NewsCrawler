@@ -19,20 +19,23 @@ namespace NewsCrawler
         private readonly INewsArticleDeterminationService newsArticleDeterminationService;
         private readonly IArticleCleaner articleCleaner;
 
-        private const string DOCUMENT_STORE_URL = "http://tomserver:5003/document?key=";
+        private readonly string documentStoreUrl;
 
         public NewsArticleFetchService(
             ILogger<NewsArticleFetchService> logger,
             INewsArticleTitleFetcherService newsArticleTitleFetcherService,
             IArticlePublishedDateFetcherService articlePublishedDateFetcherService,
             INewsArticleDeterminationService newsArticleDeterminationService,
-            IArticleCleaner articleCleaner)
+            IArticleCleaner articleCleaner,
+            Configuration configuration)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.newsArticleTitleFetcherService = newsArticleTitleFetcherService ?? throw new ArgumentNullException(nameof(newsArticleTitleFetcherService));
             this.articlePublishedDateFetcherService = articlePublishedDateFetcherService ?? throw new ArgumentNullException(nameof(articlePublishedDateFetcherService));
             this.newsArticleDeterminationService = newsArticleDeterminationService ?? throw new ArgumentNullException(nameof(newsArticleDeterminationService));
             this.articleCleaner = articleCleaner ?? throw new ArgumentNullException(nameof(articleCleaner));
+
+            documentStoreUrl = $"{configuration.DocumentServerUrl.Trim('/')}?key=";
         }
 
         private async Task<string> FetchContentFromUrl(string url)
@@ -51,7 +54,7 @@ namespace NewsCrawler
             Exception lastException = null;
             string content = null;
             // try doc store
-            string docUrl = DOCUMENT_STORE_URL + url;
+            string docUrl = documentStoreUrl + url;
 
             // list of urls to try, in order.
             List<string> urls = new List<string>();

@@ -42,17 +42,20 @@ namespace NewsCrawler
 
             var builder = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+                .AddEnvironmentVariables()
                 .AddInMemoryCollection(inMemoryCommand);
+
             var config = builder.Build();
 
             var postgresConnectionString = config.GetConnectionString("PostgresNewsArticleDatabase");
+            var configuration = new Configuration(config.GetValue<string>("DocumentServerUrl"));
             try
             {
-
                 var postgresConnection = new NpgsqlConnectionStringBuilder(postgresConnectionString);
                 Console.WriteLine($"Database host: {postgresConnection.Host}");
                 Console.WriteLine($"Database name: {postgresConnection.Database}");
                 Console.WriteLine($"Database username: {postgresConnection.Username}");
+                Console.WriteLine($"Document server: {configuration.DocumentServerUrl}");
             }
             catch (Exception ex)
             {
@@ -69,8 +72,7 @@ namespace NewsCrawler
             serviceCollection.AddScoped<IWordCountService, SpacyWordCountService>();
             serviceCollection.AddScoped<IArticleStoreRunner, ArticleStoreRunner>();
             serviceCollection.AddSingleton<CrawlerRunner>();
-
-
+            serviceCollection.AddSingleton(configuration);
         }
 
         public static IEnumerable<IServiceProvider> CreateServiceProviders(string databaseString)
