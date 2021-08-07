@@ -1,7 +1,5 @@
 ﻿using HtmlAgilityPack;
 using NewsCrawler.Interfaces;
-using NewsCrawler.Persistence;
-using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -22,10 +20,12 @@ namespace NewsCrawler.Guardian
             if (title == null)
             {
                 string titleText = doc.DocumentNode.Descendants().FirstOrDefault(n => n.Name == "title")?.InnerText?.Trim();
-                var match = titleNodeRegex.Match(titleText);
-                if (match.Success)
-                {
-                    title = match.Value.Trim();
+                if (titleText != null) {
+                    var match = titleNodeRegex.Match(titleText);
+                    if (match.Success)
+                    {
+                        title = match.Value.Trim();
+                    }
                 }
             }
             return title;
