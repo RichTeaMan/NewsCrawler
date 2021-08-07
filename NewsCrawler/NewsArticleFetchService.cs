@@ -19,7 +19,7 @@ namespace NewsCrawler
         private readonly INewsArticleDeterminationService newsArticleDeterminationService;
         private readonly IArticleCleaner articleCleaner;
 
-        private readonly string documentStoreUrl;
+        private readonly string documentStoreUrl = null;
 
         public NewsArticleFetchService(
             ILogger<NewsArticleFetchService> logger,
@@ -35,7 +35,10 @@ namespace NewsCrawler
             this.newsArticleDeterminationService = newsArticleDeterminationService ?? throw new ArgumentNullException(nameof(newsArticleDeterminationService));
             this.articleCleaner = articleCleaner ?? throw new ArgumentNullException(nameof(articleCleaner));
 
-            documentStoreUrl = $"{configuration.DocumentServerUrl.Trim('/')}?key=";
+            if (!string.IsNullOrEmpty(configuration?.DocumentServerUrl))
+            {
+                documentStoreUrl = $"{configuration?.DocumentServerUrl?.Trim('/')}?key=";
+            }
         }
 
         private async Task<string> FetchContentFromUrl(string url)
@@ -53,12 +56,15 @@ namespace NewsCrawler
         {
             Exception lastException = null;
             string content = null;
-            // try doc store
-            string docUrl = documentStoreUrl + url;
 
             // list of urls to try, in order.
             List<string> urls = new List<string>();
-            urls.Add(docUrl);
+            if (!string.IsNullOrEmpty(documentStoreUrl))
+            {
+                // try doc store
+                string docUrl = documentStoreUrl + url;
+                urls.Add(docUrl);
+            }
             urls.Add(url);
 
             foreach (var attemptUrl in urls)
