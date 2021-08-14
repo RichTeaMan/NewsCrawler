@@ -37,7 +37,7 @@ namespace NewsCrawler
 
             if (!string.IsNullOrEmpty(configuration?.DocumentServerUrl))
             {
-                documentStoreUrl = $"{configuration?.DocumentServerUrl?.Trim('/')}?key=";
+                documentStoreUrl = $"{configuration?.DocumentServerUrl?.Trim('/')}/document?key=";
             }
         }
 
